@@ -1,6 +1,7 @@
 import argparse
 import black
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument("init", help="Init Dotpyle")
 args = parser.parse_args()
