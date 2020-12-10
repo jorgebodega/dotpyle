@@ -2,18 +2,20 @@
 name = "dotpyle"
 version = "0.1.0"
 description = "Test"
-authors = ["Jorge Bodega <jorge.bodega.f@gmail.com>", "", ""]
+authors = ["Jorge Bodega <jorge.bodega.f@gmail.com>", "Perseo Gutiérrez <>", ""]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pylint = "^2.6.0"
-pep8 = "^1.7.1"
 argparse = "^1.4.0"
+flake8 = "^3.8.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 black = "^20.8b1"
+pylint = "^2.6.0"
+pep8 = "^1.7.1"
+pre-commit = "^2.9.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
