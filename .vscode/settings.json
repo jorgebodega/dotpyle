@@ -1,8 +1,0 @@
-{
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
-    "files.exclude": {
-        "**/.git": false
-    },
-    // "python.formatting.provider": "black"
-}
