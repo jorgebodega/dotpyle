@@ -23,3 +23,16 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 app = "dotpyle.main:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+exclude = '''
+/(
+  | \.git
+  | \.venv
+  | buck-out
+  | build
+  | dist
+)/
+'''
