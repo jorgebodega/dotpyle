@@ -4,3 +4,6 @@ repos:
     hooks:
       - id: black
         language_version: python3
+        verbose: true
+        args:
+          - "--check"

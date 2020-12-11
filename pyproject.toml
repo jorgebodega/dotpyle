@@ -36,4 +36,4 @@ exclude = '''
   | dist
 )/
 '''
-check = true
+verbose = true
