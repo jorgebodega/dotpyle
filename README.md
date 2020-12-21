@@ -1,10 +1,10 @@
 # dotpyle
 
-Dotpyle is a Python implementation of a dofile system manager, allowing users
+Dotpyle is a Python implementation of a dotfile system manager, allowing users
 to keep a secure copy of all program configurations remotly, create different
 profiles, etc.
 
-## Working
+## TBD
 
 ### Init
 
@@ -13,9 +13,7 @@ If it is the first time you use Dotpyle, you will need to create an empty repo o
 
 If you want to manage an existing repo you just need to input url and token
 
-    dotpyle init [--remote <git url>]  [--destination]
-
-Git url repo, token and path of local repo will be stored on ~/.config/dotpyle.conf
+    dotpyle init [--url <git url>]  [--protocol (git/https)] [--token (if repo is private)]
 
 ### Add
 
