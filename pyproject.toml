@@ -7,8 +7,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-argparse = "^1.4.0"
 flake8 = "^3.8.4"
+pylint = "^2.6.0"
+click = "^7.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
