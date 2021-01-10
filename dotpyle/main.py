@@ -3,6 +3,8 @@ import subprocess
 from subprocess import Popen, run
 from os import getenv, path, mkdir
 
+from commands import help
+
 
 DOTPYLE_FILE = "dotpyle.yml"
 
@@ -115,6 +117,7 @@ dotpyle.add_command(init)
 dotpyle.add_command(add)
 dotpyle.add_command(commit)
 dotpyle.add_command(config)
+dotpyle.add_command(help)
 
 
 def main():
