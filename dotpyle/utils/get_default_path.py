@@ -1,4 +1,4 @@
-import click
+from click import get_app_dir
 from os import getenv, path
 
 APP_NAME = "dotpyle"
@@ -16,4 +16,4 @@ def get_default_path():
     if default_config_path is not None:
         return path.expanduser("{0}/{1}".format(default_config_path, APP_NAME))
 
-    return click.get_app_dir(APP_NAME)
+    return get_app_dir(APP_NAME)
