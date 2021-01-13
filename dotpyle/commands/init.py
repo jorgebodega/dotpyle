@@ -1,7 +1,8 @@
 import click
 import subprocess
+from git import Repo
 from os import mkdir, path
-from dotpyle.utils import get_default_path
+from dotpyle.utils import get_default_path, get_default_url
 
 DOTPYLE_FILE = "dotpyle.yml"
 
@@ -15,13 +16,13 @@ DOTPYLE_FILE = "dotpyle.yml"
     "--protocol",
     required=True,
     type=click.Choice(["git", "https"]),
-    help="Git protocol",
+    help="Protocol used to clone the repository. Currently only Git and HTTPS are supported (like Github and Gitlab).",
 )
 @click.option(
     "-t",
     "--token",
     required=False,
-    help="Git token required if the Git repo is private",
+    help="Token could be used to clone a repository if it is private and the protocol is HTTPS. If the repository is private but no token provided, it will probably prompt for username/password (depends on service).",
 )
 def init(url, protocol, token):
     """
@@ -30,14 +31,17 @@ def init(url, protocol, token):
     a template config file will be createn
     """
 
-    default_config_path = get_default_path()
-    print("default_config_path: ", default_config_path)
+    default_path = get_default_path()
+    default_url = get_default_url(url, protocol, token)
+
+    Repo.clone_from(default_url, default_path)
+    return
 
     # Check if dotpyle config file exist
-    if not path.isdir(default_config_path):
+    if not path.isdir(default_path):
         # Create config file
-        print("Creating ", default_config_path)
-        mkdir(default_config_path)
+        print("Creating ", default_path)
+        mkdir(default_path)
 
     # If token is defined it is mean that repo is private
     if token:
@@ -48,7 +52,7 @@ def init(url, protocol, token):
     print("Cloning into ", url)
     # Bring the remote repo
     process = subprocess.Popen(
-        ["git", "clone", url, default_config_path],
+        ["git", "clone", url, default_path],
         stdout=subprocess.PIPE,
         universal_newlines=True,
     )
@@ -65,7 +69,7 @@ def init(url, protocol, token):
             break
 
     # Check if dotpyle exist
-    dotpyle_path = default_config_path + DOTPYLE_FILE
+    dotpyle_path = default_path + DOTPYLE_FILE
     if not path.isfile(dotpyle_path):
         # Create dotpyle config file
         dotpyle_handler = open(dotpyle_path, "w+")

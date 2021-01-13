@@ -1,5 +1,4 @@
 import click
-from os import getenv, path, mkdir
 
 from dotpyle.commands.init import init
 from dotpyle.commands.help import help
