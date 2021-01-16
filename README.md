@@ -6,6 +6,24 @@ profiles, etc.
 
 ## TBD
 
+dotpyle.yml organization:
+
+key:
+    before: ...
+    after: ...
+    paths:
+        - symlink0:fileInsideKeyFolder0
+        - symlink1:fileInsideKeyFolder1
+        - filename
+
+This will traduce into:
+
+- dotfiles
+    - key
+        - fileInsideKeyFolder0   ==> ln -s symlink0
+        - fileInsideKeyFolder1   ==> ln -s symlink0
+        - filename
+
 ### Init
 
 This will request a git url and a git token

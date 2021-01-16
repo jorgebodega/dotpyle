@@ -2,6 +2,7 @@ import click
 
 from dotpyle.commands.init import init
 from dotpyle.commands.help import help
+from dotpyle.commands.add import add
 
 
 @click.group()
@@ -10,10 +11,6 @@ def dotpyle():
     pass
 
 
-@click.command()
-@click.option("--path", help="Path file")
-def add(path):
-    pass
 
 
 @click.command()
