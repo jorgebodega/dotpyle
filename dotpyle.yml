@@ -1,0 +1,44 @@
+git:
+  default:
+    after:
+    before:
+      - sudo pacman -S git
+    root: ~
+    paths:
+      - .gitconfig
+  windows:
+    after:
+    before:
+      - choco install git.install
+    root: C:\Users\usr
+    paths:
+      - .gitconfig
+nvim:
+  default:
+    after:
+    before:
+      - sudo pacman -S neovim node
+    root: ~/.config/nvim
+    paths:
+      - init.vim
+      - after/ftplugin/ada.vim
+
+  windows:
+    after:
+    before:
+      - choco install neovim --pre
+    root: C:\AppData\Local\nvim
+    paths:
+      - init.vim
+      - after/ftplugin/ada.vim
+i3:
+  default:
+    after:
+    before:
+      - sudo pacman -S i3
+    root: ~/.config/i3
+    paths:
+      - config
+      - i3status.conf
+      - rofitheme.rasi
+      - i3-resurrect/config.json

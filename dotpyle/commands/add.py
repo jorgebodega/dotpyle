@@ -18,6 +18,8 @@ def add():
     pass
 
 
+# FIXME: when config file is empty, an error is returned
+# TypeError: argument of type 'NoneType' is not iterable
 @add.command()
 @click.help_option(help="Add file to dotpyles")
 @click.argument(
