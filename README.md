@@ -26,8 +26,8 @@ This will traduce into:
 
 ### Init
 
-This will request a git url and a git token
-If it is the first time you use Dotpyle, you will need to create an empty repo on GitHub, GitLab, etc.
+This will request a git url and a git token If it is the first time you use
+Dotpyle, you will need to create an empty repo on GitHub, GitLab, etc.
 
 If you want to manage an existing repo you just need to input url and token
 
@@ -139,6 +139,9 @@ dotfiles:
                 - after/ftplugin/ada.vim
 ```
 
+This will be the generated file structure on the repository:
+
+```
 dotpyle repo file structure
 |
 |-> git
@@ -159,4 +162,4 @@ dotpyle repo file structure
         |-> after
             |-> ftplugin
                 |-> ada.vim
-
+```
