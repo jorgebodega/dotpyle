@@ -11,9 +11,9 @@ def get_default_path():
 
     Ref: https://click.palletsprojects.com/en/7.x/api/#click.get_app_dir
     """
-    default_config_path = getenv("XDG_CONFIG_HOME")
 
-    if default_config_path is not None:
-        return path.expanduser("{0}/{1}".format(default_config_path, APP_NAME))
+    # TODO On MacOs get_app_dir return ~/Applications/Application Support/{NAME}
+    default_config_path = getenv("XDG_CONFIG_HOME", "~/.config")
 
-    return get_app_dir(APP_NAME)
+    return path.expanduser("{0}/{1}".format(default_config_path, APP_NAME))
+
