@@ -143,6 +143,8 @@ This will be the generated file structure on the repository:
 
 ```
 dotpyle repo file structure
+
+dotfiles
 |
 |-> git
 |   |-> default

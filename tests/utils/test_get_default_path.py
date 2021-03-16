@@ -13,4 +13,6 @@ def test_with_env(monkeypatch):
 
 def test_without_env():
     result_path = get_default_path()
+    print(EXPECTED_PATH)
+    print(result_path)
     assert result_path == EXPECTED_PATH

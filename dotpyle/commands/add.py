@@ -5,7 +5,7 @@ from os import mkdir, path, sys
 from shutil import rmtree
 from dotpyle.utils import get_default_path, get_default_url
 
-from dotpyle.services.ConfigFileHandler import ConfigFileHandler
+from dotpyle.services.ConfigHandler import ConfigHandler
 
 
 @click.group()
@@ -31,7 +31,7 @@ def add():
 )
 def file(key, dotfile):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
-    cfh = ConfigFileHandler()
+    cfh = ConfigHandler()
     config = cfh.read()
     print(config)
     if key in config:
