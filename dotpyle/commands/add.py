@@ -5,7 +5,7 @@ from os import mkdir, path, sys
 from shutil import rmtree
 from dotpyle.utils import get_default_path, get_default_url
 
-from dotpyle.services.ConfigHandler import ConfigHandler
+from dotpyle.services.config_handler import ConfigHandler
 
 
 @click.group()

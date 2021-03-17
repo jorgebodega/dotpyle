@@ -25,6 +25,23 @@ If you want to manage an existing repo you just need to input url and token
 2. Delete file of path
 3. Generate symbolic link to path
 
+Examples:
+
+1. Create program_name key
+1. Create profile (default by default)
+1. Set root and paths (optionally pre and post hooks)
+
+```sh
+    dotpyle add <program_name> [--profile=<profile_name>]
+    dotpyle set <program_name> [--profile=<profile_name>] [root=<root_path>] [paths=<dotfile_path1:dotfile_path2:...>]
+
+    dotpyle dotfiles add [--profile=<profile_name>] [--root=<root_path>] paths=[<dotfile_path>, ...]
+```
+
+### List
+
+    dotpyle list [--name=<program_name>] [--profile=<profile_name>]
+
 
 ### Push
 
@@ -33,7 +50,6 @@ If you want to manage an existing repo you just need to input url and token
     dotpyle init
     dotpyle add [file | pre-hook | post-hook]
     dotpyle  [file | pre-hook | post-hook]
-
 
 ### Profiles
 
@@ -71,9 +87,9 @@ TBD
 
 ### Configuration
 
-#### check-config
+#### check
 
-    dotpyle check-config [<dotpyle_config_path>]
+    dotpyle config check [<dotpyle_config_path>]
 
 This command will analize Dotpyle configuration file, by default
 (`XDG_CONFIG_HOME}/dotpyle/dotpyle.yml`) (or `<dotpyle_config_path>`),

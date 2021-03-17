@@ -1,21 +1,23 @@
-from os import path, symlink
+import os
 from yaml import safe_load, safe_dump, load, dump
 from dotpyle.utils import get_default_path
+from sys import exit
 
 
 class ConfigHandler:
     DOTPYLE_FILE = "dotpyle.yml"
     config = None
-    route = None
 
     def __init__(self, path=None):
-        if path:
-            self.stream = open(path, "r+")
-        else:
-            self.route = get_default_path()
-            self.stream = open(self.route + "/" + self.DOTPYLE_FILE, "r+")
+        if not path:
+            path = get_default_path() + "/" + self.DOTPYLE_FILE
 
-        self.config = self.read()
+        if os.path.isfile(path):
+            self.stream = open(path, "r+")
+            self.config = self.read()
+
+        else:
+            exit('File {0} does not exist'.format(path))
 
     def read(self):
         config = safe_load(self.stream)
@@ -27,3 +29,9 @@ class ConfigHandler:
         safe_dump(config, self.stream)
 
 
+    def get_config(self):
+        return self.config
+
+    def set_config(self, new_config):
+        # TODO maybe call check_config first?
+        self.config = new_config
