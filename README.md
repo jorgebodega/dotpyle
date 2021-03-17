@@ -4,25 +4,8 @@ Dotpyle is a Python implementation of a dotfile system manager, allowing users
 to keep a secure copy of all program configurations remotly, create different
 profiles, etc.
 
-## TBD
 
-dotpyle.yml organization:
-
-key:
-    before: ...
-    after: ...
-    paths:
-        - symlink0:fileInsideKeyFolder0
-        - symlink1:fileInsideKeyFolder1
-        - filename
-
-This will traduce into:
-
-- dotfiles
-    - key
-        - fileInsideKeyFolder0   ==> ln -s symlink0
-        - fileInsideKeyFolder1   ==> ln -s symlink0
-        - filename
+## Commands
 
 ### Init
 
@@ -32,6 +15,7 @@ Dotpyle, you will need to create an empty repo on GitHub, GitLab, etc.
 If you want to manage an existing repo you just need to input url and token
 
     dotpyle init [--url <git url>]  [--protocol (git/https)] [--token (if repo is private)]
+
 
 ### Add
 
@@ -45,17 +29,66 @@ If you want to manage an existing repo you just need to input url and token
 ### Push
 
 ### List of commands
+
     dotpyle init
     dotpyle add [file | pre-hook | post-hook]
     dotpyle  [file | pre-hook | post-hook]
 
 
-### Dotpyle.yml example
+### Profiles
+
+#### profile create
+
+    dotpyle profile create <profile_name>
+
+Creates a new profile named `<profile_name>`, if it does not exist.
+
+#### profile list
+
+    dotpyle profile list [<profile_name>]
+
+#### profile change
+
+    dotpyle profile change <profile_name> [<program_name> ...]
+
+This option will change the configuration file to the `<profile_name>` passed for:
+
+- all dotfiles if no `<program_name>` is passed
+- all `<program_name>`'s passed
+
+Example:
+
+    dotpyle profile change work nvim git
+
+Neovim work profile and Git work profile will be symlinked to its corresponding path.
+
+    dotpyle profile change home
+
+All dotfiles which have a 'home' profile will be symlinked to its corresponding paths.
+Dotfiles which does not have a configuration for given profile will not be altered.
+
+TBD
+
+### Configuration
+
+#### check-config
+
+    dotpyle check-config [<dotpyle_config_path>]
+
+This command will analize Dotpyle configuration file, by default
+(`XDG_CONFIG_HOME}/dotpyle/dotpyle.yml`) (or `<dotpyle_config_path>`),
+returning descriptive errors.
+
+**Info**: any other command will anayle the configuration file before
+executing.  This command is useful and recomended whenever any manual change is
+made on *dotpyle.yml*.
+
+
+### dotpyle.yml example
 
 Structure of yml (every thing inside [] are examples)
 
-```
-
+```yaml
 # General settings for dotpyle
 settings:
 
@@ -100,7 +133,7 @@ dotfiles:
 
 Example of dotpyle.yml config file:
 
-```
+```yaml
 settings:
     profiles:
         - default
@@ -142,7 +175,6 @@ dotfiles:
 This will be the generated file structure on the repository:
 
 ```
-dotpyle repo file structure
 
 dotfiles
 |

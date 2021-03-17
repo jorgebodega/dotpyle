@@ -58,8 +58,9 @@ class ConfigParser:
                 ]
 
             """
+            source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
+            link_name = root + '/' + path
             # ln -s ~/.config/dotpyle/dotfiles/<key_name>/<profile_name>/<path>  <root>/<key_name>/<path>
-            #symlink('{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path), root + '/' + path)
-            print('{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path))
-            print('')
-            print(root + '/' + path)
+            print ('>>> ln -s {0} {1}', source, link_name)
+            symlink(source, link_name)
+            #symlink('/Users/perseo/Documents/Programming/C/form.c', '/tmp/test.txt')
