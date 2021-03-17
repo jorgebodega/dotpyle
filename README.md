@@ -1,5 +1,7 @@
 # dotpyle
 
+[![GitHub CI](https://github.com/jorgebodega/dotpyle/workflows/CI/badge.svg)](https://github.com/neovim/neovim/actions)
+
 Dotpyle is a Python implementation of a dotfile system manager, allowing users
 to keep a secure copy of all program configurations remotly, create different
 profiles, etc.
