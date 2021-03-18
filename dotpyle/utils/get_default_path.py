@@ -16,4 +16,3 @@ def get_default_path():
     default_config_path = getenv("XDG_CONFIG_HOME", "~/.config")
 
     return path.expanduser("{0}/{1}".format(default_config_path, APP_NAME))
-

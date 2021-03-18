@@ -18,8 +18,6 @@ def commit():
     pass
 
 
-
-
 # Add commands to group
 dotpyle.add_command(init)
 dotpyle.add_command(add)
@@ -28,7 +26,6 @@ dotpyle.add_command(config)
 dotpyle.add_command(help)
 dotpyle.add_command(list)
 dotpyle.add_command(config)
-
 
 
 def main():

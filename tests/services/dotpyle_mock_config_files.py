@@ -54,20 +54,15 @@ dotpyle_error_cases = [
 
 
 dotpyle_hook_ok_cases = [
-    'ls',
-    'pwd',
-    'whoami',
+    "ls",
+    "pwd",
+    "whoami",
 ]
 
 dotpyle_hook_error_cases = [
-    'thisDoesNotExist',
-    'idemNotExistSorry',
-    'heheSalut',
+    "thisDoesNotExist",
+    "idemNotExistSorry",
+    "heheSalut",
 ]
 
-dotpyle_paths_ok_cases = [
-    {
-        'root': '/tmp',
-        'paths': [ ]
-    }
-]
+dotpyle_paths_ok_cases = [{"root": "/tmp", "paths": []}]

@@ -46,13 +46,54 @@ Examples:
     dotpyle list [--name=<program_name>] [--profile=<profile_name>]
 
 
-### Push
+### Interacting with Git repository
 
-### List of commands
+User may avoid interacting directly with Dotpyle git repository
 
-    dotpyle init
-    dotpyle add [file | pre-hook | post-hook]
-    dotpyle  [file | pre-hook | post-hook]
+TODO: Considering only one dotpyle sync command for pulling && pussing
+
+#### Pulling changes
+
+This command will fetch new changes from the remote repository and check nothing will break
+
+TODO
+
+    dotpyle pull
+
+#### Pushing changes (TODO)
+
+    dotpyle push
+
+#### Commiting changes
+
+Commiting should be as granular and personal as possible so Dotpyle offers the
+granularity you may need.
+
+    dotpyle commit [-n <program_name> [--path=<path1> --path=<path2> ...]] [-p <profile_name>] -m <commit_message>
+
+Examples:
+
+- General commit for all changes on all programs and profiles installed and managed by Dotpyle:
+
+    `dotpyle commit -m 'fix typo on vimrc'`
+
+- Commit for all dotfiles of specific program (e.g. nvim):
+
+    `dotpyle commit -n nvim -m 'commit message'`
+
+- Commit for all programs (and all configuration files) of a concrete profile (e.g. work):
+
+    `dotpyle commit -p work -m 'commit message'`
+
+- Commit for specific program and specific dotfiles of that program for all profiles:
+    (e.g. alacritty base configuration for all profiles which have alacritty)
+
+    `dotpyle commit -n alacritty --path=alacritty.yml -m 'commit message'`
+
+- Commit for specific program and specific dotfiles of that program on specific profile:
+    (e.g. i3 configuration for i3-resurrect and status bar on home profile)
+
+    `dotpyle commit -n i3 --path=i3-resurrect/config.json --path=i3status.conf -p home -m 'commit message'`
 
 ### Profiles
 
@@ -216,3 +257,28 @@ dotfiles
             |-> ftplugin
                 |-> ada.vim
 ```
+
+
+
+### dotpyle.local.yml structure
+
+Dotpyle needs to create a local configuration file in order to keep track of
+your configuration on the current machine.
+
+This file will not be tracked by
+git so non conflicts will be derived when using Dotpyle on multiple computers.
+
+Also, this file will be generated automatically by Dotpyle on 'init' command or
+whenever Dotpyle can't find it.
+
+Structure of yml (every thing inside [] are examples)
+
+```yaml
+installed:
+    [program_name]:
+        profile: [profile_name]
+       # modified: [True|False]
+        TBD
+TBD
+```
+

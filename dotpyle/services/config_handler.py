@@ -17,7 +17,7 @@ class ConfigHandler:
             self.config = self.read()
 
         else:
-            exit('File {0} does not exist'.format(path))
+            exit("File {0} does not exist".format(path))
 
     def read(self):
         config = safe_load(self.stream)
@@ -27,7 +27,6 @@ class ConfigHandler:
         self.stream.seek(0)
         self.stream.truncate()
         safe_dump(config, self.stream)
-
 
     def get_config(self):
         return self.config
