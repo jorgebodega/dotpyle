@@ -1,13 +1,12 @@
 from os import symlink
 import cerberus
 import subprocess
-from dotpyle.utils import get_default_path
+from dotpyle.utils import get_source_and_link_path
 
 class ConfigParser:
     def __init__(self, config):
         self.schema = eval(open("dotpyle/services/schema.py", "r").read())
         self.config = config
-        self.dotpyle_path = get_default_path()
 
     def check_config(self):
         validator = cerberus.Validator(self.schema)
@@ -58,9 +57,27 @@ class ConfigParser:
                 ]
 
             """
-            source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
+            source, link_name = get_source_and_link_path(name=key_name, profile=profile_name, root=root, path=path)
+            #source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
             link_name = root + '/' + path
             # ln -s ~/.config/dotpyle/dotfiles/<key_name>/<profile_name>/<path>  <root>/<key_name>/<path>
             print ('>>> ln -s {0} {1}', source, link_name)
             symlink(source, link_name)
             #symlink('/Users/perseo/Documents/Programming/C/form.c', '/tmp/test.txt')
+
+    def get_dotfiles(self):
+        return self.config['dotfiles']
+
+    def get_calculated_paths(self, name, profile):
+        #if name in self.config['dotfiles']:
+        content = self.config['dotfiles'][name][profile]
+        if not 'root' in content:
+            root = '~' # TODO get $HOME
+        else:
+            root = content['root']
+        return [get_source_and_link_path(name, profile, root, path) for path in content['paths']]
+
+
+
+
+

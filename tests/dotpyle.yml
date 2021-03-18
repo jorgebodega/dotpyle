@@ -40,5 +40,6 @@ settings:
   profiles:
     - default
     - windows
+    - mac
 
 version: 0
