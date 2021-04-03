@@ -6,6 +6,10 @@ from shutil import rmtree
 from dotpyle.utils import get_default_path, get_default_url
 
 from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.config_parser import ConfigParser
+
+
+parser = ConfigParser(config=ConfigHandler().get_config())
 
 
 @click.group()
@@ -23,27 +27,16 @@ def add():
 # TypeError: argument of type 'NoneType' is not iterable
 @add.command()
 @click.help_option(help="Add file to dotpyles")
-@click.argument(
-    "key",
+@click.argument("name")
+@click.option("--profile", "-p", default="default", help="Profile name, must exist")
+@click.option("--root", "-r", default="~", help="Root path")
+@click.option(
+    "--path", multiple=True, help="Program dotfiles paths starting from root path"
 )
-@click.argument(
-    "dotfile",
-)
-def file(key, dotfile):
+# @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
+def dotfile(name, profile, root, path):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
-    cfh = ConfigHandler()
-    config = cfh.read()
-    print(config)
-    if key in config:
-        key_config = config[key]
-        if dotfile in key_config:
-            print("Existing file on key config")
-        else:
-            key_config["paths"].append(dotfile)
-
-    else:
-        config[key] = {"paths": [dotfile]}
-
-    print("after")
-    print(config)
-    cfh.save(config)
+    print(name, profile, root, path)
+    # Convert path touple to list
+    paths = [p for p in path]
+    parser.add_dotfile(name, profile, root, paths, pre_hooks=None, post_hooks=None)

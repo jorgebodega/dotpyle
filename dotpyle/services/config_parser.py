@@ -1,4 +1,5 @@
-from os import symlink
+import os
+import shutil
 import cerberus
 import subprocess
 from dotpyle.utils import get_source_and_link_path
@@ -28,15 +29,19 @@ class ConfigParser:
         for key in self.config["dotfiles"].keys():
             self.process_key(key, profile_name)
 
-    def process_key(self, key_name, profile_name="default"):
+    def process_key(
+        self, key_name, profile_name="default", process_pre=True, process_post=True
+    ):
         if profile_name in self.config["dotfiles"][key_name]:
             key = self.config["dotfiles"][key_name][profile_name]
             # 1. Proces pre hooks
-            self.process_key_hooks(key["pre"])
+            if process_pre:
+                self.process_key_hooks(key["pre"])
             # 2. Proces paths
             self.process_key_paths(key_name, profile_name, key["root"], key["paths"])
             # 3. Proces posts hooks
-            self.process_key_hooks(key["post"])
+            if process_post:
+                self.process_key_hooks(key["post"])
 
     def process_key_hooks(self, hooks):
         print("Processing hooks")
@@ -62,11 +67,14 @@ class ConfigParser:
                 name=key_name, profile=profile_name, root=root, path=path
             )
             # source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
-            link_name = root + "/" + path
+            # link_name = root + "/" + path
             # ln -s ~/.config/dotpyle/dotfiles/<key_name>/<profile_name>/<path>  <root>/<key_name>/<path>
             print(">>> ln -s {0} {1}", source, link_name)
-            symlink(source, link_name)
-            # symlink('/Users/perseo/Documents/Programming/C/form.c', '/tmp/test.txt')
+            if os.path.isfile(link_name):
+                # TODO throw error or give user possibility to replace
+                print("Error >> {0} already exist", link_name)
+            else:
+                os.symlink(source, link_name)
 
     def get_dotfiles(self):
         return self.config["dotfiles"]
@@ -82,3 +90,51 @@ class ConfigParser:
             get_source_and_link_path(name, profile, root, path)
             for path in content["paths"]
         ]
+
+    def add_dotfile(self, name, profile, root, paths, pre_hooks, post_hooks):
+        dotfiles = self.get_dotfiles()
+        if name in dotfiles:
+            existing_profiles = dotfiles[name]
+            if profile in existing_profiles:
+                # TODO throw error
+                print(
+                    "Profile {} for {} already exist on Dotpyle manager", profile, name
+                )
+        else:
+            dotfiles[name] = {}
+
+        new_profile = {
+            "root": root,
+            "paths": paths,
+        }
+
+        if pre_hooks:
+            new_profile["pre"] = pre_hooks
+        if post_hooks:
+            new_profile["post"] = post_hooks
+
+        dotfiles[name][profile] = new_profile
+
+        for path in paths:
+            # Get source path (destination path on dotpyle repo) and current file path
+            source, link_name = get_source_and_link_path(name, profile, root, path)
+
+            profile_directory_path = os.path.dirname(source)
+            # Create (recursively) profile and key name directory on dotpyle/dotfiles path
+            os.makedirs(profile_directory_path, exist_ok=True)
+            try:
+                # Move existing path to dotpyle repo
+                # shutil.move does not work with symlinks
+                shutil.copy(link_name, source)
+                os.remove(link_name)
+                # Symlink path in order to start tracking changes
+                os.symlink(source, link_name)
+            except shutil.SameFileError as exc:
+                # TODO
+                print("Error >> This file is already been managed by Dotpyle")
+
+        # TODO move away from here please
+        from dotpyle.services.config_handler import ConfigHandler
+
+        handler = ConfigHandler()
+        handler.save(self.config)

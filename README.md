@@ -39,12 +39,17 @@ Examples:
     dotpyle set <program_name> [--profile=<profile_name>] [root=<root_path>] [paths=<dotfile_path1:dotfile_path2:...>]
 
     dotpyle dotfiles add [--profile=<profile_name>] [--root=<root_path>] paths=[<dotfile_path>, ...]
+
+    dotpyle add dotfile <program_name> [--profile <profile_name>]
 ```
 
 ### List
 
     dotpyle list [--name=<program_name>] [--profile=<profile_name>]
 
+### Install
+
+    dotpyle install dotfile  <program_name> [--profile <profile_name>]
 
 ### Interacting with Git repository
 
@@ -235,7 +240,6 @@ dotfiles:
 This will be the generated file structure on the repository:
 
 ```
-
 dotfiles
 |
 |-> git
