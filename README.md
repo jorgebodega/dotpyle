@@ -22,7 +22,6 @@ If you want to manage an existing repo you just need to input url and token
 
 ### Add
 
-    dotpyle add [--path PATH] [OPTS]
 
 1. Copy file to repo location
 2. Delete file of path
@@ -35,17 +34,15 @@ Examples:
 1. Set root and paths (optionally pre and post hooks)
 
 ```sh
-    dotpyle add <program_name> [--profile=<profile_name>]
-    dotpyle set <program_name> [--profile=<profile_name>] [root=<root_path>] [paths=<dotfile_path1:dotfile_path2:...>]
-
-    dotpyle dotfiles add [--profile=<profile_name>] [--root=<root_path>] paths=[<dotfile_path>, ...]
-
-    dotpyle add dotfile <program_name> [--profile <profile_name>]
+    dotpyle add dotfile <program_name> [--profile <profile_name>] [--root
+    <root_path>] [--path <dotfile_path1> [--path dotfile_path2>] ...] [--pre
+    <pre_config_install_command> [--pre <...>]] [--post
+    <post_config_install_command> [--post <...>]]
 ```
 
 ### List
 
-    dotpyle list [--name=<program_name>] [--profile=<profile_name>]
+    dotpyle list [--name <program_name>] [--profile <profile_name>]
 
 ### Install
 

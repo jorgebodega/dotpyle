@@ -2,16 +2,16 @@ dotpyle_ok_cases = [
     {
         "dotfiles": {
             "git": {
-                "default": {"before": ["sudo pacman -S git"], "paths": [".gitconfig"]},
+                "default": {"pre": ["sudo pacman -S git"], "paths": [".gitconfig"]},
                 "windows": {
-                    "before": ["choco install git.install"],
+                    "pre": ["choco install git.install"],
                     "paths": [".gitconfig"],
                     "root": "C:\\Users\\usr",
                 },
             },
             "i3": {
                 "default": {
-                    "before": ["sudo pacman -S i3"],
+                    "pre": ["sudo pacman -S i3"],
                     "paths": [
                         "config",
                         "i3status.conf",
@@ -23,12 +23,12 @@ dotpyle_ok_cases = [
             },
             "nvim": {
                 "default": {
-                    "before": ["sudo pacman -S neovim node"],
+                    "pre": ["sudo pacman -S neovim node"],
                     "paths": ["init.vim", "after/ftplugin/ada.vim"],
                     "root": "~/.config/nvim",
                 },
                 "windows": {
-                    "before": ["choco install neovim --pre"],
+                    "pre": ["choco install neovim --pre"],
                     "paths": ["init.vim", "after/ftplugin/ada.vim"],
                     "root": "C:\\AppData\\Local\\nvim",
                 },

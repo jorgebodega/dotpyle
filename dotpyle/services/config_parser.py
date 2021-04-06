@@ -35,12 +35,12 @@ class ConfigParser:
         if profile_name in self.config["dotfiles"][key_name]:
             key = self.config["dotfiles"][key_name][profile_name]
             # 1. Proces pre hooks
-            if process_pre:
+            if process_pre and "pre" in key:
                 self.process_key_hooks(key["pre"])
             # 2. Proces paths
             self.process_key_paths(key_name, profile_name, key["root"], key["paths"])
             # 3. Proces posts hooks
-            if process_post:
+            if process_post and "post" in key:
                 self.process_key_hooks(key["post"])
 
     def process_key_hooks(self, hooks):
@@ -49,8 +49,9 @@ class ConfigParser:
             print("Executing hook", hook)
             # Avoid use of array with command name + pararms
             result = subprocess.run(
-                "%s" % hook, capture_output=True, check=True, shell=True
+                "%s" % hook, capture_output=False, check=True, shell=True
             )
+            # print(result.stdout)
             result.check_returncode()  # Raise an exception if the command execution fails
 
     def process_key_paths(self, key_name, profile_name, root, paths):
@@ -69,10 +70,10 @@ class ConfigParser:
             # source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
             # link_name = root + "/" + path
             # ln -s ~/.config/dotpyle/dotfiles/<key_name>/<profile_name>/<path>  <root>/<key_name>/<path>
-            print(">>> ln -s {0} {1}", source, link_name)
+            print(">>> ln -s {0} {1}".format(source, link_name))
             if os.path.isfile(link_name):
                 # TODO throw error or give user possibility to replace
-                print("Error >> {0} already exist", link_name)
+                print("Error >> {0} already exist".format(link_name))
             else:
                 os.symlink(source, link_name)
 

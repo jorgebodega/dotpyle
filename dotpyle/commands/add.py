@@ -13,9 +13,6 @@ parser = ConfigParser(config=ConfigHandler().get_config())
 
 
 @click.group()
-# dotpyle init.vim --key vim
-# dotpyle add <key> <dotfile>
-# dotpyle add <key> <dotfile>:<path>
 def add():
     """
     This command will take KEY and ... DOTFILE
@@ -26,17 +23,31 @@ def add():
 # FIXME: when config file is empty, an error is returned
 # TypeError: argument of type 'NoneType' is not iterable
 @add.command()
-@click.help_option(help="Add file to dotpyles")
+@click.help_option(help="Add file to dotpyle")
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="Profile name, must exist")
 @click.option("--root", "-r", default="~", help="Root path")
 @click.option(
     "--path", multiple=True, help="Program dotfiles paths starting from root path"
 )
+@click.option(
+    "--pre",
+    multiple=True,
+    help="Bash command(s) to be executed before installing configuration",
+)
+@click.option(
+    "--post",
+    multiple=True,
+    help="Bash command(s) to be executed after installing configuration",
+)
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
-def dotfile(name, profile, root, path):
+def dotfile(name, profile, root, path, pre, post):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
-    print(name, profile, root, path)
-    # Convert path touple to list
+    print(name, profile, root, path, pre, post)
+    # Convert tuples to lists
     paths = [p for p in path]
-    parser.add_dotfile(name, profile, root, paths, pre_hooks=None, post_hooks=None)
+    pre_commands = [p for p in pre]
+    post_commands = [p for p in post]
+    parser.add_dotfile(
+        name, profile, root, paths, pre_hooks=pre_commands, post_hooks=post_commands
+    )

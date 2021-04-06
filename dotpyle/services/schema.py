@@ -25,8 +25,8 @@
             "valuesrules": {
                 "type": "dict",
                 "schema": {
-                    "after": {"required": False, "type": "list"},
-                    "before": {"required": False, "type": "list"},
+                    "pre": {"required": False, "type": "list"},
+                    "post": {"required": False, "type": "list"},
                     "root": {"required": False, "type": "string", "default": "~"},
                     "paths": {"required": True, "type": "list"},
                 },
