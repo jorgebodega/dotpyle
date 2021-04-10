@@ -6,16 +6,12 @@ from dotpyle.commands.add import add
 from dotpyle.commands.list import list
 from dotpyle.commands.config import config
 from dotpyle.commands.install import install
+from dotpyle.commands.commit import commit
 
 
 @click.group()
 def dotpyle():
     """ Needed to create different commands with different options """
-    pass
-
-
-@click.command()
-def commit():
     pass
 
 
@@ -28,6 +24,7 @@ dotpyle.add_command(help)
 dotpyle.add_command(list)
 dotpyle.add_command(config)
 dotpyle.add_command(install)
+dotpyle.add_command(commit)
 
 
 def main():

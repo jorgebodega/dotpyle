@@ -80,6 +80,18 @@ class ConfigParser:
     def get_dotfiles(self):
         return self.config["dotfiles"]
 
+    def get_names_and_profiles(self):
+        # return [(name, profile) for profile in seq_x for name, profiles in self.get_dotfiles().items()]
+        # return [(name, profiles) for name, profiles in self.get_dotfiles().items()]
+        return [
+            (name, [profile for profile in profiles])
+            for name, profiles in self.get_dotfiles().items()
+        ]
+
+        # for name, profiles in self.get_dotfiles.items():
+        # for profile in profiles:
+        # pass
+
     def get_calculated_paths(self, name, profile):
         # if name in self.config['dotfiles']:
         content = self.config["dotfiles"][name][profile]
