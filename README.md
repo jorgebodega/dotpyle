@@ -1,10 +1,30 @@
 # dotpyle
 
-[![GitHub CI](https://github.com/jorgebodega/dotpyle/workflows/CI/badge.svg)](https://github.com/neovim/neovim/actions)
-[![Coverage Status](https://coveralls.io/repos/github/jorgebodega/dotpyle/badge.svg?branch=development&t=Hv5NfN)](https://coveralls.io/github/jorgebodega/dotpyle?branch=development)
+<p align="center">
+  <img src="./docs/logo.png" alt="logo" width="160" />
+</p>
 
-Dotpyle is a Python implementation of a dotfile system manager, allowing users
-to keep a secure copy of all program configurations remotly, create different
+<h1 align="center" style="text-align: center;">dotPyle</h1>
+
+<p align="center">
+    <a href="https://github.com/neovim/neovim/actions">
+        <img src="https://github.com/jorgebodega/dotpyle/workflows/CI/badge.svg" alt="CI Status">
+    </a>
+    <a href="https://coveralls.io/github/jorgebodega/dotpyle?branch=development">
+        <img src="https://coveralls.io/repos/github/jorgebodega/dotpyle/badge.svg?branch=development&t=Hv5NfN" alt="Coverage Status">
+    </a>
+</p>
+
+<p align="center">
+  <b>Manage all your configuration files with different profiles remotely.</b></br>
+  <sub>Made with ❤️ by <a href="https://github.com/jorgebodega">Jorge Bodega</a> and <a href="https://github.com/perseogi">Perseo Gutierrez</a></sub>
+</p>
+
+<br/>
+
+
+dotPyle is a Python implementation of a dotfile system manager, allowing users
+to keep a secure copy of all program configurations remotely, create different
 profiles, etc.
 
 
