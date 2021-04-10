@@ -1,7 +1,6 @@
-# dotpyle
 
 <p align="center">
-  <img src="./docs/logo.png" alt="logo" width="160" />
+  <img src="./docs/logo.png" alt="logo" width="260" />
 </p>
 
 <h1 align="center" style="text-align: center;">dotPyle</h1>
