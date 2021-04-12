@@ -1,4 +1,5 @@
 import click
+import os
 from git.index import base
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.config_handler import ConfigHandler
@@ -6,6 +7,11 @@ from dotpyle.services.config_parser import ConfigParser
 from dotpyle.utils.get_source_and_link_path import get_source_and_link_path
 
 # from dotpyle.decorators import init_handlers
+
+from os import walk
+from os import listdir
+from os.path import isfile, join, isdir
+import glob, itertools
 
 
 handler = ConfigHandler()
@@ -21,15 +27,29 @@ repo = RepoHandler()
 )
 @click.option("--message", "-m", help="commit message")
 # TODO: make path option name dependant
-def commit(name, profile, path, message):
-    all_keys = name == ""
-    paths = [p for p in path]
+def commit(name: str, profile: str, path: list[str], message: str):
+    # if name == "" and profile == "":
+    # key_paths = handler.get_key_paths()
+    # repo.add(path=key_paths)
+    # print(key_paths)
 
-    print(all_keys, paths)
-    if all_keys:
+    # 1. Add files based on parameters
+    if name == "":
         for name, profiles in parser.get_names_and_profiles():
-            print(name, profile)
-            print(parser.get_calculated_paths(name, profile))
+            for prof in profiles:
+                if profile == "" or profile == prof:
+                    for source in parser.get_profile_paths(name, prof):
+                        repo.add(paths=source)
 
-    # repo.add(path='dotpyle.yml')
-    # test()
+    else:
+        print("One name")
+        # Expand path tuple to list
+        paths = [p for p in path]
+        for prof in parser.get_profiles_for_name(name):
+            if profile == "" or profile == prof:
+                for source, _ in parser.get_calculated_paths(name, profile):
+                    if profile == "" or paths == [] or source in paths:
+                        repo.add(paths=source)
+
+    # 2. Proceed with commit
+    repo.commit(message)

@@ -10,6 +10,9 @@ class ConfigParser:
         self.schema = eval(open("dotpyle/services/schema.py", "r").read())
         self.config = config
 
+    def get_config(self):
+        return self.config
+
     def check_config(self):
         validator = cerberus.Validator(self.schema)
         valid = validator.validate(self.config)
@@ -88,11 +91,16 @@ class ConfigParser:
             for name, profiles in self.get_dotfiles().items()
         ]
 
-        # for name, profiles in self.get_dotfiles.items():
-        # for profile in profiles:
-        # pass
+    def get_profile_paths(self, name, profile):
+        return [source for source, _ in self.get_calculated_paths(name, profile)]
+
+    def get_profiles_for_name(self, name: str):
+        dotfiles = self.get_dotfiles()
+        if name in dotfiles:
+            return [profile for profile in dotfiles[name]]
 
     def get_calculated_paths(self, name, profile):
+        print("debug", name, profile)
         # if name in self.config['dotfiles']:
         content = self.config["dotfiles"][name][profile]
         if not "root" in content:
@@ -105,6 +113,7 @@ class ConfigParser:
         ]
 
     def add_dotfile(self, name, profile, root, paths, pre_hooks, post_hooks):
+        sources = []
         dotfiles = self.get_dotfiles()
         if name in dotfiles:
             existing_profiles = dotfiles[name]
@@ -131,6 +140,7 @@ class ConfigParser:
         for path in paths:
             # Get source path (destination path on dotpyle repo) and current file path
             source, link_name = get_source_and_link_path(name, profile, root, path)
+            sources.append(source)
 
             profile_directory_path = os.path.dirname(source)
             # Create (recursively) profile and key name directory on dotpyle/dotfiles path
@@ -146,8 +156,5 @@ class ConfigParser:
                 # TODO
                 print("Error >> This file is already been managed by Dotpyle")
 
-        # TODO move away from here please
-        from dotpyle.services.config_handler import ConfigHandler
-
-        handler = ConfigHandler()
-        handler.save(self.config)
+        # Return all the paths added to dotPyle repo
+        return sources

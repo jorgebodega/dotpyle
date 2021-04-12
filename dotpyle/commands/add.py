@@ -7,9 +7,12 @@ from dotpyle.utils import get_default_path, get_default_url
 
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.config_parser import ConfigParser
+from dotpyle.services.repo_handler import RepoHandler
 
 
-parser = ConfigParser(config=ConfigHandler().get_config())
+handler = ConfigHandler()
+parser = ConfigParser(config=handler.get_config())
+repo = RepoHandler()
 
 
 @click.group()
@@ -30,6 +33,7 @@ def add():
 @click.option(
     "--path", multiple=True, help="Program dotfiles paths starting from root path"
 )
+# TODO: make this optional and add everything inside root
 @click.option(
     "--pre",
     multiple=True,
@@ -48,6 +52,17 @@ def dotfile(name, profile, root, path, pre, post):
     paths = [p for p in path]
     pre_commands = [p for p in pre]
     post_commands = [p for p in post]
-    parser.add_dotfile(
+    added_paths = parser.add_dotfile(
         name, profile, root, paths, pre_hooks=pre_commands, post_hooks=post_commands
     )
+
+    # Save modified dotPyle config file
+    handler.save(parser.get_config())
+    # When new key is added to dotPyle, a commit should be generated
+    # (adding new files), to keep consistency between yaml and repo
+
+    repo.add(added_paths, config_file_changed=True)
+    commit_message = "[dotPyle]: added {} on {} profile on {} program".format(
+        added_paths, profile, name
+    )
+    repo.commit(commit_message)

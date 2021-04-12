@@ -4,6 +4,8 @@ from dotpyle.utils import get_default_path
 
 
 class RepoHandler:
+    DOTPYLE_FILE = "dotpyle.yml"
+
     def __init__(self):
         repo_dir = get_default_path()
         self.repo = git.Repo(path=repo_dir)
@@ -29,7 +31,12 @@ class RepoHandler:
     # --pathspec-from-file <file>
     # read pathspec from file
     # --pathspec-file-nul   with --pathspec-from-file, pathspec elements are separated with NUL character
-    def add(self, path):
-        print(path)
+    def add(self, paths, config_file_changed=False):
         # self.repo.git.add(all=True)
-        # self.repo.git.add(path)
+        self.repo.git.add(paths)
+        if config_file_changed:
+            self.repo.git.add(get_default_path() + self.DOTPYLE_FILE)
+        print("added", paths)
+
+    def commit(self, message):
+        self.repo.index.commit(message)
