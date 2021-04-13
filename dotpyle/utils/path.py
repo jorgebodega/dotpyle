@@ -1,8 +1,6 @@
 from click import get_app_dir
 from os import getenv, path
-
-APP_NAME = "dotpyle"
-DOTPYLE_FILE = "dotpyle.yml"
+from dotpyle import constants
 
 
 def get_default_path():
@@ -16,11 +14,15 @@ def get_default_path():
     # TODO On MacOs get_app_dir return ~/Applications/Application Support/{NAME}
     default_config_path = getenv("XDG_CONFIG_HOME", "~/.config")
 
-    return path.expanduser("{0}/{1}".format(default_config_path, APP_NAME))
+    return path.expanduser("{0}/{1}".format(default_config_path, constants.APP_NAME))
 
 
 def get_configuration_path():
-    return path.join(get_default_path(), DOTPYLE_FILE)
+    return path.join(get_default_path(), constants.DOTPYLE_CONFIG_FILE_NAME)
+
+
+def get_dotfiles_path():
+    return path.join(get_default_path(), constants.DOTFILES_FOLDER)
 
 
 def get_source_and_link_path(name, profile, root, path):

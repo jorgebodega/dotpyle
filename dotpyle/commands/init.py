@@ -3,7 +3,7 @@ import subprocess
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
-from dotpyle.utils.path import get_default_path
+from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.utils.url import get_default_url
 
 DOTPYLE_FILE = "dotpyle.yml"
@@ -112,7 +112,7 @@ def init(url, protocol, token, branch, force):
             break
 
     # Check if dotpyle exist
-    dotpyle_path = default_path + DOTPYLE_FILE
+    dotpyle_path = get_configuration_path()
     if not path.isfile(dotpyle_path):
         # Create dotpyle config file
         dotpyle_handler = open(dotpyle_path, "w+")

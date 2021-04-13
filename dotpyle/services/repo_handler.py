@@ -1,11 +1,9 @@
 import os
 import git
-from dotpyle.utils.path import get_default_path
+from dotpyle.utils.path import get_configuration_path, get_default_path
 
 
 class RepoHandler:
-    DOTPYLE_FILE = "dotpyle.yml"
-
     def __init__(self):
         repo_dir = get_default_path()
         self.repo = git.Repo(path=repo_dir)
@@ -35,7 +33,7 @@ class RepoHandler:
         # self.repo.git.add(all=True)
         self.repo.git.add(paths)
         if config_file_changed:
-            self.repo.git.add(get_default_path() + self.DOTPYLE_FILE)
+            self.repo.git.add(get_configuration_path())
         print("added", paths)
 
     def commit(self, message):
