@@ -3,7 +3,8 @@ import subprocess
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
-from dotpyle.utils import get_default_path, get_default_url
+from dotpyle.utils.path import get_default_path
+from dotpyle.utils.url import get_default_url
 
 DOTPYLE_FILE = "dotpyle.yml"
 

@@ -4,7 +4,7 @@ from git.index import base
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.config_parser import ConfigParser
-from dotpyle.utils.get_source_and_link_path import get_source_and_link_path
+from dotpyle.utils.path import get_source_and_link_path
 
 # from dotpyle.decorators import init_handlers
 

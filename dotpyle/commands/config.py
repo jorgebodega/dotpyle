@@ -1,6 +1,6 @@
 import click
 
-from dotpyle.utils.get_default_path import get_default_path
+from dotpyle.utils.path import get_default_path
 from dotpyle.services.config_parser import ConfigParser
 from dotpyle.services.config_handler import ConfigHandler
 

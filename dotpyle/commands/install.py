@@ -1,7 +1,7 @@
 import click
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.config_parser import ConfigParser
-from dotpyle.utils.get_source_and_link_path import get_source_and_link_path
+from dotpyle.utils.path import get_source_and_link_path
 
 
 @click.group()

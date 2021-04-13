@@ -2,7 +2,7 @@ import os
 import shutil
 import cerberus
 import subprocess
-from dotpyle.utils import get_source_and_link_path
+from dotpyle.utils.path import get_source_and_link_path
 
 
 class ConfigParser:
@@ -158,3 +158,27 @@ class ConfigParser:
 
         # Return all the paths added to dotPyle repo
         return sources
+
+    def uninstall_key_paths(self, name, profile, remove=False):
+        dotfiles = self.get_dotfiles()
+        if profile in dotfiles[name]:
+            key = dotfiles[name][profile]
+            paths = key["paths"]
+            root = key["root"]
+            for path in paths:
+                source, link_name = get_source_and_link_path(name, profile, root, path)
+                print("Removing {}".format(link_name))
+                # os.remove(link_name)
+
+                # Before removing the file from dotPyle, copy where it should
+                # be (in case remove flag is off)
+                # if not remove:
+                # shutil.move(source, link_name)
+
+                # os.remove(source)
+
+            dotfiles[name][profile] = {}
+            print(dotfiles)
+        else:
+            # TODO error
+            print("Error: no key found")

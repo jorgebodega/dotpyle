@@ -1,5 +1,5 @@
 from os import path
-from dotpyle.utils import get_default_url
+from dotpyle.utils.url import get_default_url
 
 HTTPS_URL = "https://github.com/exampleuser/examplerepo.git"
 GIT_URL = "git@github.com:exampleuser/examplerepo.git"

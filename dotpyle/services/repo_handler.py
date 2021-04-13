@@ -1,6 +1,6 @@
 import os
 import git
-from dotpyle.utils import get_default_path
+from dotpyle.utils.path import get_default_path
 
 
 class RepoHandler:

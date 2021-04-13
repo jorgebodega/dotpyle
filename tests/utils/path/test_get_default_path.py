@@ -1,5 +1,5 @@
 from os import path
-from dotpyle.utils import get_default_path
+from dotpyle.utils.path import get_default_path
 
 EXPECTED_PATH = path.expanduser("~/.config/dotpyle")
 

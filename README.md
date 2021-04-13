@@ -16,7 +16,7 @@
 
 <p align="center">
   <b>Manage all your configuration files with different profiles remotely.</b></br>
-  <sub>Made with ❤️ by <a href="https://github.com/jorgebodega">Jorge Bodega</a> and <a href="https://github.com/perseogi">Perseo Gutierrez</a></sub>
+  <sub>Made with ❤️  by <a href="https://github.com/jorgebodega">Jorge Bodega</a> and <a href="https://github.com/perseogi">Perseo Gutierrez</a></sub>
 </p>
 
 <br/>
@@ -302,3 +302,6 @@ installed:
 TBD
 ```
 
+## TODO
+- [ ] Decorator / global variable to instanciate parser and handlers
+- [ ] Print centralized service with colorefull error / warning / correct output

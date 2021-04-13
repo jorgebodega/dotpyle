@@ -2,7 +2,7 @@ from os.path import join, isfile, isdir
 from os import listdir
 import glob, itertools
 from yaml import safe_load, safe_dump, load, dump
-from dotpyle.utils import get_default_path
+from dotpyle.utils.path import get_default_path
 from sys import exit
 
 
