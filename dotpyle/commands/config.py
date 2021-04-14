@@ -29,6 +29,7 @@ def check(path):
             get_error(key, value)
 
 
+# TODO: move this to ConfigParser and create exceptions
 def get_error(key, value):
     if type(value) == list:
         for elem in value:

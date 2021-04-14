@@ -68,7 +68,7 @@ class ConfigParser:
 
             """
             source, link_name = get_source_and_link_path(
-                name=key_name, profile=profile_name, root=root, path=path
+                name=key_name, profile=profile_name, root=root, dotfile_path=path
             )
             # source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
             # link_name = root + "/" + path
@@ -168,17 +168,22 @@ class ConfigParser:
             for path in paths:
                 source, link_name = get_source_and_link_path(name, profile, root, path)
                 print("Removing {}".format(link_name))
-                # os.remove(link_name)
+                os.remove(link_name)
 
                 # Before removing the file from dotPyle, copy where it should
                 # be (in case remove flag is off)
-                # if not remove:
-                # shutil.move(source, link_name)
+                if not remove:
+                    shutil.move(source, link_name)
+                else:
+                    os.remove(source)
 
-                # os.remove(source)
+            # Remove whole key when this profile is the last one
+            if len(dotfiles[name]) == 1:
+                del dotfiles[name]
+            # Remove only profile key
+            else:
+                del dotfiles[name][profile]
 
-            dotfiles[name][profile] = {}
-            print(dotfiles)
         else:
             # TODO error
             print("Error: no key found")

@@ -27,3 +27,4 @@ parser = ConfigParser(config=handler.get_config())
 )
 def dotfile(name, profile, remove_from_system):
     parser.uninstall_key_paths(name, profile, remove_from_system)
+    handler.save(parser.get_config())
