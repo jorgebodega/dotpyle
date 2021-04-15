@@ -14,7 +14,8 @@ def edit():
     temp_config_file = path.join(gettempdir(), constants.DOTPYLE_CONFIG_FILE_NAME_TEMP)
     copy2(dotpyle_path, temp_config_file)
 
-    system("$EDITOR {}".format(temp_config_file))
+    # Open user default editor
+    click.edit(filename=temp_config_file)
 
     handler = ConfigHandler(path=temp_config_file)
     parser = ConfigParser(config=handler.get_config())

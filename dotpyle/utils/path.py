@@ -25,13 +25,21 @@ def get_dotfiles_path():
     return path.join(get_default_path(), constants.DOTFILES_FOLDER)
 
 
+def get_dotpyle_name_path(name):
+    return path.join(get_dotfiles_path(), name)
+
+
+def get_dotpyle_profile_path(name, profile):
+    return path.join(get_dotpyle_name_path(name), profile)
+
+
 def get_source_and_link_path(name, profile, root, dotfile_path):
     """
     source: absoulte path for name+profile inside dotPyle repo
     link_name: absoulte path for name+profile on realy system
     """
     # source = "{0}/dotfiles/{1}/{2}/{3}".format(dotpyle_path, name, profile, path)
-    source = path.join(get_dotfiles_path(), name, profile, dotfile_path)
+    source = path.join(get_dotpyle_profile_path(name, profile), dotfile_path)
     # link_name = path.expanduser(root + "/" + path)
     link_name = path.expanduser(path.join(root, dotfile_path))
     return source, link_name

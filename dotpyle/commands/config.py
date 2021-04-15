@@ -1,6 +1,6 @@
 import click
 
-from dotpyle.utils.path import get_default_path
+from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.services.config_parser import ConfigParser
 from dotpyle.services.config_handler import ConfigHandler
 
@@ -15,8 +15,8 @@ def config():
     "--path", "-p", default=get_default_path(), help="path for alternative dotpyle.yml"
 )
 def check(path):
-    path_file = path + "/dotpyle.yml"
-    print("Checking", path_file, "...")
+    path_file = get_configuration_path()
+    print("Checking {}...".format(path_file))
     config = ConfigHandler().get_config()
     parser = ConfigParser(config)
 

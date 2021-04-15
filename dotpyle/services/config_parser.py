@@ -2,7 +2,11 @@ import os
 import shutil
 import cerberus
 import subprocess
-from dotpyle.utils.path import get_source_and_link_path
+from dotpyle.utils.path import (
+    get_source_and_link_path,
+    get_dotpyle_profile_path,
+    get_dotpyle_name_path,
+)
 
 
 class ConfigParser:
@@ -180,9 +184,16 @@ class ConfigParser:
             # Remove whole key when this profile is the last one
             if len(dotfiles[name]) == 1:
                 del dotfiles[name]
+                # Get key name path
+                delete_path = get_dotpyle_name_path(name)
+
             # Remove only profile key
             else:
                 del dotfiles[name][profile]
+                # Get key+profile name path
+                delete_path = get_dotpyle_profile_path(name, profile)
+            # Warning: this will remove recursively the directories (empty or not)
+            shutil.rmtree(delete_path)
 
         else:
             # TODO error

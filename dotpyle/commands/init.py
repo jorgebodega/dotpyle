@@ -60,6 +60,7 @@ def init(url, protocol, token, branch, force):
     default_path = get_default_path()
     default_url = get_default_url(url, protocol, token)
 
+    # Check if dotpyle config file exist
     if path.exists(default_path):
         if force:
             click.secho(
@@ -80,7 +81,6 @@ def init(url, protocol, token, branch, force):
     repository = Repo.clone_from(default_url, default_path, progress=None)
     return
 
-    # Check if dotpyle config file exist
     if not path.isdir(default_path):
         # Create config file
         print("Creating ", default_path)
