@@ -3,6 +3,7 @@ import click
 from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.services.config_parser import ConfigParser
 from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.print_handler import print
 
 
 @click.group()
