@@ -1,33 +1,23 @@
 import os
 import shutil
-import cerberus
 import subprocess
 from dotpyle.utils.path import (
     get_source_and_link_path,
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
 )
-from dotpyle.services.print_handler import print_config_errors
+from dotpyle.services.config_checker import ConfigCheckerType, ConfigCheckerDecorator
 
 
+@ConfigCheckerDecorator
 class ConfigParser:
+    checker: ConfigCheckerType
+
     def __init__(self, config):
-        self.schema = eval(open("dotpyle/services/schema.py", "r").read())
         self.config = config
 
     def get_config(self):
         return self.config
-
-    def check_config(self):
-        validator = cerberus.Validator(self.schema)
-        valid = validator.validate(self.config)
-        # if not valid:
-        # print (validator.errors)
-        # for error in validator.errors:
-        # print('error',error)
-
-        print_config_errors(validator.errors)
-        return validator.errors
 
     def process_all_config(self, profile_name="default"):
         print("Parsing Dotpyle config")
