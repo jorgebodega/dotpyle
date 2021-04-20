@@ -7,6 +7,7 @@ from dotpyle.utils.path import (
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
 )
+from dotpyle.services.print_handler import print_config_errors
 
 
 class ConfigParser:
@@ -25,6 +26,7 @@ class ConfigParser:
         # for error in validator.errors:
         # print('error',error)
 
+        print_config_errors(validator.errors)
         return validator.errors
 
     def process_all_config(self, profile_name="default"):
@@ -104,7 +106,6 @@ class ConfigParser:
             return [profile for profile in dotfiles[name]]
 
     def get_calculated_paths(self, name, profile):
-        print("debug", name, profile)
         # if name in self.config['dotfiles']:
         content = self.config["dotfiles"][name][profile]
         if not "root" in content:

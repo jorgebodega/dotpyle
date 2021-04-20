@@ -25,10 +25,8 @@ dotpyle.add_command(commit)
 dotpyle.add_command(config)
 dotpyle.add_command(help)
 dotpyle.add_command(list)
-dotpyle.add_command(config)
 dotpyle.add_command(install)
 dotpyle.add_command(uninstall)
-dotpyle.add_command(commit)
 
 
 def main():

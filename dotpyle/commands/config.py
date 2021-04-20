@@ -26,6 +26,7 @@ def check(path):
         print("No errors found, your config is OK")
     else:
         print("Following erros have been found on {}:\n".format(path_file))
+        print(errors)
         for key, value in errors.items():
             get_error(key, value)
 
