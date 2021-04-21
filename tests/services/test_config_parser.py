@@ -3,25 +3,9 @@ from dotpyle.services.config_parser import ConfigParser
 import pytest
 from subprocess import CalledProcessError, SubprocessError
 from dotpyle_mock_config_files import (
-    dotpyle_ok_cases,
-    dotpyle_error_cases,
     dotpyle_hook_ok_cases,
     dotpyle_hook_error_cases,
 )
-
-
-def test_check_config_ok():
-    for config_ok_file in dotpyle_ok_cases:
-        parser = ConfigParser(config_ok_file)
-        errors = parser.check_config()
-        assert errors == {}
-
-
-def test_check_config_error():
-    for config_error_file in dotpyle_error_cases:
-        parser = ConfigParser(config_error_file)
-        errors = parser.check_config()
-        assert errors != {}  # TODO improve tests
 
 
 def test_process_key():

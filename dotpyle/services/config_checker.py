@@ -1,33 +1,19 @@
 from typing import NewType
-import cerberus
+from cerberus import Validator
 
 
 class ConfigChecker:
     """"""
 
     def __init__(self):
+        # Check if we can move schema info to yaml or json
         self.schema = eval(open("dotpyle/services/schema.py", "r").read())
 
     def check_config(self, config):
-        validator = cerberus.Validator(self.schema)
-        validator.validate(config)
+        validator = Validator(self.schema)
 
+        validator.validate(config)
         return validator.errors
 
 
 ConfigCheckerType = NewType("ConfigCheckerType", ConfigChecker)
-
-
-class ConfigCheckerDecorator:
-    """"""
-
-    def __init__(self, arg):
-        self._arg = arg
-        self.checker = ConfigChecker()
-
-    def __call__(self, *args, **kwargs):
-        instance = self._arg.__new__(self._arg)
-        instance.checker = self.checker
-        instance.__init__(*args, **kwargs)
-
-        return instance

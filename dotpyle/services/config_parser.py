@@ -6,7 +6,8 @@ from dotpyle.utils.path import (
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
 )
-from dotpyle.services.config_checker import ConfigCheckerType, ConfigCheckerDecorator
+from dotpyle.decorators.config_checker import ConfigCheckerDecorator
+from dotpyle.services.config_checker import ConfigCheckerType
 
 
 @ConfigCheckerDecorator
