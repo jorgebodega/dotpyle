@@ -30,7 +30,11 @@ class ConfigParser:
             self.process_key(key, profile_name)
 
     def process_key(
-        self, key_name, profile_name="default", process_pre=True, process_post=True
+        self,
+        key_name,
+        profile_name="default",
+        process_pre=True,
+        process_post=True,
     ):
         if profile_name in self.config["dotfiles"][key_name]:
             key = self.config["dotfiles"][key_name][profile_name]
@@ -65,7 +69,10 @@ class ConfigParser:
 
             """
             source, link_name = get_source_and_link_path(
-                name=key_name, profile=profile_name, root=root, dotfile_path=path
+                name=key_name,
+                profile=profile_name,
+                root=root,
+                dotfile_path=path,
             )
             # source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
             # link_name = root + "/" + path
@@ -116,7 +123,9 @@ class ConfigParser:
             if profile in existing_profiles:
                 # TODO throw error
                 print(
-                    "Profile {} for {} already exist on Dotpyle manager", profile, name
+                    "Profile {} for {} already exist on Dotpyle manager",
+                    profile,
+                    name,
                 )
         else:
             dotfiles[name] = {}

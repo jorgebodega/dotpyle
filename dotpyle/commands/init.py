@@ -23,7 +23,10 @@ def force_callback(ctx, param, value):
 
 @click.command()
 @click.option(
-    "-u", "--url", required=True, help="Git url of existing repo (GitHub, GitLab, ...)"
+    "-u",
+    "--url",
+    required=True,
+    help="Git url of existing repo (GitHub, GitLab, ...)",
 )
 @click.option(
     "-p",
@@ -64,7 +67,8 @@ def init(url, protocol, token, branch, force):
     if path.exists(default_path):
         if force:
             click.secho(
-                "Forcing operation. Make sure you know what you are doing!", fg="red"
+                "Forcing operation. Make sure you know what you are doing!",
+                fg="red",
             )
             click.secho("Removing config folder...", fg="red")
             rmtree(default_path)

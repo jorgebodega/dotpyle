@@ -13,7 +13,10 @@ def config():
 
 @config.command()
 @click.option(
-    "--path", "-p", default=get_default_path(), help="path for alternative dotpyle.yml"
+    "--path",
+    "-p",
+    default=get_default_path(),
+    help="path for alternative dotpyle.yml",
 )
 def check(path):
     path_file = get_configuration_path()

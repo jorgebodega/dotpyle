@@ -1,0 +1,9 @@
+[run]
+branch = True
+
+include =
+        dotpyle/
+        docs/
+
+omit =
+        *__init__*

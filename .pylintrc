@@ -1,0 +1,10 @@
+[MASTER]
+
+# Use multiple processes to speed up Pylint.
+jobs=4
+
+[FORMAT]
+
+# Disable some rules that are handled by black formatter
+disable = C0330, C0326
+max-line-length = 88

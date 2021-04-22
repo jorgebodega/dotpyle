@@ -2,7 +2,10 @@ valid_cases = [
     {
         "dotfiles": {
             "git": {
-                "default": {"pre": ["sudo pacman -S git"], "paths": [".gitconfig"]},
+                "default": {
+                    "pre": ["sudo pacman -S git"],
+                    "paths": [".gitconfig"],
+                },
                 "windows": {
                     "pre": ["choco install git.install"],
                     "paths": [".gitconfig"],
