@@ -62,8 +62,8 @@ def list(name, profile):
 
 
 def print_dotfiles(tree, name, profile, content):
-    tree = tree.add(f"[bold magenta]:open_file_folder:[link file://{name}]{name}")
-    tree = tree.add(f"[bold blue]:open_file_folder:[link file://{profile}]{profile}")
+    tree = tree.add(f"[bold magenta]:open_file_folder: [link file://{name}]{name}")
+    tree = tree.add(f"[bold blue]:open_file_folder: [link file://{profile}]{profile}")
     for source, link_name in parser.get_calculated_paths(name, profile):
         source = os.path.basename(source)
         # print("\t+ {} -> {}".format(source, link_name))

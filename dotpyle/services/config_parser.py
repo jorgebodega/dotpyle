@@ -20,6 +20,9 @@ class ConfigParser:
     def get_config(self):
         return self.config
 
+    def check_config(self):
+        return self.checker.check_config(self.config)
+
     def process_all_config(self, profile_name="default"):
         print("Parsing Dotpyle config")
         # config = self.read()
