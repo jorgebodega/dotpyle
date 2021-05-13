@@ -1,9 +1,10 @@
+import glob
+import itertools
 from os.path import join, isfile, isdir
 from os import listdir
-import glob, itertools
-from yaml import safe_load, safe_dump, load, dump
+import sys
+from yaml import safe_load, safe_dump
 from dotpyle.utils.path import get_configuration_path, get_dotfiles_path
-from sys import exit
 
 
 class ConfigHandler:
@@ -17,9 +18,8 @@ class ConfigHandler:
         if isfile(path):
             self.stream = open(path, "r+")
             self.config = self.read()
-
         else:
-            exit("File {0} does not exist".format(path))
+            sys.exit("File {0} does not exist".format(path))
 
     def read(self):
         config = safe_load(self.stream)

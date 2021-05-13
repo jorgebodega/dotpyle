@@ -12,6 +12,14 @@
     <a href="https://coveralls.io/github/jorgebodega/dotpyle?branch=development">
         <img src="https://coveralls.io/repos/github/jorgebodega/dotpyle/badge.svg?branch=development&t=Hv5NfN" alt="Coverage Status">
     </a>
+    <a href="https://github.com/psf/black">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black">
+    </a>
+    <a href="https://opensource.org/licenses/MIT">
+        <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+    </a>
+
+
 </p>
 
 <p align="center">
@@ -305,3 +313,7 @@ TBD
 ## TODO
 - [ ] Decorator / global variable to instanciate parser and handlers
 - [ ] Print centralized service with colorefull error / warning / correct output
+- [ ] Change uninstall name for on more intuitive
+- [ ] Run command to execute alone hooks
+- [ ] Create commit on uninstall dotfile
+

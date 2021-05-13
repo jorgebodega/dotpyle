@@ -23,7 +23,9 @@ repo = RepoHandler()
 @click.option("--name", "-n", default="", help="program name")
 @click.option("--profile", "-p", default="default", help="profile name")
 @click.option(
-    "--path", multiple=True, help="Program dotfiles paths starting from root path"
+    "--path",
+    multiple=True,
+    help="Program dotfiles paths starting from root path",
 )
 @click.option("--message", "-m", help="commit message")
 # TODO: make path option name dependant

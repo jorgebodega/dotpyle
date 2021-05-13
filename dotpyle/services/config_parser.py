@@ -1,31 +1,27 @@
 import os
 import shutil
-import cerberus
 import subprocess
 from dotpyle.utils.path import (
     get_source_and_link_path,
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
 )
+from dotpyle.decorators.config_checker import ConfigCheckerDecorator
+from dotpyle.services.config_checker import ConfigCheckerType
 
 
+@ConfigCheckerDecorator
 class ConfigParser:
+    checker: ConfigCheckerType
+
     def __init__(self, config):
-        self.schema = eval(open("dotpyle/services/schema.py", "r").read())
         self.config = config
 
     def get_config(self):
         return self.config
 
     def check_config(self):
-        validator = cerberus.Validator(self.schema)
-        valid = validator.validate(self.config)
-        # if not valid:
-        # print (validator.errors)
-        # for error in validator.errors:
-        # print('error',error)
-
-        return validator.errors
+        return self.checker.check_config(self.config)
 
     def process_all_config(self, profile_name="default"):
         print("Parsing Dotpyle config")
@@ -37,7 +33,11 @@ class ConfigParser:
             self.process_key(key, profile_name)
 
     def process_key(
-        self, key_name, profile_name="default", process_pre=True, process_post=True
+        self,
+        key_name,
+        profile_name="default",
+        process_pre=True,
+        process_post=True,
     ):
         if profile_name in self.config["dotfiles"][key_name]:
             key = self.config["dotfiles"][key_name][profile_name]
@@ -72,7 +72,10 @@ class ConfigParser:
 
             """
             source, link_name = get_source_and_link_path(
-                name=key_name, profile=profile_name, root=root, dotfile_path=path
+                name=key_name,
+                profile=profile_name,
+                root=root,
+                dotfile_path=path,
             )
             # source = '{0}/dotfiles/{1}/{2}/{3}'.format(self.dotpyle_path, key_name, profile_name, path)
             # link_name = root + "/" + path
@@ -104,7 +107,6 @@ class ConfigParser:
             return [profile for profile in dotfiles[name]]
 
     def get_calculated_paths(self, name, profile):
-        print("debug", name, profile)
         # if name in self.config['dotfiles']:
         content = self.config["dotfiles"][name][profile]
         if not "root" in content:
@@ -124,7 +126,9 @@ class ConfigParser:
             if profile in existing_profiles:
                 # TODO throw error
                 print(
-                    "Profile {} for {} already exist on Dotpyle manager", profile, name
+                    "Profile {} for {} already exist on Dotpyle manager",
+                    profile,
+                    name,
                 )
         else:
             dotfiles[name] = {}

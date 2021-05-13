@@ -3,7 +3,11 @@
         "required": True,
         "type": "dict",
         "schema": {
-            "profiles": {"required": False, "type": "list", "default": ["default"]}
+            "profiles": {
+                "required": False,
+                "type": "list",
+                "default": ["default"],
+            }
         },
     },
     "version": {
@@ -27,7 +31,11 @@
                 "schema": {
                     "pre": {"required": False, "type": "list"},
                     "post": {"required": False, "type": "list"},
-                    "root": {"required": False, "type": "string", "default": "~"},
+                    "root": {
+                        "required": False,
+                        "type": "string",
+                        "default": "~",
+                    },
                     "paths": {"required": True, "type": "list"},
                 },
             },

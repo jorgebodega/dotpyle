@@ -3,6 +3,7 @@ import click
 from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.services.config_parser import ConfigParser
 from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.print_handler import print
 
 
 @click.group()
@@ -12,7 +13,10 @@ def config():
 
 @config.command()
 @click.option(
-    "--path", "-p", default=get_default_path(), help="path for alternative dotpyle.yml"
+    "--path",
+    "-p",
+    default=get_default_path(),
+    help="path for alternative dotpyle.yml",
 )
 def check(path):
     path_file = get_configuration_path()
@@ -25,6 +29,7 @@ def check(path):
         print("No errors found, your config is OK")
     else:
         print("Following erros have been found on {}:\n".format(path_file))
+        print(errors)
         for key, value in errors.items():
             get_error(key, value)
 

@@ -32,7 +32,9 @@ def add():
 @click.option("--profile", "-p", default="default", help="Profile name, must exist")
 @click.option("--root", "-r", default="~", help="Root path")
 @click.option(
-    "--path", multiple=True, help="Program dotfiles paths starting from root path"
+    "--path",
+    multiple=True,
+    help="Program dotfiles paths starting from root path",
 )
 # TODO: make this optional and add everything inside root
 @click.option(
@@ -54,7 +56,12 @@ def dotfile(name, profile, root, path, pre, post):
     pre_commands = [p for p in pre]
     post_commands = [p for p in post]
     added_paths = parser.add_dotfile(
-        name, profile, root, paths, pre_hooks=pre_commands, post_hooks=post_commands
+        name,
+        profile,
+        root,
+        paths,
+        pre_hooks=pre_commands,
+        post_hooks=post_commands,
     )
 
     # Save modified dotPyle config file
