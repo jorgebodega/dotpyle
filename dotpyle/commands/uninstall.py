@@ -1,6 +1,6 @@
 import click
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.config_parser import ConfigParser
+from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.config_handler import ConfigHanlder
 from dotpyle.utils.path import get_source_and_link_path
 
 
@@ -12,8 +12,8 @@ def uninstall():
     pass
 
 
-handler = ConfigHandler()
-parser = ConfigParser(config=handler.get_config())
+handler = FileHandler()
+parser = ConfigHanlder(config=handler.get_config())
 
 
 @uninstall.command()

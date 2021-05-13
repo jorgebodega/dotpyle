@@ -2,8 +2,8 @@ import click
 import os
 from git.index import base
 from dotpyle.services.repo_handler import RepoHandler
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.config_parser import ConfigParser
+from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.config_handler import ConfigHanlder
 from dotpyle.utils.path import get_source_and_link_path
 
 # from dotpyle.decorators import init_handlers
@@ -14,8 +14,8 @@ from os.path import isfile, join, isdir
 import glob, itertools
 
 
-handler = ConfigHandler()
-parser = ConfigParser(config=handler.get_config())
+handler = FileHandler()
+parser = ConfigHanlder(config=handler.get_config())
 repo = RepoHandler()
 
 

@@ -3,8 +3,8 @@ from os import system, path
 from shutil import copy2
 from tempfile import gettempdir
 from dotpyle.utils.path import get_configuration_path
-from dotpyle.services.config_parser import ConfigParser
-from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.file_handler import FileHandler
 from dotpyle import constants
 
 
@@ -17,8 +17,8 @@ def edit():
     # Open user default editor
     click.edit(filename=temp_config_file)
 
-    handler = ConfigHandler(path=temp_config_file)
-    parser = ConfigParser(config=handler.get_config())
+    handler = FileHandler(path=temp_config_file)
+    parser = ConfigHanlder(config=handler.get_config())
 
     errors = parser.check_config()
     if errors == {}:

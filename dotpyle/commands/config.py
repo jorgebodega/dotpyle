@@ -1,8 +1,8 @@
 import click
 
 from dotpyle.utils.path import get_default_path, get_configuration_path
-from dotpyle.services.config_parser import ConfigParser
-from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.file_handler import FileHandler
 from dotpyle.services.print_handler import print
 
 
@@ -21,8 +21,8 @@ def config():
 def check(path):
     path_file = get_configuration_path()
     print("Checking {}...".format(path_file))
-    config = ConfigHandler().get_config()
-    parser = ConfigParser(config)
+    config = FileHandler().get_config()
+    parser = ConfigHanlder(config)
 
     errors = parser.check_config()
     if errors == {}:

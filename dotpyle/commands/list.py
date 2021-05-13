@@ -1,6 +1,6 @@
 import click
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.config_parser import ConfigParser
+from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.config_handler import ConfigHanlder
 from dotpyle.utils.path import get_source_and_link_path
 import os
 import pathlib
@@ -13,8 +13,8 @@ from rich.text import Text
 from rich.tree import Tree
 
 
-config = ConfigHandler().get_config()
-parser = ConfigParser(config)
+config = FileHandler().get_config()
+parser = ConfigHanlder(config)
 
 
 @click.command()
