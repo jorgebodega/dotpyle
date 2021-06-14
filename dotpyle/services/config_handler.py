@@ -1,3 +1,5 @@
+"""config_handler.py """
+
 import os
 import shutil
 import subprocess
@@ -8,28 +10,103 @@ from dotpyle.utils.path import (
 )
 from dotpyle.decorators.config_checker import ConfigCheckerDecorator
 from dotpyle.services.config_checker import ConfigCheckerType
+from dotpyle.exceptions import ConfigHandlerException
 
 
 @ConfigCheckerDecorator
 class ConfigHanlder:
+    """
+    Methods to access and process Dotpyle configuration
+    """
+
     checker: ConfigCheckerType
 
     def __init__(self, config):
-        self.config = config
+        self._config = config
 
-    def get_config(self):
-        return self.config
+    @property
+    def config(self):
+        """
+        :return:
+            Internal configuration structure"""
+        return self._config
+
+    def get_dotfiles(self):
+        """
+        :return:
+            Current dotfiles structure
+        :raise ConfigHandlerException:
+            If there is no dotfiles configured"""
+
+        if "dotfiles" in self._config:
+            return self._config["dotfiles"]
+        raise ConfigHandlerException("Dotpyle database empty, no dotfiles found")
+
+    def get_name(self, name):
+        """
+        :return:
+            Dict with all profiles and configurations for a given name
+        :raise ConfigHandlerException:
+            If name does not exist on Dotpyle database"""
+
+        dotfiles = self.get_dotfiles()
+        if name in dotfiles:
+            return dotfiles[name]
+        raise ConfigHandlerException('Name "{}" does not exist'.format(name))
+
+    def get_profile(self, profile, name):
+        """
+        :return:
+            Dict with profile configurations for a given name
+        :raise ConfigHandlerException:
+            If profile does not exist on Dotpyle database"""
+
+        key = self.get_name(name)
+        if profile in key:
+            return key[profile]
+        raise ConfigHandlerException(
+            'Profile "{}" for name "{}" does not exist'.format(profile, name)
+        )
+
+    def get_names_and_profiles(self):
+        return [
+            (name, [profile for profile in profiles])
+            for name, profiles in self.get_dotfiles().items()
+        ]
+
+    def get_profile_paths(self, name, profile):
+        return [source for source, _ in self.get_calculated_paths(name, profile)]
+
+    def get_profiles_for_name(self, name: str):
+        dotfiles = self.get_dotfiles()
+        if name in dotfiles:
+            return [profile for profile in dotfiles[name]]
+
+    def get_calculated_paths(self, name, profile):
+        # if name in self._config['dotfiles']:
+        content = self._config["dotfiles"][name][profile]
+        if not "root" in content:
+            root = "~"  # TODO get $HOME
+        else:
+            root = content["root"]
+        return [
+            get_source_and_link_path(name, profile, root, path)
+            for path in content["paths"]
+        ]
 
     def check_config(self):
-        return self.checker.check_config(self.config)
+        return self.checker.check_config(self._config)
 
     def process_all_config(self, profile_name="default"):
         print("Parsing Dotpyle config")
-        # config = self.read()
-        version = self.config["version"]
+        version = self._config["version"]
         if version != 1:
-            return False
-        for key in self.config["dotfiles"].keys():
+            raise ConfigHandlerException(
+                "Version '{}' of dotfile.yml file is currently unsupported".format(
+                    version
+                )
+            )
+        for key in self._config["dotfiles"].keys():
             self.process_key(key, profile_name)
 
     def process_key(
@@ -39,8 +116,8 @@ class ConfigHanlder:
         process_pre=True,
         process_post=True,
     ):
-        if profile_name in self.config["dotfiles"][key_name]:
-            key = self.config["dotfiles"][key_name][profile_name]
+        if profile_name in self._config["dotfiles"][key_name]:
+            key = self._config["dotfiles"][key_name][profile_name]
             # 1. Proces pre hooks
             if process_pre and "pre" in key:
                 self.process_key_hooks(key["pre"])
@@ -86,37 +163,6 @@ class ConfigHanlder:
                 print("Error >> {0} already exist".format(link_name))
             else:
                 os.symlink(source, link_name)
-
-    def get_dotfiles(self):
-        return self.config["dotfiles"]
-
-    def get_names_and_profiles(self):
-        # return [(name, profile) for profile in seq_x for name, profiles in self.get_dotfiles().items()]
-        # return [(name, profiles) for name, profiles in self.get_dotfiles().items()]
-        return [
-            (name, [profile for profile in profiles])
-            for name, profiles in self.get_dotfiles().items()
-        ]
-
-    def get_profile_paths(self, name, profile):
-        return [source for source, _ in self.get_calculated_paths(name, profile)]
-
-    def get_profiles_for_name(self, name: str):
-        dotfiles = self.get_dotfiles()
-        if name in dotfiles:
-            return [profile for profile in dotfiles[name]]
-
-    def get_calculated_paths(self, name, profile):
-        # if name in self.config['dotfiles']:
-        content = self.config["dotfiles"][name][profile]
-        if not "root" in content:
-            root = "~"  # TODO get $HOME
-        else:
-            root = content["root"]
-        return [
-            get_source_and_link_path(name, profile, root, path)
-            for path in content["paths"]
-        ]
 
     def add_dotfile(self, name, profile, root, paths, pre_hooks, post_hooks):
         sources = []
@@ -202,3 +248,6 @@ class ConfigHanlder:
         else:
             # TODO error
             print("Error: no key found")
+
+    def change_profile(self, profile, name):
+        pass

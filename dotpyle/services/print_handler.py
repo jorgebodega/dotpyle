@@ -7,6 +7,10 @@ from rich.tree import Tree
 console = Console()
 
 
+def print_exception(*args):
+    console.print(*args, style="red bold")
+
+
 def print(*args):
     console.print(*args, style="bold")
     # console.print('hola', style="blink")
