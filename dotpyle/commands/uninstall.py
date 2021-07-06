@@ -12,10 +12,6 @@ def uninstall():
     pass
 
 
-handler = FileHandler()
-parser = ConfigHanlder(config=handler.get_config())
-
-
 @uninstall.command()
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="profile name")
@@ -26,5 +22,8 @@ parser = ConfigHanlder(config=handler.get_config())
     help="remove files from system (not only from dotPyle)",
 )
 def dotfile(name, profile, remove_from_system):
+    handler = FileHandler()
+    parser = ConfigHanlder(config=handler.get_config())
+
     parser.uninstall_key_paths(name, profile, remove_from_system)
     handler.save(parser.get_config())

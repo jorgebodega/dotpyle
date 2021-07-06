@@ -13,14 +13,13 @@ from rich.text import Text
 from rich.tree import Tree
 
 
-config = FileHandler().get_config()
-parser = ConfigHanlder(config)
-
-
 @click.command()
 @click.option("--name", "-n", help="program name")
 @click.option("--profile", "-p", help="profile name")
 def list(name, profile):
+
+    config = FileHandler().get_config()
+    parser = ConfigHanlder(config)
 
     dotfiles = parser.get_dotfiles()
 

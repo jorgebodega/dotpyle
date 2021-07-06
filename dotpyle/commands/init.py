@@ -59,7 +59,6 @@ def init(url, protocol, token, branch, force):
     and will check if this repo contains a dotpyle.yml config file, if not,
     a template config file will be created.
     """
-
     default_path = get_default_path()
     default_url = get_default_url(url, protocol, token)
 
@@ -72,18 +71,19 @@ def init(url, protocol, token, branch, force):
             )
             click.secho("Removing config folder...", fg="red")
             rmtree(default_path)
-        else:
+    else:
             click.secho("Folder already exists.", fg="red")
             click.secho(
-                "If this is an error, please check folder at {0} or try apply instead of init.".format(
+                "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
                     default_path
                 ),
                 fg="red",
             )
             sys.exit(1)
 
+    print('heeey')
     repository = Repo.clone_from(default_url, default_path, progress=None)
-    return
+    print('heeey 1')
 
     if not path.isdir(default_path):
         # Create config file

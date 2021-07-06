@@ -14,11 +14,6 @@ from os.path import isfile, join, isdir
 import glob, itertools
 
 
-handler = FileHandler()
-parser = ConfigHanlder(config=handler.get_config())
-repo = RepoHandler()
-
-
 @click.command()
 @click.option("--name", "-n", default="", help="program name")
 @click.option("--profile", "-p", default="default", help="profile name")
@@ -30,6 +25,9 @@ repo = RepoHandler()
 @click.option("--message", "-m", help="commit message")
 # TODO: make path option name dependant
 def commit(name: str, profile: str, path: list[str], message: str):
+    handler = FileHandler()
+    parser = ConfigHanlder(config=handler.get_config())
+    repo = RepoHandler()
     # if name == "" and profile == "":
     # key_paths = handler.get_key_paths()
     # repo.add(path=key_paths)

@@ -12,9 +12,6 @@ def install():
     pass
 
 
-handler = FileHandler()
-parser = ConfigHanlder(config=handler.get_config())
-
 
 @install.command()
 @click.argument("name")
@@ -23,6 +20,9 @@ parser = ConfigHanlder(config=handler.get_config())
 @click.option("--no-post", is_flag=True, help="Dont execute post hooks")
 @click.option("--no-hooks", is_flag=True, help="Dont execute pre and post hooks")
 def dotfile(name, profile, no_pre, no_post, no_hooks):
+
+    handler = FileHandler()
+    parser = ConfigHanlder(config=handler.get_config())
 
     process_pre = not (no_pre or no_hooks)
     process_post = not (no_post or no_hooks)

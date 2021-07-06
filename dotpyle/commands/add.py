@@ -11,11 +11,6 @@ from dotpyle.services.config_handler import ConfigHanlder
 from dotpyle.services.repo_handler import RepoHandler
 
 
-handler = FileHandler()
-parser = ConfigHanlder(config=handler.get_config())
-repo = RepoHandler()
-
-
 @click.group()
 def add():
     """
@@ -50,6 +45,9 @@ def add():
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
 def dotfile(name, profile, root, path, pre, post):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
+    handler = FileHandler()
+    parser = ConfigHanlder(config=handler.get_config())
+    repo = RepoHandler()
     print(name, profile, root, path, pre, post)
     # Convert tuples to lists
     paths = [p for p in path]
