@@ -1,6 +1,6 @@
 import click
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.utils.path import get_source_and_link_path
 
 
@@ -21,7 +21,7 @@ def install():
 def dotfile(name, profile, no_pre, no_post, no_hooks):
 
     handler = FileHandler()
-    parser = ConfigHanlder(config=handler.get_config())
+    parser = ConfigHandler(config=handler.get_config())
 
     process_pre = not (no_pre or no_hooks)
     process_post = not (no_post or no_hooks)

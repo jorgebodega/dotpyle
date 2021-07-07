@@ -1,6 +1,6 @@
 import click
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.utils.path import get_source_and_link_path
 
 
@@ -9,7 +9,7 @@ from dotpyle.utils.path import get_source_and_link_path
 @click.argument("name", default="")
 def checkout(profile, name):
     handler = FileHandler()
-    parser = ConfigHanlder(config=handler.get_config())
+    parser = ConfigHandler(config=handler.get_config())
     if name != "":
         parser.get_profile(profile, name)
     else:

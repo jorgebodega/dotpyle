@@ -3,7 +3,7 @@ import os
 from git.index import base
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.utils.path import get_source_and_link_path
 
 # from dotpyle.decorators import init_handlers
@@ -26,7 +26,7 @@ import glob, itertools
 # TODO: make path option name dependant
 def commit(name: str, profile: str, path: list[str], message: str):
     handler = FileHandler()
-    parser = ConfigHanlder(config=handler.get_config())
+    parser = ConfigHandler(config=handler.get_config())
     repo = RepoHandler()
     # if name == "" and profile == "":
     # key_paths = handler.get_key_paths()

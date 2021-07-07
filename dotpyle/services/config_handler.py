@@ -24,24 +24,8 @@ class ConfigHandler:
     Methods to access and process Dotpyle configuration
     """
 
-    def __init__(self, path=None):
-        if not path:
-            path = join(get_configuration_path())
-
-        if isfile(path):
-            self.checker = ConfigChecker()
-            self.stream = open(path, "r+")
-            self.config = self.read()
-        else:
-            raise InvalidConfigFileError("File {0} does not exist".format(path))
-
-    # def __init__(self, config):
-    #     self._config = config
-
-    def read(self):
-        self.stream.seek(0)
-        config = safe_load(self.stream)
-        return config
+    def __init__(self, config):
+        self._config = config
 
     @property
     def config(self):
@@ -264,6 +248,7 @@ class ConfigHandler:
             # Warning: this will remove recursively the directories (empty or not)
             shutil.rmtree(delete_path)
 
+            # TODO after remove, git add changes to make in consistent
         else:
             # TODO error
             print("Error: no key found")

@@ -11,7 +11,7 @@ class ConfigChecker:
     """
 
     def __init__(self):
-        with open("dotpyle/utils/schema.json", "r") as schema_file:
+        with open(constants.CONFIG_SCHEMA_PATH, "r") as schema_file:
             schema = json.loads(schema_file.read())
             self.validator = Validator(schema)
 

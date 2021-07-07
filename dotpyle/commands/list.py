@@ -1,6 +1,6 @@
 import click
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.utils.path import get_source_and_link_path
 import os
 import pathlib
@@ -19,7 +19,7 @@ from rich.tree import Tree
 def list(name, profile):
 
     config = FileHandler().get_config()
-    parser = ConfigHanlder(config)
+    parser = ConfigHandler(config)
 
     dotfiles = parser.get_dotfiles()
 
@@ -35,14 +35,14 @@ def list(name, profile):
             profiles = dotfiles[name]
             if profile:
                 if profile in profiles:
-                    print_dotfiles(tree, name, profile, profiles[profile])
+                    print_dotfiles(tree, name, profile, profiles[profile], parser)
                 else:
                     print("Profile {} in {} does not exist".format(profile, name))
 
             # Get all profiles for given name
             else:
                 for profile_name, content in profiles.items():
-                    print_dotfiles(tree, name, profile_name, content)
+                    print_dotfiles(tree, name, profile_name, content, parser)
 
     # Get all names
     else:
@@ -50,17 +50,17 @@ def list(name, profile):
         if profile:
             for program_name, profiles in dotfiles.items():
                 if profile in profiles:
-                    print_dotfiles(tree, program_name, profile, profiles[profile])
+                    print_dotfiles(tree, program_name, profile, profiles[profile], parser)
 
         else:
             for program_name, profiles in dotfiles.items():
                 for profile_name, content in profiles.items():
-                    print_dotfiles(tree, program_name, profile_name, content)
+                    print_dotfiles(tree, program_name, profile_name, content, parser)
 
     rich.print(tree)
 
 
-def print_dotfiles(tree, name, profile, content):
+def print_dotfiles(tree, name, profile, content, parser):
     tree = tree.add(f"[bold magenta]:open_file_folder: [link file://{name}]{name}")
     tree = tree.add(f"[bold blue]:open_file_folder: [link file://{profile}]{profile}")
     for source, link_name in parser.get_calculated_paths(name, profile):

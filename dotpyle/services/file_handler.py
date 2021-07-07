@@ -5,7 +5,8 @@ from os import listdir
 import sys
 from yaml import safe_load, safe_dump
 from dotpyle.utils.path import get_configuration_path, get_dotfiles_path
-
+from shutil import copy2
+from dotpyle import constants
 
 class FileHandler:
     # TODO move this variables to global
@@ -15,11 +16,12 @@ class FileHandler:
         if not path:
             path = join(get_configuration_path())
 
-        if isfile(path):
-            self.stream = open(path, "r+")
-            self.config = self.read()
-        else:
-            sys.exit("File {0} does not exist".format(path))
+        if not isfile(path):
+            print("File {0} does not exist. Creating from template...".format(path))
+            copy2(constants.CONFIG_TEMPLATE_PATH, path)
+
+        self.stream = open(path, "r+")
+        self.config = self.read()
 
     def read(self):
         config = safe_load(self.stream)

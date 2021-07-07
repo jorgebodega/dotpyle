@@ -10,6 +10,7 @@ from dotpyle.commands.install import install
 from dotpyle.commands.uninstall import uninstall
 from dotpyle.commands.commit import commit
 from dotpyle.commands.checkout import checkout
+from dotpyle.commands.push import push
 
 from dotpyle.services.print_handler import print_exception
 from dotpyle.exceptions import DotpyleException
@@ -32,6 +33,7 @@ dotpyle.add_command(list)
 dotpyle.add_command(install)
 dotpyle.add_command(uninstall)
 dotpyle.add_command(checkout)
+dotpyle.add_command(push)
 
 
 def main():

@@ -7,7 +7,7 @@ from dotpyle.utils.path import get_default_path
 from dotpyle.utils.url import get_default_url
 
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.repo_handler import RepoHandler
 
 
@@ -46,7 +46,7 @@ def add():
 def dotfile(name, profile, root, path, pre, post):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
     handler = FileHandler()
-    parser = ConfigHanlder(config=handler.get_config())
+    parser = ConfigHandler(config=handler.config)
     repo = RepoHandler()
     print(name, profile, root, path, pre, post)
     # Convert tuples to lists
@@ -63,7 +63,7 @@ def dotfile(name, profile, root, path, pre, post):
     )
 
     # Save modified dotPyle config file
-    handler.save(parser.get_config())
+    handler.save(parser.config)
     # When new key is added to dotPyle, a commit should be generated
     # (adding new files), to keep consistency between yaml and repo
 

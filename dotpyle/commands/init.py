@@ -69,9 +69,7 @@ def init(url, protocol, token, branch, force):
         )
         sys.exit(1)
 
-    print("heeey")
-    repository = Repo.clone_from(default_url, default_path, progress=None)
-    print("heeey 1")
+    # repository = Repo.clone_from(default_url, default_path, progress=None)
 
     if not path.isdir(default_path):
         # Create config file
@@ -104,12 +102,14 @@ def init(url, protocol, token, branch, force):
             break
 
     # Check if dotpyle exist
-    dotpyle_path = get_configuration_path()
-    if not path.isfile(dotpyle_path):
-        # Create dotpyle config file
-        dotpyle_handler = open(dotpyle_path, "w+")
-        # TODO copy default file to config file
-        dotpyle_handler.write("example")
-        dotpyle_handler.close()
+
+    # dotpyle_path = get_configuration_path()
+    # if not path.isfile(dotpyle_path):
+        # # Create dotpyle config file
+        # dotpyle_handler = open(dotpyle_path, "w+")
+        # # TODO copy default file to config file
+        # template = eval(open("dotpyle/services/template.py", "r").read()) # TODO
+        # dotpyle_handler.write(template)
+        # dotpyle_handler.close()
 
         # TODO: Start configuration process...

@@ -1,5 +1,5 @@
 from os import path
-from dotpyle.services.config_handler import ConfigHanlder
+from dotpyle.services.config_handler import ConfigHandler
 import pytest
 from subprocess import CalledProcessError, SubprocessError
 from dotpyle_mock_config_files import (
@@ -16,7 +16,7 @@ def test_process_key():
 
 
 def test_process_key_hook_ok():
-    parser = ConfigHanlder({})  # This does not take place
+    parser = ConfigHandler({})  # This does not take place
     try:
         parser.process_key_hooks(dotpyle_hook_ok_cases)
 
@@ -26,7 +26,7 @@ def test_process_key_hook_ok():
 
 def test_process_key_hook_error():
     # monkeypatch.setattr(obj, name, value, raising=True)
-    parser = ConfigHanlder({})  # This does not take place
+    parser = ConfigHandler({})  # This does not take place
     with pytest.raises(CalledProcessError) as exception:
         parser.process_key_hooks(dotpyle_hook_error_cases)
     assert exception.type is CalledProcessError
@@ -43,7 +43,7 @@ def test_process_key_paths(tmpdir, monkeypatch):
     tmp_path_origin = str(tmpdir)
     tmp_path_dest = tmpdir.mkdir("dest")
     monkeypatch.setenv("XDG_CONFIG_HOME", tmp_path_origin)
-    parser = ConfigHanlder({})
+    parser = ConfigHandler({})
 
     assert True
     return

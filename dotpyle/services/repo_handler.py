@@ -38,3 +38,7 @@ class RepoHandler:
 
     def commit(self, message):
         self.repo.index.commit(message)
+
+    def push(self):
+        self.repo.git.push()
+
