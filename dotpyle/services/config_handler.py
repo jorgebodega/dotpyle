@@ -15,24 +15,21 @@ from dotpyle.utils.path import (
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
 )
-from dotpyle.decorators.config_checker import ConfigCheckerDecorator
-from dotpyle.services.config_checker import ConfigCheckerType
+from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.exceptions import ConfigHandlerException
 
 
-@ConfigCheckerDecorator
 class ConfigHandler:
     """
     Methods to access and process Dotpyle configuration
     """
-
-    checker: ConfigCheckerType
 
     def __init__(self, path=None):
         if not path:
             path = join(get_configuration_path())
 
         if isfile(path):
+            self.checker = ConfigChecker()
             self.stream = open(path, "r+")
             self.config = self.read()
         else:

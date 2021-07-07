@@ -1,0 +1,40 @@
+{
+  "settings": {
+    "required": true,
+    "type": "dict",
+    "schema": {
+      "profiles": {
+        "required": false,
+        "type": "list",
+        "default": ["default"]
+      }
+    }
+  },
+  "version": {
+    "required": true,
+    "type": "number",
+    "min": 0
+  },
+  "dotfiles": {
+    "required": false,
+    "type": "dict",
+    "keysrules": { "type": "string", "regex": "[a-z,0-9]+" },
+    "valuesrules": {
+      "type": "dict",
+      "keysrules": { "type": "string", "regex": "[a-z,0-9]+" },
+      "valuesrules": {
+        "type": "dict",
+        "schema": {
+          "pre": { "required": false, "type": "list" },
+          "post": { "required": false, "type": "list" },
+          "root": {
+            "required": false,
+            "type": "string",
+            "default": "~"
+          },
+          "paths": { "required": true, "type": "list" }
+        }
+      }
+    }
+  }
+}

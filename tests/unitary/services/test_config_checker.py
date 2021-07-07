@@ -13,7 +13,9 @@ def test_config_checker_valid_configs(config):
 
 
 @pytest.mark.parametrize("config", [*invalid_cases])
-def test_config_checker_invalid_configs(config):
+def test_config_checker_invalid_configs(
+    config,
+):
     checker = ConfigChecker()
 
     errors = checker.check_config(config)

@@ -1,19 +1,30 @@
-from typing import NewType
+import json
+from collections.abc import Iterable
 from cerberus import Validator
+from cerberus.errors import ValidationError
 
 
 class ConfigChecker:
-    """"""
+    """
+    This class is a service with only one function: validate the schema
+    to avoid unexpected errors.
+    """
 
     def __init__(self):
-        # Check if we can move schema info to yaml or json
-        self.schema = eval(open("dotpyle/services/schema.py", "r").read())
+        with open("dotpyle/utils/schema.json", "r") as schema_file:
+            schema = json.loads(schema_file.read())
+            self.validator = Validator(schema)
 
-    def check_config(self, config):
-        validator = Validator(self.schema)
+    def check_config(self, config: str) -> Iterable[ValidationError]:
+        """
+        Check if the provided config match the schema inside the validator.
 
-        validator.validate(config)
-        return validator.errors
+        Args:
+            config (str): User configuration file representation
 
+        Returns:
+            Iterable[ValidationError]: Every error found while validating the schema
+        """
 
-ConfigCheckerType = NewType("ConfigCheckerType", ConfigChecker)
+        self.validator.validate(config)
+        return self.validator.errors
