@@ -12,7 +12,6 @@ def install():
     pass
 
 
-
 @install.command()
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="profile name")

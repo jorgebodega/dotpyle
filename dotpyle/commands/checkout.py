@@ -4,7 +4,6 @@ from dotpyle.services.config_handler import ConfigHanlder
 from dotpyle.utils.path import get_source_and_link_path
 
 
-
 @click.command()
 @click.argument("profile")
 @click.argument("name", default="")

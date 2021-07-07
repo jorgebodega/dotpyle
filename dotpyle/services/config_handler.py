@@ -1,4 +1,11 @@
 """config_handler.py """
+import glob
+import itertools
+from os.path import join, isfile, isdir
+from os import listdir
+from yaml import safe_load, safe_dump
+from dotpyle.errors.InvalidConfigFile import InvalidConfigFileError
+from dotpyle.utils.path import get_configuration_path, get_dotfiles_path
 
 import os
 import shutil
@@ -14,15 +21,30 @@ from dotpyle.exceptions import ConfigHandlerException
 
 
 @ConfigCheckerDecorator
-class ConfigHanlder:
+class ConfigHandler:
     """
     Methods to access and process Dotpyle configuration
     """
 
     checker: ConfigCheckerType
 
-    def __init__(self, config):
-        self._config = config
+    def __init__(self, path=None):
+        if not path:
+            path = join(get_configuration_path())
+
+        if isfile(path):
+            self.stream = open(path, "r+")
+            self.config = self.read()
+        else:
+            raise InvalidConfigFileError("File {0} does not exist".format(path))
+
+    # def __init__(self, config):
+    #     self._config = config
+
+    def read(self):
+        self.stream.seek(0)
+        config = safe_load(self.stream)
+        return config
 
     @property
     def config(self):

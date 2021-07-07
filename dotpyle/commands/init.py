@@ -9,18 +9,6 @@ from dotpyle.utils.url import get_default_url
 DOTPYLE_FILE = "dotpyle.yml"
 
 
-def progress_calculator(op_code, cur_count, max_count=None, message=""):
-    click.echo("{0}".format(op_code))
-    click.echo("{0}".format(cur_count))
-    click.echo("{0}".format(max_count))
-    click.echo("{0}".format(message))
-
-
-def force_callback(ctx, param, value):
-    if not value:
-        ctx.abort()
-
-
 @click.command()
 @click.option(
     "-u",
@@ -72,18 +60,18 @@ def init(url, protocol, token, branch, force):
             click.secho("Removing config folder...", fg="red")
             rmtree(default_path)
     else:
-            click.secho("Folder already exists.", fg="red")
-            click.secho(
-                "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
-                    default_path
-                ),
-                fg="red",
-            )
-            sys.exit(1)
+        click.secho("Folder already exists.", fg="red")
+        click.secho(
+            "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
+                default_path
+            ),
+            fg="red",
+        )
+        sys.exit(1)
 
-    print('heeey')
+    print("heeey")
     repository = Repo.clone_from(default_url, default_path, progress=None)
-    print('heeey 1')
+    print("heeey 1")
 
     if not path.isdir(default_path):
         # Create config file
