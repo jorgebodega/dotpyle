@@ -3,6 +3,8 @@ from collections.abc import Iterable
 from cerberus import Validator
 from cerberus.errors import ValidationError
 
+SCHEMA_DEFINITION_PATH = "dotpyle/utils/schema.json"
+
 
 class ConfigChecker:
     """
@@ -11,7 +13,7 @@ class ConfigChecker:
     """
 
     def __init__(self):
-        with open(constants.CONFIG_SCHEMA_PATH, "r") as schema_file:
+        with open(SCHEMA_DEFINITION_PATH, "r") as schema_file:
             schema = json.loads(schema_file.read())
             self.validator = Validator(schema)
 

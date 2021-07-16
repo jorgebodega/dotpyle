@@ -1,11 +1,4 @@
 """config_handler.py """
-import glob
-import itertools
-from os.path import join, isfile, isdir
-from os import listdir
-from yaml import safe_load, safe_dump
-from dotpyle.errors.InvalidConfigFile import InvalidConfigFileError
-from dotpyle.utils.path import get_configuration_path, get_dotfiles_path
 
 import os
 import shutil
@@ -25,6 +18,7 @@ class ConfigHandler:
     """
 
     def __init__(self, config):
+        self.checker = ConfigChecker()
         self._config = config
 
     @property
@@ -73,8 +67,7 @@ class ConfigHandler:
 
     def get_names_and_profiles(self):
         return [
-            (name, [profile for profile in profiles])
-            for name, profiles in self.get_dotfiles().items()
+            (name, list(profiles)) for name, profiles in self.get_dotfiles().items()
         ]
 
     def get_profile_paths(self, name, profile):
@@ -83,7 +76,7 @@ class ConfigHandler:
     def get_profiles_for_name(self, name: str):
         dotfiles = self.get_dotfiles()
         if name in dotfiles:
-            return [profile for profile in dotfiles[name]]
+            return list(dotfiles[name])
 
     def get_calculated_paths(self, name, profile):
         # if name in self._config['dotfiles']:
