@@ -8,24 +8,33 @@ SCHEMA_DEFINITION_PATH = "dotpyle/utils/schema.json"
 
 class ConfigChecker:
     """
-    This class is a service with only one function: validate the schema
-    to avoid unexpected errors.
+    Class to check the validity of the config file.
     """
 
-    def __init__(self):
-        with open(SCHEMA_DEFINITION_PATH, "r") as schema_file:
-            schema = json.loads(schema_file.read())
-            self.validator = Validator(schema)
+    def __init__(self, config_file=SCHEMA_DEFINITION_PATH):
+        """
+        Initialize the ConfigChecker class.
+
+        :param config_file: The path to the config file.
+        """
+        self.config_file = config_file
+        self.schema = self.load_schema()
+        self.validator = Validator(self.schema)
+
+    def load_schema(self):
+        """
+        Load the schema definition file.
+
+        :return: The schema definition.
+        """
+        with open(self.config_file, "r") as schema_file:
+            return json.load(schema_file)
 
     def check_config(self, config: str) -> Iterable[ValidationError]:
         """
-        Check if the provided config match the schema inside the validator.
-
-        Args:
-            config (str): User configuration file representation
-
-        Returns:
-            Iterable[ValidationError]: Every error found while validating the schema
+        Check the config file against the schema.
+        :param config: The config file.
+        :return: The list of errors.
         """
 
         self.validator.validate(config)
