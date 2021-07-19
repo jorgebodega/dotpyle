@@ -26,7 +26,7 @@ import glob, itertools
 # TODO: make path option name dependant
 def commit(name: str, profile: str, path: list[str], message: str):
     handler = FileHandler()
-    parser = ConfigHandler(config=handler.get_config())
+    parser = ConfigHandler(config=handler.config)
     repo = RepoHandler()
     # if name == "" and profile == "":
     # key_paths = handler.get_key_paths()

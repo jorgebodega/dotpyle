@@ -9,7 +9,7 @@ from dotpyle.utils.path import get_source_and_link_path
 @click.argument("name", default="")
 def checkout(profile, name):
     handler = FileHandler()
-    parser = ConfigHandler(config=handler.get_config())
+    parser = ConfigHandler(config=handler.config)
     if name != "":
         parser.get_profile(profile, name)
     else:

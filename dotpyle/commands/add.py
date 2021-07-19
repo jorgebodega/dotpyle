@@ -6,7 +6,7 @@ from shutil import rmtree
 from dotpyle.utils.path import get_default_path
 from dotpyle.utils.url import get_default_url
 
-from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.repo_handler import RepoHandler
 
@@ -42,8 +42,14 @@ def add():
     multiple=True,
     help="Bash command(s) to be executed after installing configuration",
 )
+@click.option(
+    "--not-install",
+    default=False,
+    is_flag=True,
+    help="Add files to Dotpyle repo and remove them from original location (useful if user wants to install it afterwards, see dotpyle install)",
+)
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
-def dotfile(name, profile, root, path, pre, post):
+def dotfile(name, profile, root, path, pre, post, not_install):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
     handler = FileHandler()
     parser = ConfigHandler(config=handler.config)
@@ -62,13 +68,18 @@ def dotfile(name, profile, root, path, pre, post):
         post_hooks=post_commands,
     )
 
-    # Save modified dotPyle config file
+    # Save modified dotpyle config file
     handler.save(parser.config)
-    # When new key is added to dotPyle, a commit should be generated
+    # When new key is added to dotpyle, a commit should be generated
     # (adding new files), to keep consistency between yaml and repo
 
     repo.add(added_paths, config_file_changed=True)
-    commit_message = "[dotPyle]: added {} on {} profile on {} program".format(
+    commit_message = "[dotpyle]: added {} on {} profile on {} program".format(
         added_paths, profile, name
     )
     repo.commit(commit_message)
+
+    if not not_install:
+        local_handler = LocalFileHandler()
+        local_handler.install_profile(name, profile)
+        local_handler.save()

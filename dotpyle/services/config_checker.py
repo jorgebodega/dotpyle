@@ -2,6 +2,7 @@ import json
 from collections.abc import Iterable
 from cerberus import Validator
 from cerberus.errors import ValidationError
+from dotpyle import constants
 
 
 class ConfigChecker:

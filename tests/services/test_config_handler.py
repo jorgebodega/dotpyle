@@ -18,7 +18,7 @@ def test_process_key():
 def test_process_key_hook_ok():
     parser = ConfigHandler({})  # This does not take place
     try:
-        parser.process_key_hooks(dotpyle_hook_ok_cases)
+        parser.exec_hooks(dotpyle_hook_ok_cases)
 
     except Exception as exc:
         assert False, f"'test_process_key_hook_ok' raised an exception {exc}"
@@ -28,7 +28,7 @@ def test_process_key_hook_error():
     # monkeypatch.setattr(obj, name, value, raising=True)
     parser = ConfigHandler({})  # This does not take place
     with pytest.raises(CalledProcessError) as exception:
-        parser.process_key_hooks(dotpyle_hook_error_cases)
+        parser.exec_hooks(dotpyle_hook_error_cases)
     assert exception.type is CalledProcessError
 
 

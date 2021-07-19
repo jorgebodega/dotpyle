@@ -59,15 +59,15 @@ def init(url, protocol, token, branch, force):
             )
             click.secho("Removing config folder...", fg="red")
             rmtree(default_path)
-    else:
-        click.secho("Folder already exists.", fg="red")
-        click.secho(
-            "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
-                default_path
-            ),
-            fg="red",
-        )
-        sys.exit(1)
+        else:
+            click.secho("Folder already exists.", fg="red")
+            click.secho(
+                "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
+                    default_path
+                ),
+                fg="red",
+            )
+            sys.exit(1)
 
     # repository = Repo.clone_from(default_url, default_path, progress=None)
 
@@ -105,11 +105,11 @@ def init(url, protocol, token, branch, force):
 
     # dotpyle_path = get_configuration_path()
     # if not path.isfile(dotpyle_path):
-        # # Create dotpyle config file
-        # dotpyle_handler = open(dotpyle_path, "w+")
-        # # TODO copy default file to config file
-        # template = eval(open("dotpyle/services/template.py", "r").read()) # TODO
-        # dotpyle_handler.write(template)
-        # dotpyle_handler.close()
+    # # Create dotpyle config file
+    # dotpyle_handler = open(dotpyle_path, "w+")
+    # # TODO copy default file to config file
+    # template = eval(open("dotpyle/services/template.py", "r").read()) # TODO
+    # dotpyle_handler.write(template)
+    # dotpyle_handler.close()
 
-        # TODO: Start configuration process...
+    # TODO: Start configuration process...

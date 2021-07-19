@@ -11,8 +11,9 @@ from dotpyle.commands.uninstall import uninstall
 from dotpyle.commands.commit import commit
 from dotpyle.commands.checkout import checkout
 from dotpyle.commands.push import push
+from dotpyle.commands.pull import pull
 
-from dotpyle.services.print_handler import print_exception
+from dotpyle.services.print_handler import error
 from dotpyle.exceptions import DotpyleException
 
 
@@ -34,13 +35,14 @@ dotpyle.add_command(install)
 dotpyle.add_command(uninstall)
 dotpyle.add_command(checkout)
 dotpyle.add_command(push)
+dotpyle.add_command(pull)
 
 
 def main():
     try:
         dotpyle()
     except DotpyleException as e:
-        print_exception(e)
+        error(e)
         exit(e.code)
 
 
