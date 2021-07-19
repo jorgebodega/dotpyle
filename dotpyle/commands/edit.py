@@ -14,6 +14,7 @@ def edit():
     """ Manually edit Dotpyle internal files """
     pass
 
+
 @edit.command()
 def config():
     dotpyle_path = get_configuration_path()
@@ -50,6 +51,7 @@ def readme():
 
     repo = RepoHandler()
     repo.add(constants.README_NAME, config_file_changed=False)
+
 
 # TODO: move this to ConfigParser and create exceptions
 def get_error(key, value):

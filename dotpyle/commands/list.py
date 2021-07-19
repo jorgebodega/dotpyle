@@ -50,7 +50,9 @@ def list(name, profile):
         if profile:
             for program_name, profiles in dotfiles.items():
                 if profile in profiles:
-                    print_dotfiles(tree, program_name, profile, profiles[profile], parser)
+                    print_dotfiles(
+                        tree, program_name, profile, profiles[profile], parser
+                    )
 
         else:
             for program_name, profiles in dotfiles.items():

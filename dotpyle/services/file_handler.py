@@ -8,6 +8,7 @@ from dotpyle.utils.path import get_configuration_path, get_dotfiles_path
 from shutil import copy2
 from dotpyle import constants
 
+
 class FileHandler:
     # TODO move this variables to global
     config = None

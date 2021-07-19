@@ -44,5 +44,6 @@ def get_source_and_link_path(name, profile, root, dotfile_path):
     link_name = path.expanduser(path.join(root, dotfile_path))
     return source, link_name
 
+
 def get_dotpyle_readme_path():
     return path.join(get_default_path(), constants.README_NAME)

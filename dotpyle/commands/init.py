@@ -105,11 +105,11 @@ def init(url, protocol, token, branch, force):
 
     # dotpyle_path = get_configuration_path()
     # if not path.isfile(dotpyle_path):
-        # # Create dotpyle config file
-        # dotpyle_handler = open(dotpyle_path, "w+")
-        # # TODO copy default file to config file
-        # template = eval(open("dotpyle/services/template.py", "r").read()) # TODO
-        # dotpyle_handler.write(template)
-        # dotpyle_handler.close()
+    # # Create dotpyle config file
+    # dotpyle_handler = open(dotpyle_path, "w+")
+    # # TODO copy default file to config file
+    # template = eval(open("dotpyle/services/template.py", "r").read()) # TODO
+    # dotpyle_handler.write(template)
+    # dotpyle_handler.close()
 
-        # TODO: Start configuration process...
+    # TODO: Start configuration process...

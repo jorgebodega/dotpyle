@@ -41,4 +41,3 @@ class RepoHandler:
 
     def push(self):
         self.repo.git.push()
-
