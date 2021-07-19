@@ -2,17 +2,19 @@ from enum import Enum
 
 
 class Protocol(Enum):
+    """
+    Enum for the different protocols.
+    """
+
     HTTPS = "https"
-    GIT = "git"
+    SSH = "ssh"
 
 
 def get_default_url(url: str, protocol: Protocol, token: str = None):
     """
-    Format the repository URL.
-
-    Because of the repo could be public or private, and can be used with two different protocols,
-    need to calculate a definitive URL to clone the content.
+    Return the default URL to clone the content.
     """
+
     default_url = url
 
     if protocol == "https" and token is not None:

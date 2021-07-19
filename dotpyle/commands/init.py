@@ -1,5 +1,4 @@
 import click
-import subprocess
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
@@ -21,7 +20,7 @@ DOTPYLE_FILE = "dotpyle.yml"
     "-p",
     "--protocol",
     required=True,
-    type=click.Choice(["git", "https"]),
+    type=click.Choice(["ssh", "https"]),
     help="Protocol used to clone the repository. Currently only Git and HTTPS are supported (like Github and Gitlab).",
 )
 @click.option(
@@ -55,53 +54,23 @@ def init(ctx, url, protocol, token, branch, force):
     # Check if dotpyle config file exist
     if path.exists(default_path):
         if force:
-            click.secho(
-                "Forcing operation. Make sure you know what you are doing!",
-                fg="red",
-            )
-            click.secho("Removing config folder...", fg="red")
+            # click.secho(
+            #     "Forcing operation. Make sure you know what you are doing!",
+            #     fg="red",
+            # )
+            # click.secho("Removing config folder...", fg="red")
             rmtree(default_path)
     else:
-        click.secho("Folder already exists.", fg="red")
-        click.secho(
-            "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
-                default_path
-            ),
-            fg="red",
-        )
+        # click.secho("Folder already exists.", fg="red")
+        # click.secho(
+        #     "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
+        #         default_path
+        #     ),
+        #     fg="red",
+        # )
         sys.exit(1)
 
-    # repository = Repo.clone_from(default_url, default_path, progress=None)
-
-    if not path.isdir(default_path):
-        # Create config file
-        print("Creating ", default_path)
-        mkdir(default_path)
-
-    # If token is defined it is mean that repo is private
-    if token:
-        # git clone https://<token>@github.com/owner/repo.git
-        url = url[0:8] + token + "@" + url[9:]
-        # Token is not need to be stored, origin url does store it for us
-
-    print("Cloning into ", url)
-    # Bring the remote repo
-    process = subprocess.Popen(
-        ["git", "clone", url, default_path],
-        stdout=subprocess.PIPE,
-        universal_newlines=True,
-    )
-    while True:
-        output = process.stdout.readline()
-        print(output.strip())
-        # Do something else
-        return_code = process.poll()
-        if return_code is not None:
-            print("RETURN CODE", return_code)
-            # Process has finished, read rest of the output
-            for output in process.stdout.readlines():
-                print(output.strip())
-            break
+    repository = Repo.clone_from(default_url, default_path, progress=None)
 
     # Check if dotpyle exist
 

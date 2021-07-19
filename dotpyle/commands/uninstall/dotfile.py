@@ -4,15 +4,7 @@ from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.utils.path import get_source_and_link_path
 
 
-@click.group()
-def uninstall():
-    """
-    Uninstall a dotfile, hook, etc (TBD)
-    """
-    pass
-
-
-@uninstall.command()
+@click.command()
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="profile name")
 @click.option(
