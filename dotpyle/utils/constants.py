@@ -6,3 +6,4 @@ README_NAME = "README.md"
 README_TEMPLATE_PATH = "dotpyle/templates/readme.md"
 CONFIG_TEMPLATE_PATH = "dotpyle/templates/basic-config.yaml"
 CONFIG_HANDLER_ERROR_CODE = 42
+CONFIG_CHECKER_PROVIDER = "CONFIG_CHECKER"

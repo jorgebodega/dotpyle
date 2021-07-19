@@ -1,6 +1,6 @@
 from click import get_app_dir
 from os import getenv, path
-from dotpyle import constants
+from dotpyle.utils import constants
 
 
 def get_default_path():

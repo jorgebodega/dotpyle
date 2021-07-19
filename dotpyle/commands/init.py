@@ -3,6 +3,7 @@ import subprocess
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
+from dotpyle.utils import constants
 from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.utils.url import get_default_url
 
@@ -41,7 +42,8 @@ DOTPYLE_FILE = "dotpyle.yml"
     is_flag=True,
     help="Force init of the package. This results that everything that cause an error will be forced to work even if that means that something will be erased.",
 )
-def init(url, protocol, token, branch, force):
+@click.pass_context
+def init(ctx, url, protocol, token, branch, force):
     """
     This command will clone an existing Git repository on ${XDG_CONFIG_HOME}/dotpyle
     and will check if this repo contains a dotpyle.yml config file, if not,

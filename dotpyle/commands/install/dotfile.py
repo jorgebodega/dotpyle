@@ -4,15 +4,7 @@ from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.utils.path import get_source_and_link_path
 
 
-@click.group()
-def install():
-    """
-    Install a dotfile, hook, etc (TBD)
-    """
-    pass
-
-
-@install.command()
+@click.command()
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="profile name")
 @click.option("--no-pre", is_flag=True, help="Dont execute pre hooks")

@@ -33,6 +33,7 @@ class ConfigChecker:
     def check_config(self, config: str) -> Iterable[ValidationError]:
         """
         Check the config file against the schema.
+
         :param config: The config file.
         :return: The list of errors.
         """

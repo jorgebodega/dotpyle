@@ -6,7 +6,7 @@ from dotpyle.utils.path import get_configuration_path, get_dotpyle_readme_path
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.file_handler import FileHandler
 from dotpyle.services.repo_handler import RepoHandler
-from dotpyle import constants
+from dotpyle.utils import constants
 
 
 @click.group()

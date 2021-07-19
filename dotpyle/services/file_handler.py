@@ -6,7 +6,7 @@ import sys
 from yaml import safe_load, safe_dump
 from dotpyle.utils.path import get_configuration_path, get_dotfiles_path
 from shutil import copy2
-from dotpyle import constants
+from dotpyle.utils import constants
 
 
 class FileHandler:
