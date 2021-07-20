@@ -8,15 +8,10 @@ from dotpyle.services.print_handler import error, warning, ok
 @click.command()
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="profile name")
-@click.option(
-    "--remove-from-system",
-    "-R",
-    is_flag=True,
-    help="remove files from system (not only from dotpyle)",
-)
-def uninstall(name, profile, remove_from_system):
+def unlink(name, profile):
     """
-    Uninstall a dotfile, hook, etc (TBD)
+    Unlink dotfiles for a program (and profile). Dotfiles will not
+    be removed from Dotpyle repository
     """
     local_handler = LocalFileHandler()
 
@@ -27,7 +22,7 @@ def uninstall(name, profile, remove_from_system):
     handler = FileHandler()
     parser = ConfigHandler(config=handler.config)
 
-    parser.uninstall_paths(name, profile, remove_from_system)
+    parser.uninstall_paths(name, profile)
     local_handler.uninstall_profile(name)
     local_handler.save()
     ok("{} dotfiles uninstalled".format(name))

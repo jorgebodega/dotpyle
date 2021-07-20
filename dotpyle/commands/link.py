@@ -11,7 +11,7 @@ from dotpyle.services.print_handler import error, warning, ok
 @click.option("--no-pre", is_flag=True, help="Dont execute pre hooks")
 @click.option("--no-post", is_flag=True, help="Dont execute post hooks")
 @click.option("--no-hooks", is_flag=True, help="Dont execute pre and post hooks")
-def install(name, profile, no_pre, no_post, no_hooks):
+def link(name, profile, no_pre, no_post, no_hooks):
 
     handler = FileHandler()
     parser = ConfigHandler(config=handler.config)

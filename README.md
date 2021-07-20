@@ -71,9 +71,9 @@ Examples:
 
     dotpyle list [--name <program_name>] [--profile <profile_name>]
 
-### Install
+### Link
 
-    dotpyle install dotfile  <program_name> [--profile <profile_name>]
+    dotpyle install <program_name> [--profile <profile_name>]
 
 ### Interacting with Git repository
 

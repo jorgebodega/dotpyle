@@ -83,3 +83,7 @@ def dotfile(name, profile, root, path, pre, post, not_install):
         local_handler = LocalFileHandler()
         local_handler.install_profile(name, profile)
         local_handler.save()
+
+        parser.install_key(
+            key_name=name, profile_name=profile, process_pre=False, process_post=False
+        )

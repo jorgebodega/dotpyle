@@ -1,7 +1,7 @@
 import click
 from dotpyle.services.file_handler import FileHandler
 from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.utils.path import get_source_and_link_path
+from dotpyle.utils.path import get_source_and_link_path, un_expanduser
 import os
 import pathlib
 import sys
@@ -75,7 +75,7 @@ def print_dotfiles(tree, name, profile, content, parser):
         # text_filename.append(f" ({decimal(file_size)})", "blue")
         # icon = "🐍 " if source.suffix == ".py" else "📄 "
         icon = "📄 "
-
+        link_name = un_expanduser(link_name)  # TODO think
         text_filename += Text(" --> ", "blink yellow")
         text_filename += Text(link_name, "yellow")
 

@@ -6,7 +6,7 @@ from os import listdir
 from yaml import safe_load, safe_dump
 from dotpyle.errors.InvalidConfigFile import InvalidConfigFileError
 from dotpyle.utils.path import get_configuration_path, get_dotfiles_path, un_expanduser
-from dotpyle.services.print_handler import error, warning
+from dotpyle.services.print_handler import error, warning, ok
 
 import os
 import shutil
@@ -168,30 +168,18 @@ class ConfigHandler:
             else:
                 os.symlink(source, link_name)
 
-    def uninstall_paths(self, name, profile, remove=False):
-        dotfiles = self.get_dotfiles()
-        if profile in dotfiles[name]:
-            key = dotfiles[name][profile]
-            paths = key["paths"]
-            root = key["root"]
-            for path in paths:
-                source, link_name = get_source_and_link_path(name, profile, root, path)
-
-                # Before removing the file from dotpyle, copy where it should
-                # be (in case remove flag is off)
-                if not remove:
-                    shutil.move(source, link_name)
-                    print("Unlinking {}".format(link_name))
-                else:
-                    os.remove(source)
-                    print(
-                        "Removing {} from system (to recover, `dotpyle install -p {} {}`)".format(
-                            link_name, profile, name
-                        )
-                    )
-        else:
-            # TODO error
-            print("Error: no key found")
+    def uninstall_paths(self, name, profile):
+        key = self.get_profile(profile, name)
+        paths = key["paths"]
+        root = key["root"]
+        for path in paths:
+            source, link_name = get_source_and_link_path(name, profile, root, path)
+            os.remove(link_name)
+            ok(
+                "Removing {} from system (to recover, `dotpyle install -p {} {}`)".format(
+                    link_name, profile, name
+                )
+            )
 
     def add_dotfile(self, name, profile, root, paths, pre_hooks, post_hooks):
         sources = []
@@ -264,3 +252,9 @@ class ConfigHandler:
     # shutil.rmtree(delete_path)
 
     # # TODO after remove, git add changes to make in consistent
+    # Before removing the file from dotpyle, copy where it should
+    # be (in case remove flag is off)
+    # if not remove:
+    # shutil.move(source, link_name)
+    # print("Unlinking {}".format(link_name))
+    # else:
