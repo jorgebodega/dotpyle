@@ -1,27 +1,12 @@
 import click
-import subprocess
-from git import Repo
-from os import mkdir, path, sys
-from shutil import rmtree
-from dotpyle.utils.path import get_default_path
-from dotpyle.utils.url import get_default_url
 
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.repo_handler import RepoHandler
 
-
-@click.group()
-def add():
-    """
-    This command will take KEY and ... DOTFILE
-    """
-    pass
-
-
 # FIXME: when config file is empty, an error is returned
 # TypeError: argument of type 'NoneType' is not iterable
-@add.command()
+@click.command()
 @click.help_option(help="Add file to dotpyle")
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="Profile name, must exist")
@@ -56,9 +41,9 @@ def dotfile(name, profile, root, path, pre, post, not_install):
     repo = RepoHandler()
     print(name, profile, root, path, pre, post)
     # Convert tuples to lists
-    paths = [p for p in path]
-    pre_commands = [p for p in pre]
-    post_commands = [p for p in post]
+    paths = list(path)
+    pre_commands = list(pre)
+    post_commands = list(post)
     added_paths = parser.add_dotfile(
         name,
         profile,

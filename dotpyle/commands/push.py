@@ -1,14 +1,9 @@
 import click
-import os
-from git.index import base
-from dotpyle.services.repo_handler import RepoHandler
-from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.utils.path import get_source_and_link_path
+
+from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 
 
 @click.command()
-def push():
-    repo = RepoHandler()
-
-    repo.push()
+@pass_repo_handler
+def push(repo_handler):
+    repo_handler.push()

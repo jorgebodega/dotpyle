@@ -1,8 +1,7 @@
 import click
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.utils.path import get_source_and_link_path
-from dotpyle.services.print_handler import error, warning, ok
+from dotpyle.services.print_handler import error, ok
 
 
 @click.command()
@@ -25,4 +24,4 @@ def unlink(name, profile):
     parser.uninstall_paths(name, profile)
     local_handler.uninstall_profile(name)
     local_handler.save()
-    ok("{} dotfiles uninstalled".format(name))
+    ok("{} dotfiles uninstalled".format(name))  # TODO: Refactor logger service

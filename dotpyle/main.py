@@ -13,6 +13,8 @@ from dotpyle.commands.push import push
 from dotpyle.commands.pull import pull
 
 from dotpyle.services.config_checker import ConfigChecker
+from dotpyle.services.repo_handler import RepoHandler
+
 from dotpyle.utils import constants
 from dotpyle.services.print_handler import error
 from dotpyle.exceptions import DotpyleException
@@ -24,6 +26,7 @@ from dotpyle.exceptions import DotpyleException
 def dotpyle(ctx=None):
     """ Needed to create different commands with different options """
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
+    ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler()
 
 
 # Add commands to group
