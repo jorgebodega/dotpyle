@@ -21,7 +21,7 @@ def config():
 def check(path):
     path_file = get_configuration_path()
     print("Checking {}...".format(path_file))
-    config = FileHandler().get_config()
+    config = FileHandler().config
     parser = ConfigHandler(config)
 
     errors = parser.check_config()

@@ -7,8 +7,19 @@ from rich.tree import Tree
 console = Console()
 
 
-def print_exception(*args):
-    console.print(*args, style="red bold")
+def error(*args):
+    console.print("Error:", style="red bold", end=" ")
+    console.print(*args, style="bold")
+
+
+def warning(*args):
+    console.print("Warning:", style="yellow bold", end=" ")
+    console.print(*args, style="bold")
+
+
+def ok(*args):
+    console.print("Success:", style="green bold", end=" ")
+    console.print(*args, style="")
 
 
 def print(*args):

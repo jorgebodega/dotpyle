@@ -16,5 +16,5 @@ class ConfigHandlerException(DotpyleException):
     """ConfigHandler custom exception"""
 
     def __init__(self, message: str):
-        message = "File configuration error: " + message
+        message = "[CONFIG] " + message
         super().__init__(message, constants.CONFIG_HANDLER_ERROR_CODE)

@@ -41,3 +41,6 @@ class RepoHandler:
 
     def push(self):
         self.repo.git.push()
+
+    def pull(self):
+        self.repo.git.pull()

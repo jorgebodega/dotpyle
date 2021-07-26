@@ -25,7 +25,7 @@ def config():
     click.edit(filename=temp_config_file)
 
     handler = FileHandler(path=temp_config_file)
-    parser = ConfigHandler(config=handler.get_config())
+    parser = ConfigHandler(config=handler.config)
 
     errors = parser.check_config()
     if errors == {}:

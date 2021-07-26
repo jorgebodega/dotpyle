@@ -71,9 +71,9 @@ Examples:
 
     dotpyle list [--name <program_name>] [--profile <profile_name>]
 
-### Install
+### Link
 
-    dotpyle install dotfile  <program_name> [--profile <profile_name>]
+    dotpyle install <program_name> [--profile <profile_name>]
 
 ### Interacting with Git repository
 
@@ -311,8 +311,9 @@ TBD
 ```
 
 ## TODO
-- [ ] Decorator / global variable to instanciate parser and handlers
-- [ ] Print centralized service with colorefull error / warning / correct output
+
+- [ ] Decorator / global variable to instance parser and handlers
+- [ ] Print centralized service with colorful error / warning / correct output
 - [ ] Change uninstall name for on more intuitive
 - [ ] Run command to execute alone hooks
 - [ ] Create commit on uninstall dotfile
