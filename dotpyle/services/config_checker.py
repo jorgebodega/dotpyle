@@ -2,7 +2,7 @@ import json
 from collections.abc import Iterable
 from cerberus import Validator
 from cerberus.errors import ValidationError
-from dotpyle import constants
+from dotpyle.utils import constants
 
 SCHEMA_DEFINITION_PATH = "dotpyle/utils/schema.json"
 

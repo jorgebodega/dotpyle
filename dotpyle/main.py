@@ -29,6 +29,7 @@ def dotpyle(ctx=None):
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler()
 
 
+
 # Add commands to group
 dotpyle.add_command(init)
 dotpyle.add_command(add)
@@ -43,7 +44,6 @@ dotpyle.add_command(checkout)
 dotpyle.add_command(config)
 dotpyle.add_command(edit)
 dotpyle.add_command(list)
-dotpyle.add_command(help)
 
 
 def main():
