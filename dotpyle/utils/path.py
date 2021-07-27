@@ -61,3 +61,11 @@ def get_source_and_link_path(
 
 def get_dotpyle_readme_path() -> str:
     return path.join(get_default_path(), constants.README_NAME)
+
+def get_script_path(script_name) -> str:
+    return path.join(get_default_path(), constants.SCRIPTS_FOLDER, script_name) + constants.SCRIPTS_EXTENSION
+
+if __name__ == "__main__":
+    print(un_expanduser("/home/perseo/ao/aoeu/eih"))
+    print(un_expanduser("/ome/perseo/ao/aoeu/eih"))
+    print(un_expanduser("/usr/home/perseo/aoe"))

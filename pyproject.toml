@@ -12,6 +12,7 @@ Cerberus = "^1.3.2"
 PyYAML = "^5.4.1"
 rich = "^10.1.0"
 click = "^8.0.1"
+setuptools = "^57.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -36,10 +37,10 @@ test = "pytest:main"
 [tool.poe.tasks]
 black = "black ."
 clear-cache = "rm -rf **/__pycache__/**"
-cov-report = "coverage report -m" 
+cov-report = "coverage report -m"
 pylint = "pylint dotpyle/ tests/"
-test = "pytest" 
-test-cov = "coverage run --source=dotpyle -m pytest" 
+test = "pytest"
+test-cov = "coverage run --source=dotpyle -m pytest"
 
 [tool.black]
 line-length = 88

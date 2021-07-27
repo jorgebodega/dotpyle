@@ -9,13 +9,7 @@ from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.utils import constants
 
 
-@click.group()
-def edit():
-    """ Manually edit Dotpyle internal files """
-    pass
-
-
-@edit.command()
+@click.command()
 def config():
     dotpyle_path = get_configuration_path()
     temp_config_file = path.join(gettempdir(), constants.DOTPYLE_CONFIG_FILE_NAME_TEMP)
@@ -36,22 +30,6 @@ def config():
         print("Errors have been found on {}:\n")
         for key, value in errors.items():
             get_error(key, value)
-
-
-@edit.command()
-def readme():
-    readme_path = get_dotpyle_readme_path()
-
-    if not path.exists(readme_path):
-        # Geterate a README with default template
-        copy2(constants.README_TEMPLATE_PATH, readme_path)
-
-    # Open user default editor
-    res = click.edit(filename=readme_path)
-
-    repo = RepoHandler()
-    repo.add(constants.README_NAME, config_file_changed=False)
-
 
 # TODO: move this to ConfigParser and create exceptions
 def get_error(key, value):

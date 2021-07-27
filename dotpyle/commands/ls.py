@@ -12,11 +12,14 @@ from rich.markup import escape
 from rich.text import Text
 from rich.tree import Tree
 
+from dotpyle.utils.autocompletion import get_names, get_profiles
 
+# TODO: flag all
 @click.command()
-@click.option("--name", "-n", help="program name")
-@click.option("--profile", "-p", help="profile name")
-def list(name, profile):
+@click.argument("name", required=False, shell_complete=get_names)
+@click.option("--profile", "-p", help="profile name", shell_complete=get_profiles)
+@click.option("--all", "-a", is_flag=True, help="list all dotfiles (linked or not)")
+def ls(name, profile, all):
 
     config = FileHandler().config
     parser = ConfigHandler(config)
