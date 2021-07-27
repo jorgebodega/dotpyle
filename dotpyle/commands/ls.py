@@ -12,11 +12,14 @@ from rich.markup import escape
 from rich.text import Text
 from rich.tree import Tree
 
+from dotpyle.utils.autocompletion import get_names, get_profiles
 
+# TODO: flag all
 @click.command()
-@click.option("--name", "-n", help="program name")
-@click.option("--profile", "-p", help="profile name")
-def list(name, profile):
+@click.argument("name", required=False, shell_complete=get_names)
+@click.option("--profile", "-p", help="profile name", shell_complete=get_profiles)
+@click.option("--all", "-a", is_flag=True, help="list all dotfiles (linked or not)")
+def ls(name, profile, all):
 
     config = FileHandler().config
     parser = ConfigHandler(config)
@@ -63,8 +66,9 @@ def list(name, profile):
 
 
 def print_dotfiles(tree, name, profile, content, parser):
-    tree = tree.add(f"[bold magenta]:open_file_folder: [link file://{name}]{name}")
-    tree = tree.add(f"[bold blue]:open_file_folder: [link file://{profile}]{profile}")
+    tree = tree.add(f"[bold magenta]:open_file_folder: [link file://{name}]{name}").add(
+        f"[bold blue]:open_file_folder: [link file://{profile}]{profile}"
+    )
     for source, link_name in parser.get_calculated_paths(name, profile):
         source = os.path.basename(source)
         # print("\t+ {} -> {}".format(source, link_name))

@@ -26,6 +26,7 @@ class ConfigHandler:
     """
 
     def __init__(self, config):
+        self.checker = ConfigChecker()
         self._config = config
         self.checker = ConfigChecker()
 
@@ -46,6 +47,16 @@ class ConfigHandler:
         if "dotfiles" in self._config:
             return self._config["dotfiles"]
         raise ConfigHandlerException("Dotpyle database empty, no dotfiles found")
+
+    def get_names(self):
+        """
+        :return:
+            Dict with all program names managed by Dotpyle
+        """
+        return [
+            (name)
+            for name, _ in self.get_dotfiles().items()
+        ]
 
     def get_name(self, name):
         """
@@ -75,8 +86,7 @@ class ConfigHandler:
 
     def get_names_and_profiles(self):
         return [
-            (name, [profile for profile in profiles])
-            for name, profiles in self.get_dotfiles().items()
+            (name, list(profiles)) for name, profiles in self.get_dotfiles().items()
         ]
 
     def get_profile_paths(self, name, profile):
@@ -85,7 +95,7 @@ class ConfigHandler:
     def get_profiles_for_name(self, name: str):
         dotfiles = self.get_dotfiles()
         if name in dotfiles:
-            return [profile for profile in dotfiles[name]]
+            return list(dotfiles[name])
 
     def get_calculated_paths(self, name, profile):
         # if name in self._config['dotfiles']:
@@ -258,3 +268,4 @@ class ConfigHandler:
     # shutil.move(source, link_name)
     # print("Unlinking {}".format(link_name))
     # else:
+

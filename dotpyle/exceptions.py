@@ -1,6 +1,6 @@
 """Dotpyle exceptions definition"""
 
-from dotpyle import constants
+from dotpyle.utils import constants
 
 
 class DotpyleException(Exception):

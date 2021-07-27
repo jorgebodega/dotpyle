@@ -1,8 +1,8 @@
 import click
-import subprocess
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
+from dotpyle.utils import constants
 from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.utils.url import get_default_url
 
@@ -20,7 +20,7 @@ DOTPYLE_FILE = "dotpyle.yml"
     "-p",
     "--protocol",
     required=True,
-    type=click.Choice(["git", "https"]),
+    type=click.Choice(["ssh", "https"]),
     help="Protocol used to clone the repository. Currently only Git and HTTPS are supported (like Github and Gitlab).",
 )
 @click.option(
@@ -41,7 +41,9 @@ DOTPYLE_FILE = "dotpyle.yml"
     is_flag=True,
     help="Force init of the package. This results that everything that cause an error will be forced to work even if that means that something will be erased.",
 )
-def init(url, protocol, token, branch, force):
+@click.pass_context
+# TODO copy gitignore template to default_path
+def init(ctx, url, protocol, token, branch, force):
     """
     This command will clone an existing Git repository on ${XDG_CONFIG_HOME}/dotpyle
     and will check if this repo contains a dotpyle.yml config file, if not,
@@ -53,53 +55,23 @@ def init(url, protocol, token, branch, force):
     # Check if dotpyle config file exist
     if path.exists(default_path):
         if force:
-            click.secho(
-                "Forcing operation. Make sure you know what you are doing!",
-                fg="red",
-            )
-            click.secho("Removing config folder...", fg="red")
+            # click.secho(
+            #     "Forcing operation. Make sure you know what you are doing!",
+            #     fg="red",
+            # )
+            # click.secho("Removing config folder...", fg="red")
             rmtree(default_path)
-        else:
-            click.secho("Folder already exists.", fg="red")
-            click.secho(
-                "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
-                    default_path
-                ),
-                fg="red",
-            )
-            sys.exit(1)
+    else:
+        # click.secho("Folder already exists.", fg="red")
+        # click.secho(
+        #     "If this is an error, please check folder at {0} or try apply instead of init.\nOtherwise use -f/--force instead".format(
+        #         default_path
+        #     ),
+        #     fg="red",
+        # )
+        sys.exit(1)
 
-    # repository = Repo.clone_from(default_url, default_path, progress=None)
-
-    if not path.isdir(default_path):
-        # Create config file
-        print("Creating ", default_path)
-        mkdir(default_path)
-
-    # If token is defined it is mean that repo is private
-    if token:
-        # git clone https://<token>@github.com/owner/repo.git
-        url = url[0:8] + token + "@" + url[9:]
-        # Token is not need to be stored, origin url does store it for us
-
-    print("Cloning into ", url)
-    # Bring the remote repo
-    process = subprocess.Popen(
-        ["git", "clone", url, default_path],
-        stdout=subprocess.PIPE,
-        universal_newlines=True,
-    )
-    while True:
-        output = process.stdout.readline()
-        print(output.strip())
-        # Do something else
-        return_code = process.poll()
-        if return_code is not None:
-            print("RETURN CODE", return_code)
-            # Process has finished, read rest of the output
-            for output in process.stdout.readlines():
-                print(output.strip())
-            break
+    repository = Repo.clone_from(default_url, default_path, progress=None)
 
     # Check if dotpyle exist
 

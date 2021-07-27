@@ -73,3 +73,6 @@ venv.bak/
 # VSCode
 .vscode/
 .vim/
+
+# Debug
+.vimspector.json
