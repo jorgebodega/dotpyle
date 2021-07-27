@@ -28,12 +28,12 @@ def dotpyle():
 
 
 # Add commands to group
-dotpyle.add_command(init)
-dotpyle.add_command(add)
 dotpyle.add_command(link)
 dotpyle.add_command(unlink)
 dotpyle.add_command(switch)
 
+dotpyle.add_command(init)
+dotpyle.add_command(add)
 dotpyle.add_command(commit)
 dotpyle.add_command(push)
 dotpyle.add_command(pull)

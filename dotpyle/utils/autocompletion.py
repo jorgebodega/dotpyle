@@ -31,17 +31,17 @@ def get_profiles(ctx, param, incomplete):
     # last = [p for p in parm]
     # cmd_line = " ".join(last + [incomplete])
 
-    f = open("test.txt", "a")
-    commandLineArgsAsStr = str(sys.argv)
-    numArgs = len(sys.argv)
-    f.write(str(incomplete))
-    f.write(commandLineArgsAsStr)
-    f.write(str(numArgs))
-    # f.write(str(ctx.command))
-    # f.write(str(ctx.info_name))
-    # f.write(str(param))
-    f.write('\n')
-    f.close()
+    # f = open("test.txt", "a")
+    # commandLineArgsAsStr = str(sys.argv)
+    # numArgs = len(sys.argv)
+    # f.write(str(incomplete))
+    # f.write(commandLineArgsAsStr)
+    # f.write(str(numArgs))
+    # # f.write(str(ctx.command))
+    # # f.write(str(ctx.info_name))
+    # # f.write(str(param))
+    # f.write('\n')
+    # f.close()
     items = [(name, '') for name in name_profiles]
     out = []
     for value, help in items:

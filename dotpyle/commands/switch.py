@@ -14,10 +14,6 @@ def switch(name, profile):
 
     handler = FileHandler()
     parser = ConfigHandler(config=handler.config)
-    name_profiles = parser.get_names()
-    # print(name_profiles)
-    items = [(name, '') for name in name_profiles]
-    print(items)
 
     local_handler = LocalFileHandler()
     if local_handler.is_profile_installed(name, profile):

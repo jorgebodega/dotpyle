@@ -41,6 +41,7 @@ DOTPYLE_FILE = "dotpyle.yml"
     is_flag=True,
     help="Force init of the package. This results that everything that cause an error will be forced to work even if that means that something will be erased.",
 )
+# TODO copy gitignore template to default_path
 def init(url, protocol, token, branch, force):
     """
     This command will clone an existing Git repository on ${XDG_CONFIG_HOME}/dotpyle
