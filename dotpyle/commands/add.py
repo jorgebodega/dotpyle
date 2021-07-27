@@ -87,3 +87,4 @@ def dotfile(name, profile, root, path, pre, post, not_install):
         parser.install_key(
             key_name=name, profile_name=profile, process_pre=False, process_post=False
         )
+
