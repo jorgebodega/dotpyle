@@ -53,10 +53,7 @@ class ConfigHandler:
         :return:
             Dict with all program names managed by Dotpyle
         """
-        return [
-            (name)
-            for name, _ in self.get_dotfiles().items()
-        ]
+        return [(name) for name, _ in self.get_dotfiles().items()]
 
     def get_name(self, name):
         """
@@ -268,4 +265,3 @@ class ConfigHandler:
     # shutil.move(source, link_name)
     # print("Unlinking {}".format(link_name))
     # else:
-

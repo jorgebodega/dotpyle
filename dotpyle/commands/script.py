@@ -10,6 +10,7 @@ from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.repo_handler import RepoHandler
 
+
 @click.command()
 @click.help_option(help="Add/edit script in order to execute it later")
 @click.argument("name")
@@ -19,4 +20,3 @@ def script(name):
     parser = ConfigHandler(config=handler.config)
 
     pass
-

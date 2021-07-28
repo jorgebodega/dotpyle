@@ -16,6 +16,8 @@ from dotpyle.commands.script import script
 
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.services.repo_handler import RepoHandler
+from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.config_handler import ConfigHandler
 
 from dotpyle.utils import constants
 from dotpyle.services.print_handler import error
@@ -29,8 +31,11 @@ def dotpyle(ctx=None):
     """
     Manage your dotfiles, create multiple profiles for different programs, automate task with hooks, etc
     """
+    handler = FileHandler()
+    parser = ConfigHandler(config=handler.config)
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler()
+    ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
 
 
 # Add commands to group
@@ -50,6 +55,7 @@ dotpyle.add_command(edit)
 dotpyle.add_command(ls)
 
 dotpyle.add_command(script)
+
 
 def main():
     try:

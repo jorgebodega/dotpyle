@@ -1,12 +1,14 @@
 import click
 
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.repo_handler import RepoHandler
+from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 
 # FIXME: when config file is empty, an error is returned
 # TypeError: argument of type 'NoneType' is not iterable
 @click.command()
+@pass_config_handler
+@pass_repo_handler
 @click.help_option(help="Add file to dotpyle")
 @click.argument("name")
 @click.option("--profile", "-p", default="default", help="Profile name, must exist")
@@ -34,17 +36,14 @@ from dotpyle.services.repo_handler import RepoHandler
     help="Add files to Dotpyle repo and remove them from original location (useful if user wants to install it afterwards, see dotpyle install)",
 )
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
-def dotfile(name, profile, root, path, pre, post, not_install):
+def dotfile(config_handler, repo_handler, name, profile, root, path, pre, post, not_install):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
-    handler = FileHandler()
-    parser = ConfigHandler(config=handler.config)
-    repo = RepoHandler()
     print(name, profile, root, path, pre, post)
     # Convert tuples to lists
     paths = list(path)
     pre_commands = list(pre)
     post_commands = list(post)
-    added_paths = parser.add_dotfile(
+    added_paths = config_handler.add_dotfile(
         name,
         profile,
         root,
@@ -52,24 +51,23 @@ def dotfile(name, profile, root, path, pre, post, not_install):
         pre_hooks=pre_commands,
         post_hooks=post_commands,
     )
-
+    file_handler = FileHandler()
     # Save modified dotpyle config file
-    handler.save(parser.config)
+    file_handler.save(config_handler.config)
     # When new key is added to dotpyle, a commit should be generated
     # (adding new files), to keep consistency between yaml and repo
 
-    repo.add(added_paths, config_file_changed=True)
+    repo_handler.add(added_paths, config_file_changed=True)
     commit_message = "[dotpyle]: added {} on {} profile on {} program".format(
         added_paths, profile, name
     )
-    repo.commit(commit_message)
+    repo_handler.commit(commit_message)
 
     if not not_install:
         local_handler = LocalFileHandler()
         local_handler.install_profile(name, profile)
         local_handler.save()
 
-        parser.install_key(
+        config_handler.install_key(
             key_name=name, profile_name=profile, process_pre=False, process_post=False
         )
-

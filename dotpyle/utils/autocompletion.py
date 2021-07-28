@@ -11,7 +11,7 @@ def get_names(ctx, param, incomplete):
     parser = ConfigHandler(config=handler.config)
     name_profiles = parser.get_names()
 
-    items = [(name, '') for name in name_profiles]
+    items = [(name, "") for name in name_profiles]
     out = []
     for value, help in items:
         if incomplete in value or incomplete in help:
@@ -20,12 +20,13 @@ def get_names(ctx, param, incomplete):
 
     return out
 
+
 # TODO: get profiles given name (previous argument)
 def get_profiles(ctx, param, incomplete):
     handler = FileHandler()
     parser = ConfigHandler(config=handler.config)
     # first, *middle, last = ctx.split()
-    name_profiles = parser.get_name('vim')
+    name_profiles = parser.get_name("vim")
 
     # cmd_line = (tok for tok in param + [incomplete])
     # last = [p for p in parm]
@@ -42,7 +43,7 @@ def get_profiles(ctx, param, incomplete):
     # # f.write(str(param))
     # f.write('\n')
     # f.close()
-    items = [(name, '') for name in name_profiles]
+    items = [(name, "") for name in name_profiles]
     out = []
     for value, help in items:
         if incomplete in value or incomplete in help:

@@ -8,11 +8,10 @@ from dotpyle.utils.path import (
     get_configuration_path,
     get_local_configuration_path,
     get_dotfiles_path,
-    get_script_path
+    get_script_path,
 )
 from shutil import copy2
 from dotpyle.utils import constants
-
 
 
 class BasicFileHandler:
@@ -101,4 +100,3 @@ class ScriptFileHandler(BasicFileHandler):
     def __init__(self, script_name):
         script_path = get_script_path(script_name)
         BasicFileHandler.__init__(self, script_path, constants.SCRIPT_TEMPLATE_PATH)
-

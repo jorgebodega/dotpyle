@@ -31,6 +31,7 @@ def config():
         for key, value in errors.items():
             get_error(key, value)
 
+
 # TODO: move this to ConfigParser and create exceptions
 def get_error(key, value):
     if type(value) == list:

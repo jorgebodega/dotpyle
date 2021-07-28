@@ -57,14 +57,15 @@ def select_user(user):
 
 cli.add_command(group)
 
+
 class EnvVarType(ParamType):
     def shell_complete(self, ctx, param, incomplete):
         # self.get_completions()
         print(incomplete)
         return [
-            CompletionItem(name)
-            for name in os.environ if name.startswith(incomplete)
+            CompletionItem(name) for name in os.environ if name.startswith(incomplete)
         ]
+
 
 @cli.command()
 @click.option("--ev", type=EnvVarType())

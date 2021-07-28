@@ -1,19 +1,16 @@
 import click
-from dotpyle.services.file_handler import FileHandler, LocalFileHandler
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.utils.path import get_source_and_link_path
-from dotpyle.services.print_handler import error, warning, ok
+from dotpyle.services.file_handler import LocalFileHandler
+from dotpyle.services.print_handler import error, ok
 from dotpyle.utils.autocompletion import get_names, get_profiles
+from dotpyle.decorators.pass_config_handler import pass_config_handler
 
 
 @click.command()
+@pass_config_handler
 @click.argument("name", shell_complete=get_names)
 @click.argument("profile", shell_complete=get_profiles)
-def switch(name, profile):
+def switch(parser, name, profile):
     """Change profile for a given program"""
-
-    handler = FileHandler()
-    parser = ConfigHandler(config=handler.config)
 
     local_handler = LocalFileHandler()
     if local_handler.is_profile_installed(name, profile):
@@ -31,4 +28,3 @@ def switch(name, profile):
     local_handler.install_profile(name, profile)
     local_handler.save()
     ok("{} dotfiles installed".format(name))
-
