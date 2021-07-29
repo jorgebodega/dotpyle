@@ -17,7 +17,7 @@ from dotpyle.commands.shell import shell
 
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.services.repo_handler import RepoHandler
-from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
 
 from dotpyle.utils import constants
@@ -41,7 +41,7 @@ def dotpyle(ctx=None):
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler()
     ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
-
+    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler()
 
 # Add commands to group
 dotpyle.add_command(link)

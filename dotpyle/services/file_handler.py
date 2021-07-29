@@ -105,7 +105,8 @@ class LocalFileHandler(BasicFileHandler):
             name in self.config["installed"]
             and self.config["installed"][name] == value
         )
-
+    def get_installed(self):
+        return self.config["installed"]
 
 class ScriptFileHandler(BasicFileHandler):
     def __init__(self, script_name):

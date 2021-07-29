@@ -1,6 +1,7 @@
 import click
-from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.decorators.pass_local_handler import pass_local_handler
+from dotpyle.services.print_handler import error
 from dotpyle.utils.path import get_source_and_link_path, un_expanduser
 import os
 import pathlib
@@ -16,6 +17,8 @@ from dotpyle.utils.autocompletion import get_names, get_profiles
 
 # TODO: flag all
 @click.command()
+@pass_local_handler
+@pass_config_handler
 @click.argument("name", required=False, shell_complete=get_names)
 @click.option(
     "--profile", "-p", help="profile name", shell_complete=get_profiles
@@ -23,10 +26,10 @@ from dotpyle.utils.autocompletion import get_names, get_profiles
 @click.option(
     "--all", "-a", is_flag=True, help="list all dotfiles (linked or not)"
 )
-def ls(name, profile, all):
-
-    config = FileHandler().config
-    parser = ConfigHandler(config)
+def ls(parser, local_handler, name, profile, all):
+    """
+    List dotfiles managed by Dotpyle
+    """
 
     dotfiles = parser.get_dotfiles()
 
@@ -36,41 +39,54 @@ def ls(name, profile, all):
         # f"[bold magenta]:open_file_folder:dotfiles",
         guide_style="bold bright_blue",
     )
-    # Filtering by name
-    if name:
-        if name in dotfiles:
-            profiles = dotfiles[name]
-            if profile:
-                if profile in profiles:
-                    print_dotfiles(
-                        tree, name, profile, profiles[profile], parser
-                    )
+    # List all
+    if all:
+        # Filtering by name
+        if name:
+            if name in dotfiles:
+                profiles = dotfiles[name]
+                if profile:
+                    if profile in profiles:
+                        print_dotfiles(
+                            tree, name, profile, profiles[profile], parser
+                        )
+                    else:
+                        print(
+                            "Profile {} in {} does not exist".format(profile, name)
+                        )
+
+                # Get all profiles for given name
                 else:
-                    print(
-                        "Profile {} in {} does not exist".format(profile, name)
-                    )
+                    for profile_name, content in profiles.items():
+                        print_dotfiles(tree, name, profile_name, content, parser)
 
-            # Get all profiles for given name
-            else:
-                for profile_name, content in profiles.items():
-                    print_dotfiles(tree, name, profile_name, content, parser)
-
-    # Get all names
-    else:
-        # Filtering only by profiles
-        if profile:
-            for program_name, profiles in dotfiles.items():
-                if profile in profiles:
-                    print_dotfiles(
-                        tree, program_name, profile, profiles[profile], parser
-                    )
-
+        # Get all names
         else:
-            for program_name, profiles in dotfiles.items():
-                for profile_name, content in profiles.items():
-                    print_dotfiles(
-                        tree, program_name, profile_name, content, parser
-                    )
+            # Filtering only by profiles
+            if profile:
+                if not profile in parser.get_profiles():
+                    error('Profile "{}" does not exist'.format(profile))
+
+                for program_name, profiles in dotfiles.items():
+                    if profile in profiles:
+                        print_dotfiles(
+                            tree, program_name, profile, profiles[profile], parser
+                        )
+
+            else:
+                for program_name, profiles in dotfiles.items():
+                    for profile_name, content in profiles.items():
+                        print_dotfiles(
+                            tree, program_name, profile_name, content, parser
+                        )
+
+    else:
+        # TODO filter
+        installed_profiles = local_handler.get_installed()
+        print(installed_profiles)
+        for name, profile_name in installed_profiles.items():
+            print_dotfiles(tree, name, profile_name, None, parser)
+
 
     rich.print(tree)
 

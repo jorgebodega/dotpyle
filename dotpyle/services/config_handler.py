@@ -54,12 +54,19 @@ class ConfigHandler:
             "Dotpyle database empty, no dotfiles found"
         )
 
-    def get_names(self):
+    def get_names(self) -> list[str]:
         """
         :return:
-            Dict with all program names managed by Dotpyle
+            List with all program names managed by Dotpyle
         """
         return [(name) for name, _ in self.get_dotfiles().items()]
+
+    def get_profiles(self) -> list[str]:
+        """
+        :return:
+            List with all profiles managed by Dotpyle
+        """
+        return self.config['settings']['profiles']
 
     def get_name(self, name):
         """
