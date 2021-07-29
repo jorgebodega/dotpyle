@@ -11,7 +11,9 @@ from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 @pass_repo_handler
 @click.help_option(help="Add file to dotpyle")
 @click.argument("name")
-@click.option("--profile", "-p", default="default", help="Profile name, must exist")
+@click.option(
+    "--profile", "-p", default="default", help="Profile name, must exist"
+)
 @click.option("--root", "-r", default="~", help="Root path")
 @click.option(
     "--path",
@@ -33,10 +35,23 @@ from dotpyle.decorators.pass_repo_handler import pass_repo_handler
     "--not-install",
     default=False,
     is_flag=True,
-    help="Add files to Dotpyle repo and remove them from original location (useful if user wants to install it afterwards, see dotpyle install)",
+    help=(
+        "Add files to Dotpyle repo and remove them from original location"
+        " (useful if user wants to install it afterwards, see dotpyle install)"
+    ),
 )
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
-def dotfile(config_handler, repo_handler, name, profile, root, path, pre, post, not_install):
+def dotfile(
+    config_handler,
+    repo_handler,
+    name,
+    profile,
+    root,
+    path,
+    pre,
+    post,
+    not_install,
+):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
     print(name, profile, root, path, pre, post)
     # Convert tuples to lists
@@ -69,5 +84,8 @@ def dotfile(config_handler, repo_handler, name, profile, root, path, pre, post, 
         local_handler.save()
 
         config_handler.install_key(
-            key_name=name, profile_name=profile, process_pre=False, process_post=False
+            key_name=name,
+            profile_name=profile,
+            process_pre=False,
+            process_post=False,
         )

@@ -13,6 +13,7 @@ from dotpyle.commands.push import push
 from dotpyle.commands.pull import pull
 from dotpyle.commands.switch import switch
 from dotpyle.commands.script import script
+from dotpyle.commands.shell import shell
 
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.services.repo_handler import RepoHandler
@@ -32,7 +33,8 @@ from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 @click.pass_context
 def dotpyle(ctx=None):
     """
-    Manage your dotfiles, create multiple profiles for different programs, automate task with hooks, etc
+    Manage your dotfiles, create multiple profiles for different programs,
+    automate task with hooks, etc.
     """
     handler = FileHandler()
     parser = ConfigHandler(config=handler.config)
@@ -56,6 +58,7 @@ dotpyle.add_command(checkout)
 dotpyle.add_command(config)
 dotpyle.add_command(edit)
 dotpyle.add_command(ls)
+dotpyle.add_command(shell)
 
 dotpyle.add_command(script)
 

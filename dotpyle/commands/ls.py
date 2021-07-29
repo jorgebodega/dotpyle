@@ -17,8 +17,12 @@ from dotpyle.utils.autocompletion import get_names, get_profiles
 # TODO: flag all
 @click.command()
 @click.argument("name", required=False, shell_complete=get_names)
-@click.option("--profile", "-p", help="profile name", shell_complete=get_profiles)
-@click.option("--all", "-a", is_flag=True, help="list all dotfiles (linked or not)")
+@click.option(
+    "--profile", "-p", help="profile name", shell_complete=get_profiles
+)
+@click.option(
+    "--all", "-a", is_flag=True, help="list all dotfiles (linked or not)"
+)
 def ls(name, profile, all):
 
     config = FileHandler().config
@@ -38,9 +42,13 @@ def ls(name, profile, all):
             profiles = dotfiles[name]
             if profile:
                 if profile in profiles:
-                    print_dotfiles(tree, name, profile, profiles[profile], parser)
+                    print_dotfiles(
+                        tree, name, profile, profiles[profile], parser
+                    )
                 else:
-                    print("Profile {} in {} does not exist".format(profile, name))
+                    print(
+                        "Profile {} in {} does not exist".format(profile, name)
+                    )
 
             # Get all profiles for given name
             else:
@@ -60,15 +68,17 @@ def ls(name, profile, all):
         else:
             for program_name, profiles in dotfiles.items():
                 for profile_name, content in profiles.items():
-                    print_dotfiles(tree, program_name, profile_name, content, parser)
+                    print_dotfiles(
+                        tree, program_name, profile_name, content, parser
+                    )
 
     rich.print(tree)
 
 
 def print_dotfiles(tree, name, profile, content, parser):
-    tree = tree.add(f"[bold magenta]:open_file_folder: [link file://{name}]{name}").add(
-        f"[bold blue]:open_file_folder: [link file://{profile}]{profile}"
-    )
+    tree = tree.add(
+        f"[bold magenta]:open_file_folder: [link file://{name}]{name}"
+    ).add(f"[bold blue]:open_file_folder: [link file://{profile}]{profile}")
     for source, link_name in parser.get_calculated_paths(name, profile):
         source = os.path.basename(source)
         # print("\t+ {} -> {}".format(source, link_name))

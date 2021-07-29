@@ -43,7 +43,8 @@ test = "pytest"
 test-cov = "coverage run --source=dotpyle -m pytest"
 
 [tool.black]
-line-length = 88
+line-length = 80
+experimental-string-processing = true
 target-version = ['py36', 'py37', 'py38']
 exclude = '''
 /(

@@ -5,7 +5,11 @@ from os.path import join, isfile, isdir
 from os import listdir
 from yaml import safe_load, safe_dump
 from dotpyle.errors.InvalidConfigFile import InvalidConfigFileError
-from dotpyle.utils.path import get_configuration_path, get_dotfiles_path, un_expanduser
+from dotpyle.utils.path import (
+    get_configuration_path,
+    get_dotfiles_path,
+    un_expanduser,
+)
 from dotpyle.services.print_handler import error, warning, ok
 
 import os
@@ -46,7 +50,9 @@ class ConfigHandler:
 
         if "dotfiles" in self._config:
             return self._config["dotfiles"]
-        raise ConfigHandlerException("Dotpyle database empty, no dotfiles found")
+        raise ConfigHandlerException(
+            "Dotpyle database empty, no dotfiles found"
+        )
 
     def get_names(self):
         """
@@ -83,11 +89,14 @@ class ConfigHandler:
 
     def get_names_and_profiles(self):
         return [
-            (name, list(profiles)) for name, profiles in self.get_dotfiles().items()
+            (name, list(profiles))
+            for name, profiles in self.get_dotfiles().items()
         ]
 
     def get_profile_paths(self, name, profile):
-        return [source for source, _ in self.get_calculated_paths(name, profile)]
+        return [
+            source for source, _ in self.get_calculated_paths(name, profile)
+        ]
 
     def get_profiles_for_name(self, name: str):
         dotfiles = self.get_dotfiles()
@@ -114,9 +123,8 @@ class ConfigHandler:
         version = self._config["version"]
         if version != 1:
             raise ConfigHandlerException(
-                "Version '{}' of dotfile.yml file is currently unsupported".format(
-                    version
-                )
+                "Version '{}' of dotfile.yml file is currently unsupported"
+                .format(version)
             )
         for key in self._config["dotfiles"].keys():
             self.install_key(key, profile_name)
@@ -180,18 +188,21 @@ class ConfigHandler:
         paths = key["paths"]
         root = key["root"]
         for path in paths:
-            source, link_name = get_source_and_link_path(name, profile, root, path)
+            source, link_name = get_source_and_link_path(
+                name, profile, root, path
+            )
             os.remove(link_name)
             ok(
-                "Removing {} from system (to recover, `dotpyle install -p {} {}`)".format(
-                    link_name, profile, name
-                )
+                "Removing {} from system (to recover, `dotpyle install -p {}"
+                " {}`)".format(link_name, profile, name)
             )
 
     def add_dotfile(self, name, profile, root, paths, pre_hooks, post_hooks):
         sources = []
         dotfiles = self.get_dotfiles()
-        root = un_expanduser(root)  # translate /home/<username>/path into ~/path
+        root = un_expanduser(
+            root
+        )  # translate /home/<username>/path into ~/path
         if name in dotfiles:
             existing_profiles = dotfiles[name]
             if profile in existing_profiles:
@@ -218,7 +229,9 @@ class ConfigHandler:
 
         for path in paths:
             # Get source path (destination path on dotpyle repo) and current file path
-            source, link_name = get_source_and_link_path(name, profile, root, path)
+            source, link_name = get_source_and_link_path(
+                name, profile, root, path
+            )
             sources.append(source)
 
             profile_directory_path = os.path.dirname(source)

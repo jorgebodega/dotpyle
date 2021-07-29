@@ -12,7 +12,9 @@ from dotpyle.utils import constants
 @click.command()
 def config():
     dotpyle_path = get_configuration_path()
-    temp_config_file = path.join(gettempdir(), constants.DOTPYLE_CONFIG_FILE_NAME_TEMP)
+    temp_config_file = path.join(
+        gettempdir(), constants.DOTPYLE_CONFIG_FILE_NAME_TEMP
+    )
     copy2(dotpyle_path, temp_config_file)
 
     # Open user default editor

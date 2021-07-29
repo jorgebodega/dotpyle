@@ -85,7 +85,9 @@ def get_error(tree, key, value):
             get_error(tree, key, elem)
     elif type(value) == dict:
         for k, v in value.items():
-            tree = tree.add(f"[bold blue]:open_file_folder:[link file://{k}]{k}")
+            tree = tree.add(
+                f"[bold blue]:open_file_folder:[link file://{k}]{k}"
+            )
             get_error(tree, k, v)
     else:
         # print(" - {}: '{}'".format(key, value))

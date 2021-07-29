@@ -21,7 +21,9 @@ class BasicFileHandler:
 
         if not isfile(file_path):
             print(
-                "File {0} does not exist. Creating from template...".format(file_path)
+                "File {0} does not exist. Creating from template...".format(
+                    file_path
+                )
             )
             copy2(template_path, file_path)
 
@@ -60,15 +62,21 @@ class FileHandler(BasicFileHandler):
         return [
             join(dotfiles_path, key)
             for key in [
-                f for f in listdir(dotfiles_path) if isdir(join(dotfiles_path, f))
+                f
+                for f in listdir(dotfiles_path)
+                if isdir(join(dotfiles_path, f))
             ]
         ]
 
     def get_profile_paths(self, key, profile):
         dotfiles_path = join(get_dotfiles_path())
-        for key in [f for f in listdir(dotfiles_path) if isdir(join(dotfiles_path, f))]:
+        for key in [
+            f for f in listdir(dotfiles_path) if isdir(join(dotfiles_path, f))
+        ]:
             key_path = join(dotfiles_path, key)
-            for prof in [f for f in listdir(key_path) if isdir(join(key_path, f))]:
+            for prof in [
+                f for f in listdir(key_path) if isdir(join(key_path, f))
+            ]:
                 prof_path = join(key_path, prof)
                 return list(
                     itertools.chain(
@@ -82,7 +90,9 @@ class LocalFileHandler(BasicFileHandler):
     def __init__(self, path=None):
         if not path:
             path = get_local_configuration_path()
-        BasicFileHandler.__init__(self, path, constants.CONFIG_LOCAL_TEMPLATE_PATH)
+        BasicFileHandler.__init__(
+            self, path, constants.CONFIG_LOCAL_TEMPLATE_PATH
+        )
 
     def install_profile(self, name, profile):
         self.config["installed"][name] = profile
@@ -92,11 +102,14 @@ class LocalFileHandler(BasicFileHandler):
 
     def is_profile_installed(self, name, value):
         return (
-            name in self.config["installed"] and self.config["installed"][name] == value
+            name in self.config["installed"]
+            and self.config["installed"][name] == value
         )
 
 
 class ScriptFileHandler(BasicFileHandler):
     def __init__(self, script_name):
         script_path = get_script_path(script_name)
-        BasicFileHandler.__init__(self, script_path, constants.SCRIPT_TEMPLATE_PATH)
+        BasicFileHandler.__init__(
+            self, script_path, constants.SCRIPT_TEMPLATE_PATH
+        )

@@ -14,7 +14,9 @@ def get_default_path() -> str:
     # TODO On MacOs get_app_dir return ~/Applications/Application Support/{NAME}
     default_config_path = getenv("XDG_CONFIG_HOME", "~/.config")
 
-    return path.expanduser("{0}/{1}".format(default_config_path, constants.APP_NAME))
+    return path.expanduser(
+        "{0}/{1}".format(default_config_path, constants.APP_NAME)
+    )
 
 
 def un_expanduser(path: str) -> str:
@@ -32,7 +34,9 @@ def get_configuration_path() -> str:
 
 
 def get_local_configuration_path() -> str:
-    return path.join(get_default_path(), constants.DOTPYLE_LOCAL_CONFIG_FILE_NAME)
+    return path.join(
+        get_default_path(), constants.DOTPYLE_LOCAL_CONFIG_FILE_NAME
+    )
 
 
 def get_dotfiles_path() -> str:
