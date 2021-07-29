@@ -24,6 +24,9 @@ from dotpyle.services.print_handler import error
 from dotpyle.exceptions import DotpyleException
 
 
+from dotpyle.decorators.pass_repo_handler import pass_repo_handler
+
+
 @click.group()
 @click.version_option()
 @click.pass_context
@@ -55,6 +58,14 @@ dotpyle.add_command(edit)
 dotpyle.add_command(ls)
 
 dotpyle.add_command(script)
+
+
+@dotpyle.command()
+@pass_repo_handler
+def test(repo_handler: RepoHandler):
+    repo_handler.clone(
+        remote_url="https://github.com/jorgebodega/Dotfiles.git",
+    )
 
 
 def main():

@@ -2,8 +2,7 @@ import click
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
-from dotpyle.utils import constants
-from dotpyle.utils.path import get_default_path, get_configuration_path
+from dotpyle.utils.path import get_default_path
 from dotpyle.utils.url import get_default_url
 
 DOTPYLE_FILE = "dotpyle.yml"
@@ -41,16 +40,14 @@ DOTPYLE_FILE = "dotpyle.yml"
     is_flag=True,
     help="Force init of the package. This results that everything that cause an error will be forced to work even if that means that something will be erased.",
 )
-@click.pass_context
 # TODO copy gitignore template to default_path
-def init(ctx, url, protocol, token, branch, force):
+def init(url, protocol, token, branch, force):
     """
     This command will clone an existing Git repository on ${XDG_CONFIG_HOME}/dotpyle
     and will check if this repo contains a dotpyle.yml config file, if not,
     a template config file will be created.
     """
     default_path = get_default_path()
-    default_url = get_default_url(url, protocol, token)
 
     # Check if dotpyle config file exist
     if path.exists(default_path):
@@ -71,7 +68,8 @@ def init(ctx, url, protocol, token, branch, force):
         # )
         sys.exit(1)
 
-    repository = Repo.clone_from(default_url, default_path, progress=None)
+    url = get_default_url(url, protocol, token)
+    repository = Repo.clone_from(url, default_path, progress=None)
 
     # Check if dotpyle exist
 

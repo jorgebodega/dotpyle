@@ -1,40 +1,44 @@
-import os
-import git
+from os import path
+from typing import Callable, Optional
+from git import Repo, PathLike
+from shutil import rmtree
 from dotpyle.utils.path import get_configuration_path, get_default_path
 
 
 class RepoHandler:
-    def __init__(self):
-        repo_dir = get_default_path()
-        self.repo = git.Repo(path=repo_dir)
+    def __init__(self, local_path: PathLike = get_default_path()):
+        self.local_path = local_path
+        if path.exists(local_path):
+            self.repo = Repo(local_path)
 
-    # usage: git add [<options>] [--] <pathspec>...
+    def clone(
+        self,
+        remote_url: PathLike,
+        force: bool = False,
+        progress_listener: Optional[Callable] = None,
+        branch_name: str = None,
+    ) -> Repo:
+        if path.exists(self.local_path):
+            if force:
+                rmtree(self.local_path)
+            else:
+                raise FileExistsError(
+                    "Default path already exists. Please use --force to override."
+                )
 
-    # -n, --dry-run         dry run
-    # -v, --verbose         be verbose
+        self.repo = Repo.clone_from(
+            url=remote_url,
+            to_path=self.local_path,
+            progress=progress_listener,
+            branch=branch_name,
+        )
+        return self.repo
 
-    # -i, --interactive     interactive picking
-    # -p, --patch           select hunks interactively
-    # -e, --edit            edit current diff and apply
-    # -f, --force           allow adding otherwise ignored files
-    # -u, --update          update tracked files
-    # --renormalize         renormalize EOL of tracked files (implies -u)
-    # -N, --intent-to-add   record only the fact that the path will be added later
-    # -A, --all             add changes from all tracked and untracked files
-    # --ignore-removal      ignore paths removed in the working tree (same as --no-all)
-    # --refresh             don't add, only refresh the index
-    # --ignore-errors       just skip files which cannot be added because of errors
-    # --ignore-missing      check if - even missing - files are ignored in dry run
-    # --chmod (+|-)x        override the executable bit of the listed files
-    # --pathspec-from-file <file>
-    # read pathspec from file
-    # --pathspec-file-nul   with --pathspec-from-file, pathspec elements are separated with NUL character
     def add(self, paths, config_file_changed=False):
         # self.repo.git.add(all=True)
         self.repo.git.add(paths)
         if config_file_changed:
             self.repo.git.add(get_configuration_path())
-        print("added", paths)
 
     def commit(self, message):
         self.repo.index.commit(message)
