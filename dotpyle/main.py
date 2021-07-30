@@ -19,6 +19,7 @@ from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.logger import Logger
 
 from dotpyle.utils import constants
 from dotpyle.services.print_handler import error
@@ -26,22 +27,33 @@ from dotpyle.exceptions import DotpyleException
 
 
 from dotpyle.decorators.pass_repo_handler import pass_repo_handler
+from dotpyle.decorators.pass_logger import pass_logger
 
 
 @click.group()
 @click.version_option()
+@click.option(
+    "--verbose",
+    "-v",
+    "verbose",
+    is_flag=True,
+    help="Enable verbose mode",
+)
 @click.pass_context
-def dotpyle(ctx=None):
+def dotpyle(ctx=None, verbose=False):
     """
     Manage your dotfiles, create multiple profiles for different programs,
     automate task with hooks, etc.
     """
-    handler = FileHandler()
-    parser = ConfigHandler(config=handler.config)
+    # handler = FileHandler()
+    # parser = ConfigHandler(config=handler.config)
+    logger = Logger(verbose=verbose)
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
-    ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler()
-    ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
-    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler()
+    ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
+    ctx.meta[constants.LOGGER_PROVIDER] = logger
+    # ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
+    # ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler()
+
 
 # Add commands to group
 dotpyle.add_command(link)
@@ -65,18 +77,25 @@ dotpyle.add_command(script)
 
 @dotpyle.command()
 @pass_repo_handler
-def test(repo_handler: RepoHandler):
+@pass_logger
+def test(
+    logger: Logger,
+    repo_handler: RepoHandler,
+):
     repo_handler.clone(
         remote_url="https://github.com/jorgebodega/Dotfiles.git",
+        force=True,
     )
+    file_handler = FileHandler(logger=logger)
+    print(file_handler.read())
 
 
 def main():
     try:
         dotpyle()
-    except DotpyleException as e:
+    except Exception as e:
         error(e)
-        exit(e.code)
+        # exit(e.code)
 
 
 if __name__ == "__main__":

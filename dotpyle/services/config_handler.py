@@ -32,7 +32,6 @@ class ConfigHandler:
     def __init__(self, config):
         self.checker = ConfigChecker()
         self._config = config
-        self.checker = ConfigChecker()
 
     @property
     def config(self):
@@ -66,7 +65,7 @@ class ConfigHandler:
         :return:
             List with all profiles managed by Dotpyle
         """
-        return self.config['settings']['profiles']
+        return self.config["settings"]["profiles"]
 
     def get_name(self, name):
         """

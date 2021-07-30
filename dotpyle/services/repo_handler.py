@@ -2,11 +2,17 @@ from os import path
 from typing import Callable, Optional
 from git import Repo, PathLike
 from shutil import rmtree
+
 from dotpyle.utils.path import get_configuration_path, get_default_path
+from dotpyle.services.logger import Logger
 
 
 class RepoHandler:
-    def __init__(self, local_path: PathLike = get_default_path()):
+    def __init__(
+        self, logger: Logger, local_path: PathLike = get_default_path()
+    ):
+        self.logger = logger
+
         self.local_path = local_path
         if path.exists(local_path):
             self.repo = Repo(local_path)
@@ -20,10 +26,15 @@ class RepoHandler:
     ) -> Repo:
         if path.exists(self.local_path):
             if force:
+                self.logger.warning(
+                    "Forcing operation. Make sure you know what you are doing!"
+                )
+                self.logger.warning("Removing config folder...")
                 rmtree(self.local_path)
             else:
                 raise FileExistsError(
-                    "Default path already exists. Please use --force to override."
+                    "Default path already exists. Please use --force to"
+                    " override."
                 )
 
         self.repo = Repo.clone_from(
