@@ -1,10 +1,7 @@
 from rich.console import Console
-from rich.filesize import decimal
-from rich.markup import escape
-from rich.text import Text
 from rich.tree import Tree
 
-console = Console()
+console = Console(color_system="auto")
 
 
 def error(*args):

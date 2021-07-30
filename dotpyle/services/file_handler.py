@@ -2,7 +2,6 @@ import glob
 import itertools
 from os.path import join, isfile, isdir
 from os import listdir
-import sys
 from yaml import safe_load, safe_dump
 from dotpyle.utils.path import (
     get_configuration_path,
@@ -12,61 +11,54 @@ from dotpyle.utils.path import (
 )
 from shutil import copy2
 from dotpyle.utils import constants
+from dotpyle.services.logger import Logger
 
 
 class BasicFileHandler:
-    def __init__(self, file_path, template_path):
-        if not file_path:
-            print("TODO error, exit")
+    def __init__(self, file_path: str, template_path: str, logger: Logger):
+        self.logger = logger
 
         if not isfile(file_path):
-            print(
+            self.logger.warning(
                 "File {0} does not exist. Creating from template...".format(
                     file_path
                 )
             )
             copy2(template_path, file_path)
 
-        self.stream = open(file_path, "r+")
+        self.file_path = file_path
         self._config = self.read()
 
     def read(self):
-        return safe_load(self.stream)
+        self.logger.warning("Reading file {0}".format(self.file_path))
+        with open(self.file_path, "r") as stream:
+            self._config = safe_load(stream)
 
-    def save(self, config=None):
-        self.stream.seek(0)
-        self.stream.truncate()
-        if not config:
-            config = self.config
-        safe_dump(config, self.stream)
+        return self._config
+
+    def save(self, config: dict):
+        """Save the configuration to the file.
+
+        Args:
+            config (str): New configuration for the file.
+        """
+        # TODO: Check config first
+        with open(self.file_path, "w") as stream:
+            safe_dump(config, stream)
+            self._config = config
 
     @property
     def config(self):
         return self._config
 
-    @config.setter
-    def config(self, new_config):
-        # TODO maybe call check_config first?
-        self._config = new_config
-
 
 class FileHandler(BasicFileHandler):
-    def __init__(self, path=None):
-        if not path:
-            path = get_configuration_path()
-        BasicFileHandler.__init__(self, path, constants.CONFIG_TEMPLATE_PATH)
-
-    # TODO deprecated
-    def get_key_paths(self):
-        dotfiles_path = join(get_dotfiles_path())
-        return [
-            join(dotfiles_path, key)
-            for key in [
-                f
-                for f in listdir(dotfiles_path)
-                if isdir(join(dotfiles_path, f))
-            ]
-        ]
+    def __init__(self, logger: Logger, path=None):
+        super().__init__(
+            file_path=get_configuration_path() if path is None else path,
+            template_path=constants.CONFIG_TEMPLATE_PATH,
+            logger=logger,
+        )
 
     def get_profile_paths(self, key, profile):
         dotfiles_path = join(get_dotfiles_path())
@@ -87,11 +79,11 @@ class FileHandler(BasicFileHandler):
 
 
 class LocalFileHandler(BasicFileHandler):
-    def __init__(self, path=None):
-        if not path:
-            path = get_local_configuration_path()
-        BasicFileHandler.__init__(
-            self, path, constants.CONFIG_LOCAL_TEMPLATE_PATH
+    def __init__(self, logger: Logger, path=None):
+        super().__init__(
+            file_path=get_local_configuration_path() if path is None else path,
+            template_path=constants.CONFIG_LOCAL_TEMPLATE_PATH,
+            logger=logger,
         )
 
     def install_profile(self, name, profile):
@@ -105,12 +97,15 @@ class LocalFileHandler(BasicFileHandler):
             name in self.config["installed"]
             and self.config["installed"][name] == value
         )
+
     def get_installed(self):
         return self.config["installed"]
 
+
 class ScriptFileHandler(BasicFileHandler):
-    def __init__(self, script_name):
-        script_path = get_script_path(script_name)
-        BasicFileHandler.__init__(
-            self, script_path, constants.SCRIPT_TEMPLATE_PATH
+    def __init__(self, logger: Logger, script_name: str):
+        super().__init__(
+            file_path=get_script_path(script_name),
+            template_path=constants.SCRIPT_TEMPLATE_PATH,
+            logger=logger,
         )

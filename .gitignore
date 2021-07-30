@@ -76,3 +76,5 @@ venv.bak/
 
 # Debug
 .vimspector.json
+
+.dmypy.json
