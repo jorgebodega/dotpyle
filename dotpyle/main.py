@@ -45,14 +45,15 @@ def dotpyle(ctx=None, verbose=False):
     Manage your dotfiles, create multiple profiles for different programs,
     automate task with hooks, etc.
     """
-    # handler = FileHandler()
-    # parser = ConfigHandler(config=handler.config)
     logger = Logger(verbose=verbose)
+    handler = FileHandler(logger=logger)
+    parser = ConfigHandler(config=handler.config)
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
     ctx.meta[constants.LOGGER_PROVIDER] = logger
-    # ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
-    # ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler()
+    ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
+    ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
+    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(logger=logger)
 
 
 # Add commands to group

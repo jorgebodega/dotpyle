@@ -2,13 +2,14 @@ import click
 
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.decorators.pass_local_handler import pass_local_handler
+from dotpyle.decorators.pass_file_handler import pass_file_handler
 from dotpyle.decorators.pass_repo_handler import pass_repo_handler
+from dotpyle.decorators.pass_logger import pass_logger
 
 # FIXME: when config file is empty, an error is returned
 # TypeError: argument of type 'NoneType' is not iterable
 @click.command()
-@pass_config_handler
-@pass_repo_handler
 @click.help_option(help="Add file to dotpyle")
 @click.argument("name")
 @click.option(
@@ -40,10 +41,18 @@ from dotpyle.decorators.pass_repo_handler import pass_repo_handler
         " (useful if user wants to install it afterwards, see dotpyle install)"
     ),
 )
+@pass_file_handler
+@pass_local_handler
+@pass_config_handler
+@pass_repo_handler
+@pass_logger
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
 def dotfile(
-    config_handler,
+    logger,
     repo_handler,
+    config_handler,
+    local_handler,
+    file_handler,
     name,
     profile,
     root,
@@ -66,7 +75,6 @@ def dotfile(
         pre_hooks=pre_commands,
         post_hooks=post_commands,
     )
-    file_handler = FileHandler()
     # Save modified dotpyle config file
     file_handler.save(config_handler.config)
     # When new key is added to dotpyle, a commit should be generated
@@ -79,9 +87,8 @@ def dotfile(
     repo_handler.commit(commit_message)
 
     if not not_install:
-        local_handler = LocalFileHandler()
         local_handler.install_profile(name, profile)
-        local_handler.save()
+        local_handler.save(local_handler.config)
 
         config_handler.install_key(
             key_name=name,
