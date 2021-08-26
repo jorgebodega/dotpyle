@@ -317,4 +317,5 @@ TBD
 - [ ] Change uninstall name for on more intuitive
 - [ ] Run command to execute alone hooks
 - [ ] Create commit on uninstall dotfile
+- [ ] Force option on link command
 

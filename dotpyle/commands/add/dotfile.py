@@ -1,6 +1,5 @@
 import click
 
-from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.decorators.pass_config_handler import pass_config_handler
 from dotpyle.decorators.pass_local_handler import pass_local_handler
 from dotpyle.decorators.pass_file_handler import pass_file_handler
