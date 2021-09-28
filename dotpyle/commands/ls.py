@@ -13,15 +13,21 @@ from rich.markup import escape
 from rich.text import Text
 from rich.tree import Tree
 
-from dotpyle.utils.autocompletion import get_names, get_profiles
+from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
 
 # TODO: flag all
 @click.command()
 @pass_local_handler
 @pass_config_handler
-@click.argument("name", required=False, shell_complete=get_names)
+@click.argument("name", required=False, type=DotfileNamesVarType())
 @click.option(
-    "--profile", "-p", help="profile name", shell_complete=get_profiles
+    # "--profile", "-p", help="profile name", shell_complete=get_profiles
+    "--profile",
+    "-p",
+    help="profile name",
+    type=ProfileVarType()
+    # "--profile", "-p", help="profile name", type=click.Path(exists=True, resolve_path=True, allow_dash=True)
+    # "--profile", "-p", help="profile name"
 )
 @click.option(
     "--all", "-a", is_flag=True, help="list all dotfiles (linked or not)"
@@ -52,13 +58,17 @@ def ls(parser, local_handler, name, profile, all):
                         )
                     else:
                         print(
-                            "Profile {} in {} does not exist".format(profile, name)
+                            "Profile {} in {} does not exist".format(
+                                profile, name
+                            )
                         )
 
                 # Get all profiles for given name
                 else:
                     for profile_name, content in profiles.items():
-                        print_dotfiles(tree, name, profile_name, content, parser)
+                        print_dotfiles(
+                            tree, name, profile_name, content, parser
+                        )
 
         # Get all names
         else:
@@ -70,7 +80,11 @@ def ls(parser, local_handler, name, profile, all):
                 for program_name, profiles in dotfiles.items():
                     if profile in profiles:
                         print_dotfiles(
-                            tree, program_name, profile, profiles[profile], parser
+                            tree,
+                            program_name,
+                            profile,
+                            profiles[profile],
+                            parser,
                         )
 
             else:
@@ -86,7 +100,6 @@ def ls(parser, local_handler, name, profile, all):
         print(installed_profiles)
         for name, profile_name in installed_profiles.items():
             print_dotfiles(tree, name, profile_name, None, parser)
-
 
     rich.print(tree)
 

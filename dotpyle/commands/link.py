@@ -21,11 +21,18 @@ def link(
     logger,
     config_handler,
     local_handler,
-        name, profile, no_pre, no_post, no_hooks):
+    name,
+    profile,
+    no_pre,
+    no_post,
+    no_hooks,
+):
 
     if local_handler.is_profile_installed(name, profile):
         error("Profile {} already installed for {}".format(profile, name))
-        return
+        error("wtf")
+        exit(1)
+        # return
 
     process_pre = not (no_pre or no_hooks)
     process_post = not (no_post or no_hooks)

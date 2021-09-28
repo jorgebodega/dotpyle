@@ -1,52 +1,63 @@
 from click.shell_completion import CompletionItem
+from click import ParamType
 
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.config_handler import ConfigHandler
 import os
 import sys
+from dotpyle.decorators.pass_config_handler import pass_config_handler
+
+# This is awful: should be done with inyection
+from dotpyle.services.logger import Logger
+
+config_handler = ConfigHandler(
+    config=FileHandler(logger=Logger(verbose=False)).config
+)
 
 
-def get_names(ctx, param, incomplete):
-    handler = FileHandler()
-    parser = ConfigHandler(config=handler.config)
-    name_profiles = parser.get_names()
-
-    items = [(name, "") for name in name_profiles]
-    out = []
-    for value, help in items:
-        if incomplete in value or incomplete in help:
-            # yield value
-            out.append(CompletionItem(value, help=help))
-
-    return out
+class DotfileNamesVarType(ParamType):
+    def shell_complete(self, ctx, param, incomplete):
+        names = config_handler.get_names()
+        items = [(name, "") for name in names]
+        for value, help in items:
+            if incomplete in value or incomplete in help:
+                yield (CompletionItem(value, help=help))
 
 
 # TODO: get profiles given name (previous argument)
-def get_profiles(ctx, param, incomplete):
-    handler = FileHandler()
-    parser = ConfigHandler(config=handler.config)
-    # first, *middle, last = ctx.split()
-    name_profiles = parser.get_name("vim")
+# TODO https://stackoverflow.com/a/58617108/10474917
+class ProfileVarType(ParamType):
+    def shell_complete(self, ctx, param, incomplete):
+        profiles = config_handler.get_profiles()
+        items = [(name, "") for name in profiles]
+        for value, help in items:
+            if incomplete in value or incomplete in help:
+                yield (CompletionItem(value, help=help))
 
-    # cmd_line = (tok for tok in param + [incomplete])
-    # last = [p for p in parm]
-    # cmd_line = " ".join(last + [incomplete])
 
-    # f = open("test.txt", "a")
-    # commandLineArgsAsStr = str(sys.argv)
-    # numArgs = len(sys.argv)
-    # f.write(str(incomplete))
-    # f.write(commandLineArgsAsStr)
-    # f.write(str(numArgs))
-    # # f.write(str(ctx.command))
-    # # f.write(str(ctx.info_name))
-    # # f.write(str(param))
-    # f.write('\n')
-    # f.close()
-    items = [(name, "") for name in name_profiles]
-    out = []
-    for value, help in items:
-        if incomplete in value or incomplete in help:
-            out.append(CompletionItem(value, help=help))
+class ScriptVarType(ParamType):
+    def shell_complete(self, ctx, param, incomplete):
+        scripts = config_handler.get_scripts()
+        items = [(name, "") for name in scripts]
+        # For now, there will be no help
+        for value, help in items:
+            if incomplete in value or incomplete in help:
+                yield (CompletionItem(value, help=help))
 
-    return out
+
+class EnvVarType(ParamType):
+    def shell_complete(self, ctx, param, incomplete):
+        return [
+            CompletionItem(name)
+            for name in os.environ
+            if name.startswith(incomplete)
+        ]
+
+
+# No parece posible autocompletar con paths empezando en ~ o en / o en ../
+# FIXME
+class PathVarType(ParamType):
+    def shell_complete(self, ctx, param, incomplete):
+        import os
+
+        return [CompletionItem(path) for path in os.listdir("/")]

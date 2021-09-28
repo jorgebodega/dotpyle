@@ -86,12 +86,11 @@ def dotfile(
     repo_handler.commit(commit_message)
 
     if not not_install:
-        local_handler.install_profile(name, profile)
-        local_handler.save(local_handler.config)
-
         config_handler.install_key(
             key_name=name,
             profile_name=profile,
             process_pre=False,
             process_post=False,
         )
+        local_handler.install_profile(name, profile)
+        local_handler.save(local_handler.config)

@@ -67,11 +67,16 @@ def get_dotpyle_readme_path() -> str:
     return path.join(get_default_path(), constants.README_NAME)
 
 
-def get_script_path(script_name) -> str:
-    return (
-        path.join(get_default_path(), constants.SCRIPTS_FOLDER, script_name)
-        + constants.SCRIPTS_EXTENSION
-    )
+def get_scripts_path() -> str:
+    return path.join(get_default_path(), constants.SCRIPTS_FOLDER)
+
+
+def get_script_path(filename: str) -> str:
+    return path.join(get_default_path(), constants.SCRIPTS_FOLDER, filename)
+
+
+def get_basename(full_path: str) -> str:
+    return path.basename(full_path)
 
 
 if __name__ == "__main__":

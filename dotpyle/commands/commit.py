@@ -1,17 +1,7 @@
 import click
-import os
-from git.index import base
-from dotpyle.services.repo_handler import RepoHandler
-from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.utils.path import get_source_and_link_path
 
-# from dotpyle.decorators import init_handlers
-
-from os import walk
-from os import listdir
-from os.path import isfile, join, isdir
-import glob, itertools
+from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 
 
 @click.command()
@@ -23,33 +13,40 @@ import glob, itertools
     help="Program dotfiles paths starting from root path",
 )
 @click.option("--message", "-m", help="commit message")
+@pass_config_handler
+@pass_repo_handler
 # TODO: make path option name dependant
-def commit(name: str, profile: str, path: list[str], message: str):
-    handler = FileHandler()
-    parser = ConfigHandler(config=handler.config)
-    repo = RepoHandler()
-    # if name == "" and profile == "":
-    # key_paths = handler.get_key_paths()
-    # repo.add(path=key_paths)
-    # print(key_paths)
+def commit(
+    repo_handler,
+    config_handler,
+    name: str,
+    profile: str,
+    path: list[str],
+    message,
+):
+
+    if not message:
+        print("TODO: open default editor")
 
     # 1. Add files based on parameters
     if name == "":
-        for name, profiles in parser.get_names_and_profiles():
+        for name, profiles in config_handler.get_names_and_profiles():
             for prof in profiles:
                 if profile == "" or profile == prof:
-                    for source in parser.get_profile_paths(name, prof):
-                        repo.add(paths=source)
+                    for source in config_handler.get_profile_paths(name, prof):
+                        repo_handler.add(paths=source)
 
     else:
         print("One name")
         # Expand path tuple to list
         paths = [p for p in path]
-        for prof in parser.get_profiles_for_name(name):
+        for prof in config_handler.get_profiles_for_name(name):
             if profile == "" or profile == prof:
-                for source, _ in parser.get_calculated_paths(name, profile):
+                for source, _ in config_handler.get_calculated_paths(
+                    name, profile
+                ):
                     if profile == "" or paths == [] or source in paths:
-                        repo.add(paths=source)
+                        repo_handler.add(paths=source)
 
     # 2. Proceed with commit
-    repo.commit(message)
+    repo_handler.commit(message)

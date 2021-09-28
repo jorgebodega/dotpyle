@@ -12,8 +12,8 @@ from dotpyle.commands.checkout import checkout
 from dotpyle.commands.push import push
 from dotpyle.commands.pull import pull
 from dotpyle.commands.switch import switch
-from dotpyle.commands.script import script
 from dotpyle.commands.shell import shell
+from dotpyle.commands.run import run
 
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.services.repo_handler import RepoHandler
@@ -53,7 +53,9 @@ def dotpyle(ctx=None, verbose=False):
     ctx.meta[constants.LOGGER_PROVIDER] = logger
     ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
     ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
-    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(logger=logger)
+    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(
+        logger=logger
+    )
 
 
 # Add commands to group
@@ -72,8 +74,7 @@ dotpyle.add_command(config)
 dotpyle.add_command(edit)
 dotpyle.add_command(ls)
 dotpyle.add_command(shell)
-
-dotpyle.add_command(script)
+dotpyle.add_command(run)
 
 
 @dotpyle.command()

@@ -19,7 +19,9 @@ from dotpyle.utils.path import (
     get_source_and_link_path,
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
+    get_scripts_path,
 )
+import dotpyle.utils.path as paths
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.exceptions import ConfigHandlerException
 
@@ -51,6 +53,30 @@ class ConfigHandler:
             return self._config["dotfiles"]
         raise ConfigHandlerException(
             "Dotpyle database empty, no dotfiles found"
+        )
+
+    def get_scripts(self) -> dict[str, str]:
+        """
+        :return:
+            Current scripts structure
+        :raise ConfigHandlerException:
+            If there is no scrpts configured"""
+
+        if "scripts" in self._config:
+            return self._config["scripts"]
+
+        raise ConfigHandlerException("Dotpyle database empty, no scripts found")
+
+    def get_script_path(self, script_name) -> str:
+        """
+        :return:
+        :raise ConfigHandlerException:
+            If name does not exist on Dotpyle database"""
+        scripts = self.get_scripts()
+        if script_name in scripts:
+            return paths.get_script_path(scripts[script_name])
+        raise ConfigHandlerException(
+            'Script "{}" does not exist'.format(script_name)
         )
 
     def get_names(self) -> list[str]:
@@ -284,3 +310,34 @@ class ConfigHandler:
     # shutil.move(source, link_name)
     # print("Unlinking {}".format(link_name))
     # else:
+
+    def add_script(self, script_path: str, name: str):
+        scripts_directory_path = paths.get_scripts_path()
+        script_filename = paths.get_basename(script_path)
+        destination_script_path = paths.get_script_path(script_filename)
+        print(scripts_directory_path, script_path, destination_script_path)
+
+        try:
+            scripts = self.get_scripts()
+        except ConfigHandlerException:
+            os.makedirs(scripts_directory_path, exist_ok=True)
+            scripts = {}
+            self.config["scripts"] = scripts
+
+        scripts[name] = script_filename
+
+        try:
+            # Move existing path to dotpyle repo
+            # shutil.move does not work with symlinks
+            shutil.copy(script_path, destination_script_path)
+            os.remove(script_path)
+            # Symlink path in order to start tracking changes
+            os.symlink(
+                destination_script_path, script_path
+            )  # delegate this as optional up
+        except shutil.SameFileError as exc:
+            # TODO
+            print("Error >> This file is already been managed by Dotpyle")
+
+        # Return paths to be added
+        return destination_script_path

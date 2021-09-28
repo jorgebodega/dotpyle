@@ -36,5 +36,14 @@
         }
       }
     }
+  },
+
+  "scripts": {
+    "required": false,
+    "type": "dict",
+    "keysrules": { "type": "string", "regex": "[a-z,0-9]+" },
+    "valuesrules": {
+      "type": "string"
+    }
   }
 }
