@@ -10,8 +10,9 @@ from dotpyle.decorators.pass_config_handler import pass_config_handler
 # This is awful: should be done with inyection
 from dotpyle.services.logger import Logger
 
+logger = Logger(verbose=False)
 config_handler = ConfigHandler(
-    config=FileHandler(logger=Logger(verbose=False)).config
+    config=FileHandler(logger=logger).config, logger=logger
 )
 
 
@@ -56,6 +57,7 @@ class EnvVarType(ParamType):
 
 # No parece posible autocompletar con paths empezando en ~ o en / o en ../
 # FIXME
+# type=click.Path(exists=True, resolve_path=True, allow_dash=True)
 class PathVarType(ParamType):
     def shell_complete(self, ctx, param, incomplete):
         import os

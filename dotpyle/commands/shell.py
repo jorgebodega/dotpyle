@@ -1,5 +1,4 @@
 import click
-from dotpyle.services.print_handler import warning, ok
 from dotpyle.utils.path import get_default_path
 from os import getenv, environ, read, write, setsid
 import sys
@@ -8,18 +7,20 @@ import termios
 import tty
 import pty
 from subprocess import Popen
+from dotpyle.decorators.pass_logger import pass_logger
 
 
 @click.command()
-def shell():
-    """Open shell inside Dotpyle repo"""
+@pass_logger
+def shell(logger):
+    """Open shell inside Dotpyle repository"""
     path = get_default_path()
     shell = getenv("SHELL", "/bin/sh")
     prompt = "(Dotpyle) repo [{}] > ".format(path)
     new_env = environ
     new_env["PS1"] = prompt
 
-    warning(
+    logger.alert(
         "Opening shell session on Dotpyle git repo, make sure you understand"
         "what you are doing.\nType exit or <c-d> to return"
     )
@@ -58,4 +59,4 @@ def shell():
     # restore tty settings back
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_tty)
 
-    ok("Shell session end")
+    logger.success("Shell session end")

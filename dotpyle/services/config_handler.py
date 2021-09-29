@@ -10,7 +10,6 @@ from dotpyle.utils.path import (
     get_dotfiles_path,
     un_expanduser,
 )
-from dotpyle.services.print_handler import error, warning, ok
 
 import os
 import shutil
@@ -24,6 +23,7 @@ from dotpyle.utils.path import (
 import dotpyle.utils.path as paths
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.exceptions import ConfigHandlerException
+from dotpyle.services.logger import Logger
 
 
 class ConfigHandler:
@@ -31,7 +31,8 @@ class ConfigHandler:
     Methods to access and process Dotpyle configuration
     """
 
-    def __init__(self, config):
+    def __init__(self, config, logger: Logger):
+        self.logger = logger
         self.checker = ConfigChecker()
         self._config = config
 
@@ -211,7 +212,7 @@ class ConfigHandler:
             print(">>> ln -s {0} {1}".format(source, link_name))
             if os.path.isfile(link_name):
                 # TODO throw error or give user possibility to replace and self.con[name] ==is
-                error("{0} already exist".format(link_name))
+                self.logger.error("{0} already exist".format(link_name))
             else:
                 os.symlink(source, link_name)
 
@@ -224,7 +225,7 @@ class ConfigHandler:
                 name, profile, root, path
             )
             os.remove(link_name)
-            ok(
+            self.logger.log(
                 "Removing {} from system (to recover, `dotpyle install -p {}"
                 " {}`)".format(link_name, profile, name)
             )

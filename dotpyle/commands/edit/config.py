@@ -7,10 +7,12 @@ from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.file_handler import FileHandler
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.utils import constants
+from dotpyle.decorators.pass_logger import pass_logger
 
 
 @click.command()
-def config():
+@pass_logger
+def config(logger):
     dotpyle_path = get_configuration_path()
     temp_config_file = path.join(
         gettempdir(), constants.DOTPYLE_CONFIG_FILE_NAME_TEMP
@@ -20,8 +22,8 @@ def config():
     # Open user default editor
     click.edit(filename=temp_config_file)
 
-    handler = FileHandler(path=temp_config_file)
-    parser = ConfigHandler(config=handler.config)
+    handler = FileHandler(path=temp_config_file, logger=logger)
+    parser = ConfigHandler(config=handler.config, logger=logger)
 
     errors = parser.check_config()
     if errors == {}:

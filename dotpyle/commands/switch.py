@@ -1,25 +1,36 @@
 import click
-from dotpyle.services.file_handler import LocalFileHandler
-from dotpyle.services.print_handler import error, ok
+from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.decorators.pass_local_handler import pass_local_handler
+from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
 from dotpyle.decorators.pass_config_handler import pass_config_handler
 
 
 @click.command()
-@pass_config_handler
 @click.argument("name", type=DotfileNamesVarType())
 @click.argument("profile", type=ProfileVarType())
-def switch(parser, name, profile):
+@pass_local_handler
+@pass_config_handler
+@pass_logger
+def switch(logger, config_handler, local_handler, name, profile):
     """Change profile for a given program"""
 
-    local_handler = LocalFileHandler()
     if local_handler.is_profile_installed(name, profile):
-        error("Profile {} already installed for {}".format(profile, name))
+        logger.failure(
+            "Profile {} already installed for {}".format(profile, name)
+        )
+        return
+    old_profile = local_handler.get_installed_profile(name)
+
+    if profile not in config_handler.get_profiles_for_name(name):
+        # TODO: suggest a profile creation with current changes
+        logger.failure(
+            "'{}' profile does not exist for '{}'".format(profile, name)
+        )
         return
 
-    parser.uninstall_paths(name, profile)
-
-    parser.install_key(
+    config_handler.uninstall_paths(name, profile)
+    config_handler.install_key(
         key_name=name,
         profile_name=profile,
         process_pre=False,
@@ -27,4 +38,8 @@ def switch(parser, name, profile):
     )
     local_handler.install_profile(name, profile)
     local_handler.save()
-    ok("{} dotfiles installed".format(name))
+    logger.success(
+        "Switched profile '{}' to '{}' for {} ".format(
+            old_profile, profile, name
+        )
+    )

@@ -1,8 +1,8 @@
 import click
 from dotpyle.decorators.pass_config_handler import pass_config_handler
 from dotpyle.decorators.pass_local_handler import pass_local_handler
-from dotpyle.services.print_handler import error
-from dotpyle.utils.path import get_source_and_link_path, un_expanduser
+from dotpyle.decorators.pass_logger import pass_logger
+from dotpyle.utils.path import un_expanduser
 import os
 import pathlib
 import sys
@@ -15,24 +15,17 @@ from rich.tree import Tree
 
 from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
 
-# TODO: flag all
+
 @click.command()
-@pass_local_handler
-@pass_config_handler
 @click.argument("name", required=False, type=DotfileNamesVarType())
-@click.option(
-    # "--profile", "-p", help="profile name", shell_complete=get_profiles
-    "--profile",
-    "-p",
-    help="profile name",
-    type=ProfileVarType()
-    # "--profile", "-p", help="profile name", type=click.Path(exists=True, resolve_path=True, allow_dash=True)
-    # "--profile", "-p", help="profile name"
-)
+@click.option("--profile", "-p", help="profile name", type=ProfileVarType())
 @click.option(
     "--all", "-a", is_flag=True, help="list all dotfiles (linked or not)"
 )
-def ls(parser, local_handler, name, profile, all):
+@pass_local_handler
+@pass_config_handler
+@pass_logger
+def ls(logger, parser, local_handler, name, profile, all):
     """
     List dotfiles managed by Dotpyle
     """
@@ -57,7 +50,7 @@ def ls(parser, local_handler, name, profile, all):
                             tree, name, profile, profiles[profile], parser
                         )
                     else:
-                        print(
+                        logger.failure(
                             "Profile {} in {} does not exist".format(
                                 profile, name
                             )
@@ -75,7 +68,9 @@ def ls(parser, local_handler, name, profile, all):
             # Filtering only by profiles
             if profile:
                 if not profile in parser.get_profiles():
-                    error('Profile "{}" does not exist'.format(profile))
+                    logger.failure(
+                        'Profile "{}" does not exist'.format(profile)
+                    )
 
                 for program_name, profiles in dotfiles.items():
                     if profile in profiles:
@@ -97,7 +92,7 @@ def ls(parser, local_handler, name, profile, all):
     else:
         # TODO filter
         installed_profiles = local_handler.get_installed()
-        print(installed_profiles)
+        logger.log(str(installed_profiles))
         for name, profile_name in installed_profiles.items():
             print_dotfiles(tree, name, profile_name, None, parser)
 

@@ -22,7 +22,6 @@ from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.logger import Logger
 
 from dotpyle.utils import constants
-from dotpyle.services.print_handler import error
 from dotpyle.exceptions import DotpyleException
 
 
@@ -46,16 +45,20 @@ def dotpyle(ctx=None, verbose=False):
     automate task with hooks, etc.
     """
     logger = Logger(verbose=verbose)
-    handler = FileHandler(logger=logger)
-    parser = ConfigHandler(config=handler.config)
-    ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
-    ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
-    ctx.meta[constants.LOGGER_PROVIDER] = logger
-    ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
-    ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
-    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(
-        logger=logger
-    )
+    try:
+        handler = FileHandler(logger=logger)
+        parser = ConfigHandler(config=handler.config, logger=logger)
+        ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
+        ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
+        ctx.meta[constants.LOGGER_PROVIDER] = logger
+        ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
+        ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
+        ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(
+            logger=logger
+        )
+    except Exception as e:
+        logger.error(e)
+        # exit(e.code)
 
 
 # Add commands to group
@@ -93,11 +96,7 @@ def test(
 
 
 def main():
-    try:
-        dotpyle()
-    except Exception as e:
-        error(e)
-        # exit(e.code)
+    dotpyle()
 
 
 if __name__ == "__main__":
