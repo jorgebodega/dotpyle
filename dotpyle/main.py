@@ -8,7 +8,6 @@ from dotpyle.commands.config import config
 from dotpyle.commands.link import link
 from dotpyle.commands.unlink import unlink
 from dotpyle.commands.commit import commit
-from dotpyle.commands.checkout import checkout
 from dotpyle.commands.push import push
 from dotpyle.commands.pull import pull
 from dotpyle.commands.switch import switch
@@ -45,20 +44,16 @@ def dotpyle(ctx=None, verbose=False):
     automate task with hooks, etc.
     """
     logger = Logger(verbose=verbose)
-    try:
-        handler = FileHandler(logger=logger)
-        parser = ConfigHandler(config=handler.config, logger=logger)
-        ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
-        ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
-        ctx.meta[constants.LOGGER_PROVIDER] = logger
-        ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
-        ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
-        ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(
-            logger=logger
-        )
-    except Exception as e:
-        logger.error(e)
-        # exit(e.code)
+    handler = FileHandler(logger=logger)
+    parser = ConfigHandler(config=handler.config, logger=logger)
+    ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
+    ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
+    ctx.meta[constants.LOGGER_PROVIDER] = logger
+    ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
+    ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
+    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(
+        logger=logger
+    )
 
 
 # Add commands to group
@@ -71,7 +66,6 @@ dotpyle.add_command(add)
 dotpyle.add_command(commit)
 dotpyle.add_command(push)
 dotpyle.add_command(pull)
-dotpyle.add_command(checkout)
 
 dotpyle.add_command(config)
 dotpyle.add_command(edit)
@@ -96,7 +90,12 @@ def test(
 
 
 def main():
-    dotpyle()
+    try:
+        dotpyle()
+    except DotpyleException as e:
+        logger = Logger(verbose=True)
+        logger.failure(e)
+        exit(e.code)
 
 
 if __name__ == "__main__":

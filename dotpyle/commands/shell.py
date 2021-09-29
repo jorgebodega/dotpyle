@@ -8,11 +8,12 @@ import tty
 import pty
 from subprocess import Popen
 from dotpyle.decorators.pass_logger import pass_logger
+from dotpyle.services.logger import Logger
 
 
 @click.command()
 @pass_logger
-def shell(logger):
+def shell(logger: Logger):
     """Open shell inside Dotpyle repository"""
     path = get_default_path()
     shell = getenv("SHELL", "/bin/sh")

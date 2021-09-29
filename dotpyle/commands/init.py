@@ -53,7 +53,7 @@ from dotpyle.utils.url import get_default_url
     ),
 )
 # TODO copy gitignore template to default_path
-def init(url, protocol, token, branch, force):
+def init(url: str, protocol, token: str, branch: str, force: bool):
     """
     This command will clone an existing Git repository on
     ${XDG_CONFIG_HOME}/dotpyle and will check if this repo contains a

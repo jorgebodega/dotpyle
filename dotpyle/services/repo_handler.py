@@ -59,3 +59,18 @@ class RepoHandler:
 
     def pull(self):
         self.repo.git.pull()
+
+    def check_changes(self, path):
+        diff_index = self.repo.index.diff(None, path)
+        print(self.repo.git.diff(path))
+        len(list(diff_index.iter_change_type("M"))) > 0
+
+        # for diff_item in diff_index.iter_change_type('M'):
+        # print(diff_item)
+        # print("A blob:\n{}".format(diff_item.a_blob.data_stream.read().decode('utf-8')))
+        # print("B blob:\n{}".format(diff_item.b_blob.data_stream.read().decode('utf-8')))
+        # return self.repo.git.status()
+        # return self.repo.index.diff(self.repo.head.commit)
+        # return self.repo.head.commit.diff()
+
+        # for diff in self.repo.head.commit.diff('HEAD~1'):

@@ -5,6 +5,8 @@ from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.file_handler import FileHandler
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.services.logger import Logger
+from dotpyle.services.config_handler import ConfigHandler
 
 
 @click.group()
@@ -21,7 +23,7 @@ def config():
 )
 @pass_config_handler
 @pass_logger
-def check(logger, config_handler, path):
+def check(logger: Logger, config_handler: ConfigHandler, path: str):
     path_file = get_configuration_path()
     print("Checking {}...".format(path_file))
 

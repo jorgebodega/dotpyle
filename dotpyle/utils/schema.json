@@ -41,7 +41,7 @@
   "scripts": {
     "required": false,
     "type": "dict",
-    "keysrules": { "type": "string", "regex": "[a-z,0-9]+" },
+    "keysrules": { "type": "string"},
     "valuesrules": {
       "type": "string"
     }

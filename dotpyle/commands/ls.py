@@ -1,19 +1,16 @@
 import click
+import os
+import rich
+from rich.text import Text
+from rich.tree import Tree
+from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
 from dotpyle.decorators.pass_config_handler import pass_config_handler
 from dotpyle.decorators.pass_local_handler import pass_local_handler
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.utils.path import un_expanduser
-import os
-import pathlib
-import sys
-
-import rich
-from rich.filesize import decimal
-from rich.markup import escape
-from rich.text import Text
-from rich.tree import Tree
-
-from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
+from dotpyle.services.logger import Logger
+from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.file_handler import LocalFileHandler
 
 
 @click.command()
@@ -25,12 +22,19 @@ from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
 @pass_local_handler
 @pass_config_handler
 @pass_logger
-def ls(logger, parser, local_handler, name, profile, all):
+def ls(
+    logger: Logger,
+    config_handler: ConfigHandler,
+    local_handler: LocalFileHandler,
+    name: str,
+    profile: str,
+    all: bool,
+):
     """
     List dotfiles managed by Dotpyle
     """
 
-    dotfiles = parser.get_dotfiles()
+    dotfiles = config_handler.get_dotfiles()
 
     tree = Tree(
         "🌲 [b green]dotfiles",
@@ -47,7 +51,11 @@ def ls(logger, parser, local_handler, name, profile, all):
                 if profile:
                     if profile in profiles:
                         print_dotfiles(
-                            tree, name, profile, profiles[profile], parser
+                            tree,
+                            name,
+                            profile,
+                            profiles[profile],
+                            config_handler,
                         )
                     else:
                         logger.failure(
@@ -60,14 +68,14 @@ def ls(logger, parser, local_handler, name, profile, all):
                 else:
                     for profile_name, content in profiles.items():
                         print_dotfiles(
-                            tree, name, profile_name, content, parser
+                            tree, name, profile_name, content, config_handler
                         )
 
         # Get all names
         else:
             # Filtering only by profiles
             if profile:
-                if not profile in parser.get_profiles():
+                if not profile in config_handler.get_profiles():
                     logger.failure(
                         'Profile "{}" does not exist'.format(profile)
                     )
@@ -79,14 +87,18 @@ def ls(logger, parser, local_handler, name, profile, all):
                             program_name,
                             profile,
                             profiles[profile],
-                            parser,
+                            config_handler,
                         )
 
             else:
                 for program_name, profiles in dotfiles.items():
                     for profile_name, content in profiles.items():
                         print_dotfiles(
-                            tree, program_name, profile_name, content, parser
+                            tree,
+                            program_name,
+                            profile_name,
+                            content,
+                            config_handler,
                         )
 
     else:
@@ -94,7 +106,7 @@ def ls(logger, parser, local_handler, name, profile, all):
         installed_profiles = local_handler.get_installed()
         logger.log(str(installed_profiles))
         for name, profile_name in installed_profiles.items():
-            print_dotfiles(tree, name, profile_name, None, parser)
+            print_dotfiles(tree, name, profile_name, None, config_handler)
 
     rich.print(tree)
 

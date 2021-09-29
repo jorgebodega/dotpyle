@@ -5,14 +5,14 @@ from tempfile import gettempdir
 from dotpyle.utils.path import get_configuration_path, get_dotpyle_readme_path
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.utils import constants
 from dotpyle.decorators.pass_logger import pass_logger
+from dotpyle.services.logger import Logger
 
 
 @click.command()
 @pass_logger
-def config(logger):
+def config(logger: Logger):
     dotpyle_path = get_configuration_path()
     temp_config_file = path.join(
         gettempdir(), constants.DOTPYLE_CONFIG_FILE_NAME_TEMP

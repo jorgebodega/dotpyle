@@ -213,6 +213,9 @@ class ConfigHandler:
             if os.path.isfile(link_name):
                 # TODO throw error or give user possibility to replace and self.con[name] ==is
                 self.logger.error("{0} already exist".format(link_name))
+                raise ConfigHandlerException(
+                    "{0} already exist".format(link_name)
+                )
             else:
                 os.symlink(source, link_name)
 

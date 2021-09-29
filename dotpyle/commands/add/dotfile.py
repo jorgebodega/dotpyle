@@ -5,6 +5,11 @@ from dotpyle.decorators.pass_local_handler import pass_local_handler
 from dotpyle.decorators.pass_file_handler import pass_file_handler
 from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 from dotpyle.decorators.pass_logger import pass_logger
+from dotpyle.services.logger import Logger
+from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.services.file_handler import LocalFileHandler
+from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.repo_handler import RepoHandler
 
 # FIXME: when config file is empty, an error is returned
 # TypeError: argument of type 'NoneType' is not iterable
@@ -47,18 +52,18 @@ from dotpyle.decorators.pass_logger import pass_logger
 @pass_logger
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
 def dotfile(
-    logger,
-    repo_handler,
-    config_handler,
-    local_handler,
-    file_handler,
-    name,
-    profile,
-    root,
-    path,
-    pre,
-    post,
-    not_install,
+    logger: Logger,
+    repo_handler: RepoHandler,
+    config_handler: ConfigHandler,
+    local_handler: LocalFileHandler,
+    file_handler: FileHandler,
+    name: str,
+    profile: str,
+    root: str,
+    path: list[str],
+    pre: list[str],
+    post: list[str],
+    not_install: bool,
 ):
     """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
     print(name, profile, root, path, pre, post)
