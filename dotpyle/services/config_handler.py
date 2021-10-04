@@ -345,3 +345,10 @@ class ConfigHandler:
 
         # Return paths to be added
         return destination_script_path
+
+    def duplicate_profile(
+        self, name: str, current_profile: str, new_profile: str
+    ):
+        self.get_profile(name, current_profile)
+
+        pass

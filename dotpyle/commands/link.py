@@ -35,6 +35,7 @@ def link(
     no_post: bool,
     no_hooks: bool,
 ):
+    """Link dotfiles for a given program and profile (and optionally execute hooks)"""
 
     if local_handler.is_profile_installed(name, profile):
         logger.failure(

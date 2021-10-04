@@ -100,9 +100,10 @@ class LocalFileHandler(BasicFileHandler):
 
     def get_installed_profile(self, name):
         installed = self.get_installed()
-        if name in installed:
-            return installed[name]
-        return None  # maybe raise exception
+        return installed.get(name, None)
+        # if name in installed:
+        # return installed[name]
+        # return None  # maybe raise exception
 
     def get_installed(self):
         return self.config["installed"]

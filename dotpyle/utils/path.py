@@ -51,6 +51,9 @@ def get_dotpyle_profile_path(name: str, profile: str) -> str:
     return path.join(get_dotpyle_name_path(name), profile)
 
 
+def get_link_path(root, dotfile_path):
+    return path.expanduser(path.join(root, dotfile_path))
+
 def get_source_and_link_path(
     name: str, profile: str, root: str, dotfile_path: str
 ) -> tuple[str, str]:

@@ -17,11 +17,24 @@ class Logger:
         if self.verbose:
             self.console.print(text)
 
-    def log(self, msg) -> None:
+    def _print(self, *args) -> None:
+        """
+        Prints the message.
+        """
+        if self.verbose:
+            self.console.print(*args)
+
+    # def log(self, msg) -> None:
+    # """
+    # Prints a message to the console.
+    # """
+    # self.__print(Text(msg))
+
+    def log(self, *msg) -> None:
         """
         Prints a message to the console.
         """
-        self.__print(Text(msg))
+        self._print(*msg)
 
     def warning(self, msg) -> None:
         """

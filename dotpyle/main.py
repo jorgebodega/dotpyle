@@ -81,12 +81,11 @@ def test(
     logger: Logger,
     repo_handler: RepoHandler,
 ):
-    repo_handler.clone(
-        remote_url="https://github.com/jorgebodega/Dotfiles.git",
-        force=True,
-    )
-    file_handler = FileHandler(logger=logger)
-    print(file_handler.read())
+    from dotpyle.services.config_manager import ConfigManager
+
+    # file_handler = FileHandler(logger=logger)
+    # print(file_handler.read())
+    config_manager = ConfigManager(logger=logger)
 
 
 def main():
