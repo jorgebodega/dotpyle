@@ -1,11 +1,9 @@
 import click
-from dotpyle.decorators.pass_config_handler import pass_config_handler
-from dotpyle.decorators.pass_local_handler import pass_local_handler
+from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.utils.autocompletion import ProfileVarType, DotfileNamesVarType
 from dotpyle.services.logger import Logger
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.file_handler import LocalFileHandler
+from dotpyle.services.config_manager import ConfigManager
 
 
 @click.command()
@@ -17,13 +15,11 @@ from dotpyle.services.file_handler import LocalFileHandler
     help="profile name",
     type=ProfileVarType(),
 )
-@pass_local_handler
-@pass_config_handler
+@pass_config_manager
 @pass_logger
 def unlink(
     logger: Logger,
-    config_handler: ConfigHandler,
-    local_handler: LocalFileHandler,
+    manager: ConfigManager,
     name: str,
     profile: str,
 ):
@@ -32,13 +28,12 @@ def unlink(
     be removed from Dotpyle repository
     """
 
-    if not local_handler.is_profile_installed(name, profile):
+    profile_data = manager.get_dotfile(name).get_profile(profile)
+    if not profile_data.linked:
         logger.failure(
             "Profile {} is not installed for {}".format(profile, name)
         )
         return
 
-    config_handler.uninstall_paths(name, profile)
-    local_handler.uninstall_profile(name)
-    local_handler.save(local_handler.config)
+    profile_data.linked = False
     logger.success("{} dotfiles uninstalled".format(name))

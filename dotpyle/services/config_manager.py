@@ -1,187 +1,18 @@
 import os
-from typing import Union, Any
+from typing import Any
 from dotpyle.utils import path
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.services.logger import Logger
 from dotpyle.exceptions import ConfigHandlerException
 
 from rich.tree import Tree
-from rich.text import Text
-
-PathLike = Union[str, os.PathLike]
-ShellCommand = str
 
 
-class Profile(object):
-    __slots__ = (
-        "_dotfile_name",
-        "_profile_name",
-        "_paths",
-        "_post",
-        "_pre",
-        "_root",
-        "_is_linked",
-    )
-
-    def __init__(
-        self,
-        dotfile_name: str,
-        profile_name: str,
-        paths: list[str],
-        root: PathLike = "~",
-        pre: list[ShellCommand] = [],
-        post: list[ShellCommand] = [],
-    ):
-        self._dotfile_name = dotfile_name
-        self._profile_name = profile_name
-        self._paths = paths
-        self._root = root
-        self._post = post
-        self._pre = pre
-        self._is_linked = False  # Set false by default (checked later)
-
-    def __str__(self) -> str:
-        return "\t\tPaths: {}\n\t-Root: {} TODO".format(self._paths, self._root)
-
-    def _get_tree(self) -> Tree:
-        tree = Tree(f"[bold blue]:open_file_folder: [link file://{self._profile_name}]{self._profile_name}")
-        for _path in self._paths:
-            link_path = path.un_expanduser(path.get_link_path(self._root, _path))
-            text_filename = Text(_path, "green")
-            text_filename.stylize(f"link file://{_path}")
-            text_filename += Text(" --> ", "blink yellow")
-            text_filename += Text(link_path, "yellow")
-            tree.add(Text("📄 ") + text_filename)
-        return tree
-
-    @property
-    def profile_name(self):
-        return self._profile_name
-
-    @profile_name.setter
-    def profile_name(self, profile_name):
-        self._profile_name = profile_name
-
-    @property
-    def paths(self) -> list[str]:
-        return self._paths
-
-    @paths.setter
-    def paths(self, paths: list[str]) -> None:
-        self._paths = paths
-
-    @property
-    def linked(self) -> bool:
-        return self._is_linked
-
-    @linked.setter
-    def linked(self, linked: bool):
-        self._is_linked = linked
-
-    def _serialize(self):
-        return {
-            "paths": self._paths,
-            "root": self._root,
-            "pre": self._pre,
-            "post": self._post,
-        }
-
-class Script(object):
-    """Script class to manage all relation with the capacity of Dotpyle to
-    store, track and execute scripts"""
-
-    __slots__ = ("_alias", "_filename")
-
-    def __init__(self, alias: str, filename: str) -> None:
-        """Initialize script object to be managed by Dotpyle"""
-        self._alias = alias
-        self._filename = filename
-
-    @property
-    def alias(self) -> str:
-        return self._alias
-
-    @alias.setter
-    def alias(self, alias):
-        self._alias = alias
-
-    @property
-    def filename(self) -> str:
-        return self._filename
-
-    @filename.setter
-    def filename(self, filename):
-        self._filename = filename
-
-    def get_path(self) -> PathLike:
-        """:return: filename full path"""
-        return path.get_script_path(self._filename)
-
-    def __str__(self) -> str:
-        return "Script: {} located on {}".format(self._alias, self.get_path())
-
-    def _serialize(self):
-        return self._filename
-        # return {self._alias: self._filename}
-
-
-class Dotfile(object):
-    __slots__ = (
-        "_program_name",
-        "_profiles",
-        "_linked_profile",
-    )
-
-    def __init__(
-        self,
-        program_name: str,
-        profiles: dict[str, Profile],
-    ):
-        self._program_name = program_name
-        self._profiles = profiles
-        self._linked_profile = None
-
-    @property
-    def program_name(self):
-        return self._program_name
-
-    @program_name.setter
-    def program_name(self, program_name):
-        self._program_name = program_name
-
-    @property
-    def linked_profile(self):
-        return self._linked_profile
-
-    @linked_profile.setter
-    def linked_profile(self, profile_name):
-        if profile_name in self._profiles:
-            profile = self._profiles[profile_name]
-            # Set linked profile to internal profile
-            profile.linked = True
-            self._linked_profile = profile
-
-    def __str__(self) -> str:
-        return "Program: {}\nProfiles:\n{}\nIntalled profile: {}".format(
-            self._program_name, *self._profiles.values(), self._linked_profile
-        )
-
-    def _get_tree(self) -> Tree:
-        tree = Tree(
-            # f"[bold magenta]:open_file_folder: [link file://{self._program_name}]{self._program_name}"
-            f"[bold magenta]:open_file_folder: {self._program_name} {'[bold green][LINKED]' if self._linked_profile else ''}"
-        )
-        for profile in self._profiles.values():
-            tree.add(profile._get_tree())
-        return tree
-
-    def _serialize(self):
-        return {
-            self._program_name: {
-                profile_name: profile_data._serialize()
-                for profile_name, profile_data in self._profiles.items()
-            }
-        }
+from dotpyle.objects.base import PathLike
+from dotpyle.objects.action import BaseAction
+from dotpyle.objects.script import Script
+from dotpyle.objects.profile import Profile
+from dotpyle.objects.dotfile import Dotfile
 
 
 class ConfigManager:
@@ -209,6 +40,15 @@ class ConfigManager:
         self._dotfiles: dict[str, Dotfile] = {}
         self._load_config()
 
+    def __del__(self):
+        self._run_pending_actions()
+        try:
+            self._save_config()
+            self._logger.log("Config file saved successfully")
+        except:
+            self._rollback_actions()
+            self._logger.failure("Error... TODO")
+
     def _load_config(self) -> None:
         """Read dotpyle.yml config file and creates a OOP mapping of all fields"""
         self._load_general_config()
@@ -216,9 +56,9 @@ class ConfigManager:
         """Read dotpyle.local.yml config file and set which dotfiles are linked"""
         self._load_local_config()
 
-        self._logger.log(*self._dotfiles.values())
-        for dotfile in self._dotfiles.values():
-            self._logger.log(dotfile._get_tree())
+        # self._logger.log(*self._dotfiles.values())
+        # for dotfile in self._dotfiles.values():
+            # self._logger.log(dotfile._get_tree())
 
     def _load_general_config(self) -> None:
         """Read dotpyle.yml config file and creates a OOP mapping of all fields"""
@@ -247,7 +87,7 @@ class ConfigManager:
                             dotfile_name=dotfile_name,
                             profile_name=profile_name,
                             paths=profile_data.get("paths", []),
-                            root=profile_data.get("root", None),
+                            root=profile_data.get("root", '~'),
                             pre=profile_data.get("pre", []),
                             post=profile_data.get("post", []),
                         )
@@ -268,12 +108,13 @@ class ConfigManager:
         version = local_dict.get("version", None)
         if version != 0:
             raise ConfigHandlerException(
-                "Version '{}' of dotfile.local.yml file is currently unsupported"
-                .format(version)
+                "Version '{}' of dotfile.local.yml file is currently"
+                " unsupported".format(version)
             )
         installed_profiles = local_dict.get("installed", {})
         for dotfile, profile in installed_profiles.items():
-            self.get_dotfile(dotfile).linked_profile = profile
+            # self.get_dotfile(dotfile).linked_profile = profile
+            self.get_dotfile(dotfile).get_profile(profile).linked = True
 
     def _get_linked_dotfiles(self) -> list[Dotfile]:
         """Auxiliar mothod to obtain current linked profiles"""
@@ -283,12 +124,14 @@ class ConfigManager:
                 linked_dotfiles.append(dotfile.linked_profile)
         return linked_dotfiles
 
-    def _get_linked_profiles(self) -> dict[str,str]:
+    def _get_linked_profiles(self) -> dict[str, str]:
         """Auxiliar mothod to obtain current linked profiles"""
         linked_profiles = {}
         for dotfile in self._dotfiles.values():
             if dotfile.linked_profile:
-                linked_profiles[dotfile.program_name] = dotfile.linked_profile.profile_name
+                linked_profiles[
+                    dotfile.program_name
+                ] = dotfile.linked_profile.profile_name
         return linked_profiles
 
     def _serialize_general_config(self) -> dict[str, Any]:
@@ -321,10 +164,50 @@ class ConfigManager:
         self._config_file_handler.save(self._serialize_general_config())
         self._local_file_handler.save(self._serialize_local_config())
 
+    def _get_pending_actions(self) -> list[BaseAction]:
+        pending_actions = []
+        for dotfile in self._dotfiles.values():
+            pending_actions.extend(dotfile._get_pending_actions())
+        return pending_actions
+
+    def _rollback_actions(self, actions: list[BaseAction] = None):
+        if not actions:
+            actions = self._get_pending_actions()
+        for action in actions:
+            action.rollback()
+        pass
+
+    def _run_pending_actions(self) -> None:
+        run_actions: list[BaseAction] = []
+        try:
+            for action in self._get_pending_actions():
+                self._logger.log(action)
+                run_actions.append(action)
+                action.run()
+        except:
+            # Rollback executed actions
+            self._rollback_actions(run_actions)
+
+    def query_dotfiles(self, program_name: str) -> list[Dotfile]:
+        match = []
+        if program_name:
+            match = [dotfile_data for dotfile_name, dotfile_data in self._dotfiles.items() if dotfile_name == program_name]
+        else:
+            match.extend(self._dotfiles.values())
+        return match
+
+    # def get_tree(self, program_name: str, profile_name: str, only_linked: bool):
+        # for dotfile in self.query_dotfiles(program_name):
+            # profile_tree = dotfile.get_tree(profile_filter=profile_name, only_linked=only_linked)
+            # if len(profile_tree.children) > 0:
+                # tree.add(dotfile.get_tree(profile_filter=name, only_linked=only_linked))
+
     def get_dotfile(self, program_name: str) -> Dotfile:
         if program_name in self._dotfiles:
             return self._dotfiles[program_name]
-        raise ConfigHandlerException('Dotfile "{}" does not exist'.format(program_name))
+        raise ConfigHandlerException(
+            'Dotfile "{}" does not exist'.format(program_name)
+        )
 
     def edit_dotfile(self, program_name: str):
         pass

@@ -69,6 +69,9 @@ class Logger:
         self.forced_console.print("Success:", style="green bold", end=" ")
         self.forced_console.print(*args, style="")
 
+    def print(self, *args) -> None:
+        self.forced_console.print(*args)
+
     def print_config_errors(self, errors):
         tree = Tree(
             "🌲 [b red]Errors",

@@ -1,11 +1,9 @@
 import click
-from dotpyle.decorators.pass_config_handler import pass_config_handler
-from dotpyle.decorators.pass_local_handler import pass_local_handler
+from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.utils.autocompletion import ProfileVarType, DotfileNamesVarType
 from dotpyle.services.logger import Logger
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.file_handler import LocalFileHandler
+from dotpyle.services.config_manager import ConfigManager
 
 
 @click.command()
@@ -22,13 +20,11 @@ from dotpyle.services.file_handler import LocalFileHandler
 @click.option(
     "--no-hooks", is_flag=True, help="Don't execute pre and post hooks"
 )
-@pass_local_handler
-@pass_config_handler
+@pass_config_manager
 @pass_logger
 def link(
     logger: Logger,
-    config_handler: ConfigHandler,
-    local_handler: LocalFileHandler,
+    manager: ConfigManager,
     name: str,
     profile: str,
     no_pre: bool,
@@ -37,20 +33,15 @@ def link(
 ):
     """Link dotfiles for a given program and profile (and optionally execute hooks)"""
 
-    if local_handler.is_profile_installed(name, profile):
+    profile_data = manager.get_dotfile(name).get_profile(profile)
+    if profile_data.linked:
         logger.failure(
             "Profile {} already installed for {}".format(profile, name)
         )
         return
 
-    process_pre = not (no_pre or no_hooks)
-    process_post = not (no_post or no_hooks)
-    config_handler.install_key(
-        key_name=name,
-        profile_name=profile,
-        process_pre=process_pre,
-        process_post=process_post,
-    )
-    local_handler.install_profile(name, profile)
-    local_handler.save(local_handler.config)
+    profile_data.linked = True
+    profile_data.process_pre = not (no_pre or no_hooks)
+    profile_data.process_post = not (no_post or no_hooks)
+
     logger.success("{} dotfiles installed".format(name))
