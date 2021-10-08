@@ -1,15 +1,13 @@
 import click
 
-from dotpyle.decorators.pass_config_handler import pass_config_handler
-from dotpyle.decorators.pass_local_handler import pass_local_handler
-from dotpyle.decorators.pass_file_handler import pass_file_handler
+from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.services.logger import Logger
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.file_handler import LocalFileHandler
-from dotpyle.services.file_handler import FileHandler
+from dotpyle.services.config_manager import ConfigManager
 from dotpyle.services.repo_handler import RepoHandler
+from dotpyle.objects.dotfile import Dotfile
+from dotpyle.objects.profile import Profile
 
 # FIXME: when config file is empty, an error is returned
 # TypeError: argument of type 'NoneType' is not iterable
@@ -45,18 +43,14 @@ from dotpyle.services.repo_handler import RepoHandler
         " (useful if user wants to install it afterwards, see dotpyle install)"
     ),
 )
-@pass_file_handler
-@pass_local_handler
-@pass_config_handler
+@pass_config_manager
 @pass_repo_handler
 @pass_logger
 # @click.option("--pre-hook", multiple=True,  help="Program dotfiles paths starting from root path")
 def dotfile(
     logger: Logger,
     repo_handler: RepoHandler,
-    config_handler: ConfigHandler,
-    local_handler: LocalFileHandler,
-    file_handler: FileHandler,
+    manager: ConfigManager,
     name: str,
     profile: str,
     root: str,
@@ -71,31 +65,34 @@ def dotfile(
     paths = list(path)
     pre_commands = list(pre)
     post_commands = list(post)
-    added_paths = config_handler.add_dotfile(
-        name,
-        profile,
-        root,
-        paths,
-        pre_hooks=pre_commands,
-        post_hooks=post_commands,
-    )
-    # Save modified dotpyle config file
-    file_handler.save(config_handler.config)
+
+    try:
+        dotfile = manager.get_dotfile(name)
+    except:
+        dotfile = Dotfile(program_name=name)
+
+    print('dotfile')
+    profile_data = Profile(dotfile_name=name, profile_name=profile, paths=paths, root=root, pre=pre_commands, post=post_commands)
+    logger.log(profile_data._get_tree())
+
+    manager.set_dotfile(dotfile.add_profile(profile_data))
+
+
     # When new key is added to dotpyle, a commit should be generated
     # (adding new files), to keep consistency between yaml and repo
 
-    repo_handler.add(added_paths, config_file_changed=True)
-    commit_message = "[dotpyle]: added {} on {} profile on {} program".format(
-        added_paths, profile, name
-    )
-    repo_handler.commit(commit_message)
+    # repo_handler.add(added_paths, config_file_changed=True)
+    # commit_message = "[dotpyle]: added {} on {} profile on {} program".format(
+        # added_paths, profile, name
+    # )
+    # repo_handler.commit(commit_message)
 
-    if not not_install:
-        config_handler.install_key(
-            key_name=name,
-            profile_name=profile,
-            process_pre=False,
-            process_post=False,
-        )
-        local_handler.install_profile(name, profile)
-        local_handler.save(local_handler.config)
+    # if not not_install:
+        # config_handler.install_key(
+            # key_name=name,
+            # profile_name=profile,
+            # process_pre=False,
+            # process_post=False,
+        # )
+        # local_handler.install_profile(name, profile)
+        # local_handler.save(local_handler.config)

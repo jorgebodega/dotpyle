@@ -13,7 +13,7 @@ class Dotfile(object):
     def __init__(
         self,
         program_name: str,
-        profiles: dict[str, Profile],
+        profiles: dict[str, Profile] = {},
     ):
         self._program_name = program_name
         self._profiles = profiles
@@ -74,7 +74,7 @@ class Dotfile(object):
         return matched
 
 
-    def get_tree(self, profile_filter: str, only_linked: bool) -> Tree:
+    def get_tree(self, profile_filter: str = '', only_linked: bool = False) -> Tree:
         tree = Tree(
             f"[bold magenta]:open_file_folder: {self._program_name}"
         )
@@ -91,6 +91,15 @@ class Dotfile(object):
 
     def _get_pending_actions(self) -> list[BaseAction]:
         pending_actions = []
+        # if self._new:
+            # pending_actions.append(mathe)
         for profile in self.profiles.values():
             pending_actions.extend(profile._get_pending_actions())
         return pending_actions
+
+    def add_profile(self, profile: Profile):
+        # TODO validate profile
+        profile.track = True
+        print(profile, profile.track)
+        self._profiles[profile.profile_name] = profile
+        return self

@@ -10,12 +10,15 @@ from dotpyle.services.logger import Logger
 class RepoHandler:
     def __init__(
         self, logger: Logger, local_path: PathLike = get_default_path()
-    ):
+    ) -> None:
         self.logger = logger
 
         self.local_path = local_path
         if path.exists(local_path):
             self.repo = Repo(local_path)
+
+    def __str__(self) -> str:
+        return "RepoHandler tracking {}".format(self.local_path)
 
     def clone(
         self,

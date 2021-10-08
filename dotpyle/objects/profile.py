@@ -1,10 +1,10 @@
-from dotpyle.objects.base import PathLike, ShellCommand
-from dotpyle.objects.action import BaseAction, LinkAction, UnlinkAction, ScriptAction
+import os
+from typing import Any
 from rich.tree import Tree
 from rich.text import Text
 from dotpyle.utils import path
-import os
-from typing import Any
+from dotpyle.objects.base import PathLike, ShellCommand
+from dotpyle.objects.action import BaseAction, LinkAction, UnlinkAction, ScriptAction, RepoAction
 
 
 class Profile(object):
@@ -17,7 +17,8 @@ class Profile(object):
         "_root",
         "_is_linked",
         "_process_pre",
-        "_process_post"
+        "_process_post",
+        "_track",
     )
 
     def __init__(
@@ -28,6 +29,7 @@ class Profile(object):
         root: PathLike = "~",
         pre: list[ShellCommand] = [],
         post: list[ShellCommand] = [],
+        track: bool = False,
     ) -> None:
         self._dotfile_name = dotfile_name
         self._profile_name = profile_name
@@ -35,9 +37,11 @@ class Profile(object):
         self._root = root
         self._post = post
         self._pre = pre
+        # Internals
         self._is_linked = False  # Set false by default (checked later)
         self._process_pre = False
         self._process_post = False
+        self._track = track
 
     def __str__(self) -> str:
         return self._profile_name
@@ -99,6 +103,14 @@ class Profile(object):
     def process_post(self, process: bool) -> None:
         self._process_post = process
 
+    @property
+    def track(self) -> bool:
+        return self._track
+
+    @track.setter
+    def track(self, track: bool) -> None:
+        self._track = track
+
     def _serialize(self) -> dict[str, Any]:
         serialized: dict[str, Any] = { "paths": self._paths }
         if self._root != '~':
@@ -131,6 +143,10 @@ class Profile(object):
                 pending_actions.append(ScriptAction(self._pre))
             if self._process_post:
                 pending_actions.append(ScriptAction(self._post))
+
+        print('track', self, self._dotfile_name, self._track)
+        if self._track:
+            pending_actions.append(RepoAction(self))
 
         return pending_actions
 

@@ -1,18 +1,19 @@
 import os
 from typing import Any
-from dotpyle.utils import path
-from dotpyle.services.file_handler import FileHandler, LocalFileHandler
-from dotpyle.services.logger import Logger
-from dotpyle.exceptions import ConfigHandlerException
-
 from rich.tree import Tree
 
+from dotpyle.utils import path
+# from dotpyle.services import FileHandler, LocalFileHandler, Logger
+# from dotpyle.services import FileHandler, LocalFileHandler
+# from dotpyle.services import  Logger
 
-from dotpyle.objects.base import PathLike
-from dotpyle.objects.action import BaseAction
+from dotpyle.services.logger import Logger
+from dotpyle.services.file_handler import FileHandler, LocalFileHandler
+from dotpyle.exceptions import ConfigHandlerException
 from dotpyle.objects.script import Script
-from dotpyle.objects.profile import Profile
 from dotpyle.objects.dotfile import Dotfile
+from dotpyle.objects.action import BaseAction
+from dotpyle.objects.profile import Profile
 
 
 class ConfigManager:
@@ -208,6 +209,9 @@ class ConfigManager:
         raise ConfigHandlerException(
             'Dotfile "{}" does not exist'.format(program_name)
         )
+
+    def set_dotfile(self, dotfile: Dotfile) -> None:
+        self._dotfiles[dotfile.program_name] = dotfile
 
     def edit_dotfile(self, program_name: str):
         pass

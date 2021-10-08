@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 import os
+from dotpyle.services.repo_handler import RepoHandler
+from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 from dotpyle.objects.base import PathLike, ShellCommand
+# from dotpyle.objects.profile import Profile
 
 
 class BaseAction(ABC):
@@ -63,4 +66,22 @@ class ScriptAction(BaseAction):
         pass
 
 
+class RepoAction(BaseAction):
+    def __init__(self, profile): # TODO cannot type Profile (circular dependency)
+        self.profile = profile
 
+    def __str__(self) -> str:
+        return "[Repo action]: "
+
+    # @pass_repo_handler
+    def run(self): #, repo_handler: RepoHandler):
+        # commit_message = "[dotpyle]: added {} on {} profile on {} program".format(
+            # added_paths, profile, name
+        # )
+        # repo_handler.add(added_paths, config_file_changed=True)
+        # repo_handler.commit(commit_message)
+        # print('repo_handler', repo_handler)
+        print("Added paths: {}, of profile {} on program {}".format(self.profile.paths, self.profile.profile_name, self.profile._dotfile_name ))
+
+    def rollback(self):
+        pass
