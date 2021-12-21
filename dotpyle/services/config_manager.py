@@ -30,21 +30,21 @@ class ConfigManager:
         "_version",
     )
 
-    def __init__(self, logger: Logger, config_path=None) -> None:
+    def __init__(self, file_handler: FileHandler, local_file_handler: LocalFileHandler, logger: Logger) -> None:
         self._logger = logger
         # self.checker = ConfigChecker()
-        self._config_file_handler = FileHandler(logger=logger, path=config_path)
-        self._local_file_handler = LocalFileHandler(
-            logger=logger, path=config_path
-        )
+        self._config_file_handler = file_handler
+        self._local_file_handler = local_file_handler
         self._scripts: dict[str, Script] = {}
         self._dotfiles: dict[str, Dotfile] = {}
         self._load_config()
 
     def __del__(self):
-        self._run_pending_actions()
         try:
+            # First save config file
             self._save_config()
+            self._run_pending_actions()
+            # TODO rollback config file storage
             self._logger.log("Config file saved successfully")
         except:
             self._rollback_actions()
@@ -114,7 +114,6 @@ class ConfigManager:
             )
         installed_profiles = local_dict.get("installed", {})
         for dotfile, profile in installed_profiles.items():
-            # self.get_dotfile(dotfile).linked_profile = profile
             self.get_dotfile(dotfile).get_profile(profile).linked = True
 
     def _get_linked_dotfiles(self) -> list[Dotfile]:
@@ -174,7 +173,8 @@ class ConfigManager:
     def _rollback_actions(self, actions: list[BaseAction] = None):
         if not actions:
             actions = self._get_pending_actions()
-        for action in actions:
+        # Iterate over all executed actions backwards, rollbacking them
+        for action in actions[::-1]:
             action.rollback()
         pass
 

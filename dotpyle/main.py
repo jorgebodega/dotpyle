@@ -23,10 +23,10 @@ from dotpyle.services.logger import Logger
 from dotpyle.utils import constants
 from dotpyle.exceptions import DotpyleException
 
-
 from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.services.config_manager import ConfigManager
+
 
 @click.group()
 @click.version_option()
@@ -45,17 +45,19 @@ def dotpyle(ctx=None, verbose=False):
     """
     logger = Logger(verbose=verbose)
     handler = FileHandler(logger=logger)
+    local_file_handler = LocalFileHandler(logger=logger)
     parser = ConfigHandler(config=handler.config, logger=logger)
-    ctx.meta[constants.CONFIG_MANAGER_PROVIDER] = ConfigManager(logger=logger)
+
+    ctx.meta[constants.CONFIG_MANAGER_PROVIDER] = ConfigManager(
+        file_handler=handler,
+        local_file_handler=local_file_handler,
+        logger=logger)
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
     ctx.meta[constants.LOGGER_PROVIDER] = logger
     ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
     ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
-    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = LocalFileHandler(
-        logger=logger
-    )
-
+    ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = local_file_handler
 
 
 # Add commands to group

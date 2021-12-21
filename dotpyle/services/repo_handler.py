@@ -50,8 +50,10 @@ class RepoHandler:
 
     def add(self, paths, config_file_changed=False):
         # self.repo.git.add(all=True)
+        print("RepoHandler add: {}".format(paths))
         self.repo.git.add(paths)
         if config_file_changed:
+            print("RepoHandler config file changed", get_configuration_path())
             self.repo.git.add(get_configuration_path())
 
     def commit(self, message):

@@ -73,6 +73,7 @@ def dotfile(
 
     print('dotfile')
     profile_data = Profile(dotfile_name=name, profile_name=profile, paths=paths, root=root, pre=pre_commands, post=post_commands)
+    profile_data.linked = not not_install
     logger.log(profile_data._get_tree())
 
     manager.set_dotfile(dotfile.add_profile(profile_data))

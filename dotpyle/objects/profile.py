@@ -4,7 +4,7 @@ from rich.tree import Tree
 from rich.text import Text
 from dotpyle.utils import path
 from dotpyle.objects.base import PathLike, ShellCommand
-from dotpyle.objects.action import BaseAction, LinkAction, UnlinkAction, ScriptAction, RepoAction
+from dotpyle.objects.action import BaseAction, LinkAction, UnlinkAction, ScriptAction, RepoAction, MoveAction
 
 
 class Profile(object):
@@ -47,21 +47,22 @@ class Profile(object):
         return self._profile_name
 
     def _get_tree(self) -> Tree:
-        tree = Tree(
-            "[bold blue]:open_file_folder: [link"
-            f" file://{self._profile_name}]{self._profile_name}"
-            f" {'[bold green][LINKED]' if self._is_linked else ''}"
-        )
+        tree = Tree("[bold blue]:open_file_folder: [link"
+                    f" file://{self._profile_name}]{self._profile_name}"
+                    f" {'[bold green][LINKED]' if self._is_linked else ''}")
         for _path in self._paths:
             link_path = path.un_expanduser(
-                path.get_link_path(str(self._root), _path)
-            )
+                path.get_link_path(str(self._root), _path))
             text_filename = Text(_path, "green")
             text_filename.stylize(f"link file://{_path}")
             text_filename += Text(" --> ", "blink yellow")
             text_filename += Text(link_path, "yellow")
             tree.add(Text("📄 ") + text_filename)
         return tree
+
+    @property
+    def dotfile_name(self) -> str:
+        return self._dotfile_name
 
     @property
     def profile_name(self) -> str:
@@ -111,8 +112,19 @@ class Profile(object):
     def track(self, track: bool) -> None:
         self._track = track
 
+    def get_link_paths(self) -> list[str]:
+        return [
+            path.get_link_path(str(self._root), _path) for _path in self.paths
+        ]
+
+    def get_repo_paths(self) -> list[str]:
+        return [
+            path.get_repo_paths(self.dotfile_name, self.profile_name, _path)
+            for _path in self.paths
+        ]
+
     def _serialize(self) -> dict[str, Any]:
-        serialized: dict[str, Any] = { "paths": self._paths }
+        serialized: dict[str, Any] = {"paths": self._paths}
         if self._root != '~':
             serialized["root"] = self._root
         if self._pre:
@@ -121,17 +133,17 @@ class Profile(object):
             serialized["post"] = self._post
         return serialized
 
-
     def _get_pending_actions(self) -> list[BaseAction]:
         pending_actions: list[BaseAction] = []
         for _path in self.paths:
             source, link = path.get_source_and_link_path(
-                self._dotfile_name, self.profile_name, str(self._root), _path
-            )
+                self._dotfile_name, self.profile_name, str(self._root), _path)
             path_linked = os.path.islink(link)
-            path_correctly_linked = (
-                os.readlink(link) == source if path_linked else False
-            )
+            path_correctly_linked = (os.readlink(link) == source
+                                     if path_linked else False)
+            if self._track:
+                pending_actions.append(MoveAction(link, source))
+
             if self.linked:
                 if not path_linked or not path_correctly_linked:
                     pending_actions.append(LinkAction(source, link))
@@ -139,15 +151,13 @@ class Profile(object):
                 if path_linked and path_correctly_linked:
                     pending_actions.append(UnlinkAction(link))
 
-            if self._process_pre:
+            # Create actions only if there are any actions to be executed
+            if self._process_pre and self._pre:
                 pending_actions.append(ScriptAction(self._pre))
-            if self._process_post:
+            if self._process_post and self._post:
                 pending_actions.append(ScriptAction(self._post))
 
-        print('track', self, self._dotfile_name, self._track)
         if self._track:
             pending_actions.append(RepoAction(self))
 
         return pending_actions
-
-
