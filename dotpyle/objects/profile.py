@@ -141,8 +141,14 @@ class Profile(object):
             path_linked = os.path.islink(link)
             path_correctly_linked = (os.readlink(link) == source
                                      if path_linked else False)
+            source_path_exist = os.path.exists(source)
             if self._track:
                 pending_actions.append(MoveAction(link, source))
+
+            # This allows to add new paths to dotpyle.yml and to be linked automatically
+            if not source_path_exist:
+                pending_actions.append(MoveAction(link, source))
+                # TODO: RepoAction maybe to add and commit the new added paths
 
             if self.linked:
                 if not path_linked or not path_correctly_linked:
