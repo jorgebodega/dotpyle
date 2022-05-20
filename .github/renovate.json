@@ -1,0 +1,42 @@
+{
+  "extends": ["config:base"],
+  "schedule": ["after 9pm"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["pin"],
+      "groupName": "pin",
+      "prPriority": 60,
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["patch", "digest"],
+      "groupName": "patch",
+      "prPriority": 50,
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "groupName": "minor",
+      "prPriority": 40,
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "groupName": "major",
+      "prPriority": 20,
+      "automerge": false
+    },
+    {
+      "matchDepTypes": ["dev-dependencies"],
+      "groupName": "dev-dependencies",
+      "prPriority": 30,
+      "automerge": true
+    },
+    {
+      "matchCurrentVersion": "<1.0.0",
+      "groupName": "beta",
+      "prPriority": 10,
+      "automerge": false
+    }
+  ]
+}
