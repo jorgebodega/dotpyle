@@ -1,38 +1,21 @@
 {
-  "extends": ["config:base"],
+  "extends": [
+    "config:base",
+    ":assignAndReview(jorgebodega)",
+    ":disableRateLimiting",
+    ":semanticCommits",
+    ":semanticCommitScopeDisabled",
+    ":separatePatchReleases",
+    ":timezone(UTC+1)"
+  ],
   "schedule": ["after 9pm"],
   "packageRules": [
     {
-      "matchUpdateTypes": ["pin"],
-      "groupName": "pin",
-      "prPriority": 60,
-      "automerge": true
-    },
-    {
-      "matchUpdateTypes": ["patch", "digest"],
-      "groupName": "patch",
-      "prPriority": 50,
-      "automerge": true
-    },
-    {
-      "matchUpdateTypes": ["minor"],
-      "groupName": "minor",
-      "prPriority": 40
-    },
-    {
-      "matchUpdateTypes": ["major"],
-      "groupName": "major",
-      "prPriority": 20
-    },
-    {
-      "matchDepTypes": ["dev-dependencies"],
-      "groupName": "dev-dependencies",
-      "prPriority": 30
-    },
-    {
-      "matchCurrentVersion": "<1.0.0",
-      "groupName": "beta",
-      "prPriority": 10
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": ">=1.0.0",
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
     }
   ]
 }
