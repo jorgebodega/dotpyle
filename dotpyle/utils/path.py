@@ -14,7 +14,8 @@ def get_default_path() -> str:
     # TODO On MacOs get_app_dir return ~/Applications/Application Support/{NAME}
     default_config_path = getenv("XDG_CONFIG_HOME", "~/.config")
 
-    return path.expanduser("{0}/{1}".format(default_config_path, constants.APP_NAME))
+    return path.expanduser("{0}/{1}".format(default_config_path,
+                                            constants.APP_NAME))
 
 
 def un_expanduser(path: str) -> str:
@@ -32,7 +33,8 @@ def get_configuration_path() -> str:
 
 
 def get_local_configuration_path() -> str:
-    return path.join(get_default_path(), constants.DOTPYLE_LOCAL_CONFIG_FILE_NAME)
+    return path.join(get_default_path(),
+                     constants.DOTPYLE_LOCAL_CONFIG_FILE_NAME)
 
 
 def get_dotfiles_path() -> str:
@@ -47,23 +49,38 @@ def get_dotpyle_profile_path(name: str, profile: str) -> str:
     return path.join(get_dotpyle_name_path(name), profile)
 
 
-def get_source_and_link_path(
-    name: str, profile: str, root: str, dotfile_path: str
-) -> tuple[str, str]:
+def get_repo_paths(name: str, profile: str, dotfile_path: str) -> str:
+    return path.join(get_dotpyle_profile_path(name, profile), dotfile_path)
+
+
+def get_link_path(root: str, dotfile_path: str) -> str:
+    return path.expanduser(path.join(root, dotfile_path))
+
+
+def get_source_and_link_path(name: str, profile: str, root: str,
+                             dotfile_path: str) -> tuple[str, str]:
     """
     source: absolute path for name+profile inside dotpyle repo
     link_name: absolute path for name+profile on real system
     """
-    source = path.join(get_dotpyle_profile_path(name, profile), dotfile_path)
-    link_name = path.expanduser(path.join(root, dotfile_path))
-    return source, link_name
+    return get_repo_paths(name, profile, dotfile_path), get_link_path(root, dotfile_path)
 
 
 def get_dotpyle_readme_path() -> str:
     return path.join(get_default_path(), constants.README_NAME)
 
-def get_script_path(script_name) -> str:
-    return path.join(get_default_path(), constants.SCRIPTS_FOLDER, script_name) + constants.SCRIPTS_EXTENSION
+
+def get_scripts_path() -> str:
+    return path.join(get_default_path(), constants.SCRIPTS_FOLDER)
+
+
+def get_script_path(filename: str) -> str:
+    return path.join(get_default_path(), constants.SCRIPTS_FOLDER, filename)
+
+
+def get_basename(full_path: str) -> str:
+    return path.basename(full_path)
+
 
 if __name__ == "__main__":
     print(un_expanduser("/home/perseo/ao/aoeu/eih"))

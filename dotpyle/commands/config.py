@@ -3,7 +3,10 @@ import click
 from dotpyle.utils.path import get_default_path, get_configuration_path
 from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.print_handler import print
+from dotpyle.decorators.pass_logger import pass_logger
+from dotpyle.decorators.pass_config_handler import pass_config_handler
+from dotpyle.services.logger import Logger
+from dotpyle.services.config_handler import ConfigHandler
 
 
 @click.group()
@@ -18,13 +21,13 @@ def config():
     default=get_default_path(),
     help="path for alternative dotpyle.yml",
 )
-def check(path):
+@pass_config_handler
+@pass_logger
+def check(logger: Logger, config_handler: ConfigHandler, path: str):
     path_file = get_configuration_path()
     print("Checking {}...".format(path_file))
-    config = FileHandler().config
-    parser = ConfigHandler(config)
 
-    errors = parser.check_config()
+    errors = config_handler.check_config()
     if errors == {}:
         print("No errors found, your config is OK")
     else:

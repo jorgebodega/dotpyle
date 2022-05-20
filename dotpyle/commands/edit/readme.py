@@ -1,23 +1,27 @@
 import click
-from os import system, path
+from os import path
 from shutil import copy2
-from tempfile import gettempdir
-from dotpyle.utils.path import get_configuration_path, get_dotpyle_readme_path
-from dotpyle.services.config_handler import ConfigHandler
-from dotpyle.services.file_handler import FileHandler
-from dotpyle.services.repo_handler import RepoHandler
+from dotpyle.utils.path import get_dotpyle_readme_path
 from dotpyle.utils import constants
+from dotpyle.decorators.pass_repo_handler import pass_repo_handler
+from dotpyle.services.repo_handler import RepoHandler
+
 
 @click.command()
-def readme():
+@pass_repo_handler
+def readme(repo_handler: RepoHandler):
+    """
+    Open README.md file in the default editor and if it does not already
+    exist, it will create it from a template
+    """
+
     readme_path = get_dotpyle_readme_path()
 
     if not path.exists(readme_path):
-        # Geterate a README with default template
+        # Generate a README with default template
         copy2(constants.README_TEMPLATE_PATH, readme_path)
 
     # Open user default editor
-    res = click.edit(filename=readme_path)
+    click.edit(filename=readme_path)
 
-    repo = RepoHandler()
-    repo.add(constants.README_NAME, config_file_changed=False)
+    repo_handler.add(constants.README_NAME, config_file_changed=False)

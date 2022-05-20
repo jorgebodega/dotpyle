@@ -37,7 +37,10 @@ def test_process_key_paths(tmpdir, monkeypatch):
     TEST_KEY_NAME = "nvim"
     TEST_PATH_NAME = "init.vim"
     TEST_PROFILE_NAME = "default"
-    TEST_CONTENT = "this is just a test case, this content should match with the content of link to be created"
+    TEST_CONTENT = (
+        "this is just a test case, this content should match with the content"
+        " of link to be created"
+    )
     tmp_file = tmpdir / TEST_KEY_NAME
     tmp_file.write_text(TEST_CONTENT, encoding="utf-8")
     tmp_path_origin = str(tmpdir)

@@ -36,5 +36,14 @@
         }
       }
     }
+  },
+
+  "scripts": {
+    "required": false,
+    "type": "dict",
+    "keysrules": { "type": "string"},
+    "valuesrules": {
+      "type": "string"
+    }
   }
 }

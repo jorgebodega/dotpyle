@@ -5,8 +5,11 @@ from os.path import join, isfile, isdir
 from os import listdir
 from yaml import safe_load, safe_dump
 from dotpyle.errors.InvalidConfigFile import InvalidConfigFileError
-from dotpyle.utils.path import get_configuration_path, get_dotfiles_path, un_expanduser
-from dotpyle.services.print_handler import error, warning, ok
+from dotpyle.utils.path import (
+    get_configuration_path,
+    get_dotfiles_path,
+    un_expanduser,
+)
 
 import os
 import shutil
@@ -15,9 +18,12 @@ from dotpyle.utils.path import (
     get_source_and_link_path,
     get_dotpyle_profile_path,
     get_dotpyle_name_path,
+    get_scripts_path,
 )
+import dotpyle.utils.path as paths
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.exceptions import ConfigHandlerException
+from dotpyle.services.logger import Logger
 
 
 class ConfigHandler:
@@ -25,10 +31,10 @@ class ConfigHandler:
     Methods to access and process Dotpyle configuration
     """
 
-    def __init__(self, config):
+    def __init__(self, config, logger: Logger):
+        self.logger = logger
         self.checker = ConfigChecker()
         self._config = config
-        self.checker = ConfigChecker()
 
     @property
     def config(self):
@@ -46,17 +52,47 @@ class ConfigHandler:
 
         if "dotfiles" in self._config:
             return self._config["dotfiles"]
-        raise ConfigHandlerException("Dotpyle database empty, no dotfiles found")
+        raise ConfigHandlerException(
+            "Dotpyle database empty, no dotfiles found"
+        )
 
-    def get_names(self):
+    def get_scripts(self) -> dict[str, str]:
         """
         :return:
-            Dict with all program names managed by Dotpyle
+            Current scripts structure
+        :raise ConfigHandlerException:
+            If there is no scrpts configured"""
+
+        if "scripts" in self._config:
+            return self._config["scripts"]
+
+        raise ConfigHandlerException("Dotpyle database empty, no scripts found")
+
+    def get_script_path(self, script_name) -> str:
         """
-        return [
-            (name)
-            for name, _ in self.get_dotfiles().items()
-        ]
+        :return:
+        :raise ConfigHandlerException:
+            If name does not exist on Dotpyle database"""
+        scripts = self.get_scripts()
+        if script_name in scripts:
+            return paths.get_script_path(scripts[script_name])
+        raise ConfigHandlerException(
+            'Script "{}" does not exist'.format(script_name)
+        )
+
+    def get_names(self) -> list[str]:
+        """
+        :return:
+            List with all program names managed by Dotpyle
+        """
+        return [(name) for name, _ in self.get_dotfiles().items()]
+
+    def get_profiles(self) -> list[str]:
+        """
+        :return:
+            List with all profiles managed by Dotpyle
+        """
+        return self.config["settings"]["profiles"]
 
     def get_name(self, name):
         """
@@ -86,11 +122,14 @@ class ConfigHandler:
 
     def get_names_and_profiles(self):
         return [
-            (name, list(profiles)) for name, profiles in self.get_dotfiles().items()
+            (name, list(profiles))
+            for name, profiles in self.get_dotfiles().items()
         ]
 
     def get_profile_paths(self, name, profile):
-        return [source for source, _ in self.get_calculated_paths(name, profile)]
+        return [
+            source for source, _ in self.get_calculated_paths(name, profile)
+        ]
 
     def get_profiles_for_name(self, name: str):
         dotfiles = self.get_dotfiles()
@@ -117,9 +156,8 @@ class ConfigHandler:
         version = self._config["version"]
         if version != 1:
             raise ConfigHandlerException(
-                "Version '{}' of dotfile.yml file is currently unsupported".format(
-                    version
-                )
+                "Version '{}' of dotfile.yml file is currently unsupported"
+                .format(version)
             )
         for key in self._config["dotfiles"].keys():
             self.install_key(key, profile_name)
@@ -174,7 +212,10 @@ class ConfigHandler:
             print(">>> ln -s {0} {1}".format(source, link_name))
             if os.path.isfile(link_name):
                 # TODO throw error or give user possibility to replace and self.con[name] ==is
-                error("{0} already exist".format(link_name))
+                self.logger.error("{0} already exist".format(link_name))
+                raise ConfigHandlerException(
+                    "{0} already exist".format(link_name)
+                )
             else:
                 os.symlink(source, link_name)
 
@@ -183,18 +224,21 @@ class ConfigHandler:
         paths = key["paths"]
         root = key["root"]
         for path in paths:
-            source, link_name = get_source_and_link_path(name, profile, root, path)
+            source, link_name = get_source_and_link_path(
+                name, profile, root, path
+            )
             os.remove(link_name)
-            ok(
-                "Removing {} from system (to recover, `dotpyle install -p {} {}`)".format(
-                    link_name, profile, name
-                )
+            self.logger.log(
+                "Removing {} from system (to recover, `dotpyle install -p {}"
+                " {}`)".format(link_name, profile, name)
             )
 
     def add_dotfile(self, name, profile, root, paths, pre_hooks, post_hooks):
         sources = []
         dotfiles = self.get_dotfiles()
-        root = un_expanduser(root)  # translate /home/<username>/path into ~/path
+        root = un_expanduser(
+            root
+        )  # translate /home/<username>/path into ~/path
         if name in dotfiles:
             existing_profiles = dotfiles[name]
             if profile in existing_profiles:
@@ -221,7 +265,9 @@ class ConfigHandler:
 
         for path in paths:
             # Get source path (destination path on dotpyle repo) and current file path
-            source, link_name = get_source_and_link_path(name, profile, root, path)
+            source, link_name = get_source_and_link_path(
+                name, profile, root, path
+            )
             sources.append(source)
 
             profile_directory_path = os.path.dirname(source)
@@ -269,3 +315,40 @@ class ConfigHandler:
     # print("Unlinking {}".format(link_name))
     # else:
 
+    def add_script(self, script_path: str, name: str):
+        scripts_directory_path = paths.get_scripts_path()
+        script_filename = paths.get_basename(script_path)
+        destination_script_path = paths.get_script_path(script_filename)
+        print(scripts_directory_path, script_path, destination_script_path)
+
+        try:
+            scripts = self.get_scripts()
+        except ConfigHandlerException:
+            os.makedirs(scripts_directory_path, exist_ok=True)
+            scripts = {}
+            self.config["scripts"] = scripts
+
+        scripts[name] = script_filename
+
+        try:
+            # Move existing path to dotpyle repo
+            # shutil.move does not work with symlinks
+            shutil.copy(script_path, destination_script_path)
+            os.remove(script_path)
+            # Symlink path in order to start tracking changes
+            os.symlink(
+                destination_script_path, script_path
+            )  # delegate this as optional up
+        except shutil.SameFileError as exc:
+            # TODO
+            print("Error >> This file is already been managed by Dotpyle")
+
+        # Return paths to be added
+        return destination_script_path
+
+    def duplicate_profile(
+        self, name: str, current_profile: str, new_profile: str
+    ):
+        self.get_profile(name, current_profile)
+
+        pass

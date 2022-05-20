@@ -2,11 +2,8 @@ import click
 from git import Repo
 from os import mkdir, path, sys
 from shutil import rmtree
-from dotpyle.utils import constants
-from dotpyle.utils.path import get_default_path, get_configuration_path
+from dotpyle.utils.path import get_default_path
 from dotpyle.utils.url import get_default_url
-
-DOTPYLE_FILE = "dotpyle.yml"
 
 
 @click.command()
@@ -21,36 +18,48 @@ DOTPYLE_FILE = "dotpyle.yml"
     "--protocol",
     required=True,
     type=click.Choice(["ssh", "https"]),
-    help="Protocol used to clone the repository. Currently only Git and HTTPS are supported (like Github and Gitlab).",
+    help=(
+        "Protocol used to clone the repository. Currently only Git and HTTPS"
+        "are supported (like Github and Gitlab)."
+    ),
 )
 @click.option(
     "-t",
     "--token",
     required=False,
-    help="Token could be used to clone a repository if it is private and the protocol is HTTPS. If the repository is private but no token provided, it will probably prompt for username/password (depends on service).",
+    help=(
+        "Token could be used to clone a repository if it is private and the"
+        "protocol is HTTPS. If the repository is private but no token provided,"
+        "it will probably prompt for username/password (depends on service)."
+    ),
 )
 @click.option(
     "-b",
     "--branch",
     required=False,
-    help="Desired branch of the repository. If not provided, the `default` branch will be used.",
+    help=(
+        "Desired branch of the repository. If not provided, the `default` "
+        "branch will be used."
+    ),
 )
 @click.option(
     "-f",
     "--force",
     is_flag=True,
-    help="Force init of the package. This results that everything that cause an error will be forced to work even if that means that something will be erased.",
+    help=(
+        "Force init of the package. This results that everything that cause an"
+        "error will be forced to work even if that means that something will be"
+        "erased."
+    ),
 )
-@click.pass_context
 # TODO copy gitignore template to default_path
-def init(ctx, url, protocol, token, branch, force):
+def init(url: str, protocol, token: str, branch: str, force: bool):
     """
-    This command will clone an existing Git repository on ${XDG_CONFIG_HOME}/dotpyle
-    and will check if this repo contains a dotpyle.yml config file, if not,
-    a template config file will be created.
+    This command will clone an existing Git repository on
+    ${XDG_CONFIG_HOME}/dotpyle and will check if this repo contains a
+    dotpyle.yml config file, if not, a template config file will be created.
     """
     default_path = get_default_path()
-    default_url = get_default_url(url, protocol, token)
 
     # Check if dotpyle config file exist
     if path.exists(default_path):
@@ -71,7 +80,8 @@ def init(ctx, url, protocol, token, branch, force):
         # )
         sys.exit(1)
 
-    repository = Repo.clone_from(default_url, default_path, progress=None)
+    url = get_default_url(url, protocol, token)
+    repository = Repo.clone_from(url, default_path, progress=None)
 
     # Check if dotpyle exist
 
