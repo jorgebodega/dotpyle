@@ -14,10 +14,10 @@ package_data = {"": ["*"], "dotpyle": ["templates/*"]}
 install_requires = [
     "Cerberus>=1.3.2,<2.0.0",
     "GitPython>=3.1.12,<4.0.0",
-    "PyYAML>=5.4.1,<6.0.0",
+    "PyYAML>=6.0,<6.1.0",
     "click>=8.0.1,<9.0.0",
-    "rich>=10.1.0,<11.0.0",
-    "setuptools>=57.4.0,<58.0.0",
+    "rich>=12.4.1,<12.5.0",
+    "setuptools>=62.3.2,<62.4.0",
 ]
 
 entry_points = {
