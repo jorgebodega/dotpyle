@@ -21,7 +21,7 @@ coveralls = "^3.0.1"
 pylint = "^2.6.0"
 pep8 = "^1.7.1"
 pre-commit = "^2.9.3"
-pytest-cov = "^2.10.1"
+pytest-cov = "^3.0.0"
 poethepoet = "^0.10.0"
 pytest-print = "^0.2.1"
 
