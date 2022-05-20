@@ -17,26 +17,22 @@
     {
       "matchUpdateTypes": ["minor"],
       "groupName": "minor",
-      "prPriority": 40,
-      "automerge": false
+      "prPriority": 40
     },
     {
       "matchUpdateTypes": ["major"],
       "groupName": "major",
-      "prPriority": 20,
-      "automerge": false
+      "prPriority": 20
     },
     {
       "matchDepTypes": ["dev-dependencies"],
       "groupName": "dev-dependencies",
-      "prPriority": 30,
-      "automerge": true
+      "prPriority": 30
     },
     {
       "matchCurrentVersion": "<1.0.0",
       "groupName": "beta",
-      "prPriority": 10,
-      "automerge": false
+      "prPriority": 10
     }
   ]
 }
