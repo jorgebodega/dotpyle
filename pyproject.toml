@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dotpyle"
-version = "0.1.0"
+version = "0.0.1"
 description = "Test"
 authors = ["Jorge Bodega <jorge.bodega.f@gmail.com>", "Perseo Gutiérrez <perseo.gi98@gmail.com>"]
 license = "MIT"
