@@ -18,8 +18,6 @@
     <a href="https://opensource.org/licenses/MIT">
         <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
     </a>
-
-
 </p>
 
 <p align="center">
@@ -30,10 +28,24 @@
 <br/>
 
 
-dotPyle is a Python implementation of a dotfile system manager, allowing users
+Dotpyle is a Python implementation of a dotfile system manager, allowing users
 to keep a secure copy of all program configurations remotely, create different
 profiles, etc.
 
+
+## Install
+
+```sh
+pip install dotpyle
+```
+
+### Post install
+
+If autocomplete is wish to be enabled:
+
+```sh
+bash $(pip show dotpyle | grep Location | cut -f2 -d':')/dotpyle/autocomplete-install.sh
+```
 
 ## Commands
 

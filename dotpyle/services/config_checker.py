@@ -4,15 +4,12 @@ from cerberus import Validator
 from cerberus.errors import ValidationError
 from dotpyle.utils import constants
 
-SCHEMA_DEFINITION_PATH = "dotpyle/utils/schema.json"
-
-
 class ConfigChecker:
     """
     Class to check the validity of the config file.
     """
 
-    def __init__(self, config_file=SCHEMA_DEFINITION_PATH):
+    def __init__(self, config_file=constants.CONFIG_SCHEMA_PATH):
         """
         Initialize the ConfigChecker class.
 
