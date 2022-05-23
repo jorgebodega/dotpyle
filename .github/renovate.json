@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "config:base",
+    ":assignAndReview(jorgebodega)",
+    ":disableRateLimiting",
+    ":semanticCommits",
+    ":semanticCommitScopeDisabled",
+    ":separatePatchReleases",
+    ":timezone(UTC+1)"
+  ],
+  "schedule": ["after 9pm"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": ">=1.0.0",
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    }
+  ]
+}
