@@ -1,8 +1,8 @@
 import click
 
 from dotpyle.commands.init import init
-from dotpyle.commands.edit import edit
 from dotpyle.commands.add import add
+from dotpyle.commands.edit import edit
 from dotpyle.commands.ls import ls
 from dotpyle.commands.config import config
 from dotpyle.commands.link import link

@@ -6,6 +6,7 @@ def execute(command, check: bool = False):
         # "%s" % command, capture_output=False, check=check, shell=True
         # command, capture_output=False, check=check, shell=True
         command,
+        shell = True,
         capture_output=False,
         check=check,
     )

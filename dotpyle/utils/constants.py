@@ -1,3 +1,5 @@
+import os
+
 APP_NAME = "dotpyle"
 DOTPYLE_CONFIG_FILE_NAME = "dotpyle.yml"
 DOTPYLE_LOCAL_CONFIG_FILE_NAME = "dotpyle.local.yml"
@@ -9,7 +11,8 @@ README_TEMPLATE_PATH = "dotpyle/templates/readme.md"
 CONFIG_TEMPLATE_PATH = "dotpyle/templates/basic-config.yaml"
 CONFIG_LOCAL_TEMPLATE_PATH = "dotpyle/templates/local-config.yaml"
 SCRIPT_TEMPLATE_PATH = "dotpyle/templates/script.yaml"
-CONFIG_SCHEMA_PATH = "dotpyle/utils/schema.json"
+
+CONFIG_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.json")
 CONFIG_HANDLER_ERROR_CODE = 42
 SCRIPTS_EXTENSION = "yaml"
 CONFIG_CHECKER_PROVIDER = "CONFIG_CHECKER"

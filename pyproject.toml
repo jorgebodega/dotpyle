@@ -1,9 +1,19 @@
 [tool.poetry]
 name = "dotpyle"
-version = "0.0.1"
-description = "Test"
-authors = ["Jorge Bodega <jorge.bodega.f@gmail.com>", "Perseo Gutiérrez <perseo.gi98@gmail.com>"]
+version = "0.1.4"
+description = "Dotpyle is a Python implementation of a dotfile system manager, allowing users to keep a secure copy of all program configurations remotely, create different profiles, etc."
+authors = [
+   "Jorge Bodega <jorge.bodega.f@gmail.com>",
+   "Perseo Gutiérrez <perseo.gi98@gmail.com>"
+]
+maintainers = [
+   "Jorge Bodega <jorge.bodega.f@gmail.com>",
+   "Perseo Gutiérrez <perseo.gi98@gmail.com>"
+]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/jorgebodega/dotpyle"
+repository = "https://github.com/jorgebodega/dotpyle"
 
 [tool.poetry.dependencies]
 python = "^3.9"

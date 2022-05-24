@@ -1,0 +1,2 @@
+include dotpyle/utils/schema.json
+include dotpyle/.dotpyle-complete.*
