@@ -22,7 +22,7 @@ pylint = "^2.6.0"
 pep8 = "^1.7.1"
 pre-commit = "^2.9.3"
 pytest-cov = "^3.0.0"
-poethepoet = "^0.10.0"
+poethepoet = "^0.13.0"
 pytest-print = "^0.2.1"
 
 [build-system]
