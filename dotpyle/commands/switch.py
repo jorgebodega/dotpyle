@@ -12,7 +12,7 @@ from dotpyle.services.repo_handler import RepoHandler
 
 @click.command()
 @click.argument("name", type=DotfileNamesVarType())
-@click.argument("profile", default='default', type=ProfileVarType())
+@click.argument("profile", default="default", type=ProfileVarType())
 @click.option("--pre", is_flag=True, help="Execute pre hooks")
 @click.option("--post", is_flag=True, help="Execute post hooks")
 @click.option("--hooks", is_flag=True, help="Execute pre and post hooks")
@@ -40,14 +40,11 @@ def switch(
 ):
     """Change profile for a given program"""
 
-
     dotfile = manager.get_dotfile(name)
     new_profile = dotfile.get_profile(profile)
     old_profile = dotfile.linked_profile
     if not old_profile:
-        logger.failure(
-            "Program '{}' in not currently linked'".format(name)
-        )
+        logger.failure("Program '{}' in not currently linked'".format(name))
         return
 
     if new_profile.linked:
@@ -67,21 +64,20 @@ def switch(
         )
     )
 
-
     # if profile not in config_handler.get_profiles_for_name(name):
-        # if not create_profile:
-            # logger.failure(
-                # "'{}' profile does not exist for '{}', use --create-profile to"
-                # " create a new profile with current changes".format(
-                    # profile, name
-                # )
-            # )
-            # return
+    # if not create_profile:
+    # logger.failure(
+    # "'{}' profile does not exist for '{}', use --create-profile to"
+    # " create a new profile with current changes".format(
+    # profile, name
+    # )
+    # )
+    # return
 
-        # current_profile_path = config_handler.get_profile_paths(
-            # name, old_profile
-        # )
-        # print(current_profile_path)
-        # if repo_handler.check_changes(current_profile_path):
-            # logger.failure("TODO: git changes")
-            # return
+    # current_profile_path = config_handler.get_profile_paths(
+    # name, old_profile
+    # )
+    # print(current_profile_path)
+    # if repo_handler.check_changes(current_profile_path):
+    # logger.failure("TODO: git changes")
+    # return

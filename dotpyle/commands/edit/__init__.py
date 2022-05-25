@@ -1,6 +1,7 @@
 import click
 
 from dotpyle.commands.edit.config import config
+from dotpyle.commands.edit.local import local
 from dotpyle.commands.edit.readme import readme
 from dotpyle.commands.edit.dotfile import dotfile
 
@@ -13,4 +14,5 @@ def edit():
 
 edit.add_command(config)
 edit.add_command(readme)
-edit.add_command(dotfile)
+edit.add_command(local)
+# edit.add_command(dotfile)

@@ -13,7 +13,7 @@ if __name__ == "__main__":
 #
 # class PostInstallCommand(install):
 #     """Post-installation for installation mode."""
-#    
+#
 #     def __post_install(self, dir):
 #         call(['./dotpyle/autocomplete-install.sh'])
 #

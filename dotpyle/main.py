@@ -4,7 +4,6 @@ from dotpyle.commands.init import init
 from dotpyle.commands.add import add
 from dotpyle.commands.edit import edit
 from dotpyle.commands.ls import ls
-from dotpyle.commands.config import config
 from dotpyle.commands.link import link
 from dotpyle.commands.unlink import unlink
 from dotpyle.commands.commit import commit
@@ -51,7 +50,8 @@ def dotpyle(ctx=None, verbose=False):
     ctx.meta[constants.CONFIG_MANAGER_PROVIDER] = ConfigManager(
         file_handler=handler,
         local_file_handler=local_file_handler,
-        logger=logger)
+        logger=logger,
+    )
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
     ctx.meta[constants.LOGGER_PROVIDER] = logger
@@ -71,25 +71,10 @@ dotpyle.add_command(commit)
 dotpyle.add_command(push)
 dotpyle.add_command(pull)
 
-dotpyle.add_command(config)
 dotpyle.add_command(edit)
 dotpyle.add_command(ls)
 dotpyle.add_command(shell)
 dotpyle.add_command(run)
-
-
-@dotpyle.command()
-@pass_repo_handler
-@pass_logger
-def test(
-    logger: Logger,
-    repo_handler: RepoHandler,
-):
-    from dotpyle.services.config_manager import ConfigManager
-
-    # file_handler = FileHandler(logger=logger)
-    # print(file_handler.read())
-    config_manager = ConfigManager(logger=logger)
 
 
 def main():
