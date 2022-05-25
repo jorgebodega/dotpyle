@@ -16,4 +16,4 @@ def run(config_handler: ConfigHandler, script: str, arguments):
     script_path = config_handler.get_script_path(script)
     command = process.create_command(script_path, arguments)
     stdout = process.execute(command, True)
-    #print(stdout)
+    # print(stdout)

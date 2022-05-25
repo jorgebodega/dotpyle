@@ -71,29 +71,35 @@ def dotfile(
     except:
         dotfile = Dotfile(program_name=name)
 
-    print('dotfile')
-    profile_data = Profile(dotfile_name=name, profile_name=profile, paths=paths, root=root, pre=pre_commands, post=post_commands)
+    print("dotfile")
+    profile_data = Profile(
+        dotfile_name=name,
+        profile_name=profile,
+        paths=paths,
+        root=root,
+        pre=pre_commands,
+        post=post_commands,
+    )
     profile_data.linked = not not_install
     logger.log(profile_data._get_tree())
 
     manager.set_dotfile(dotfile.add_profile(profile_data))
-
 
     # When new key is added to dotpyle, a commit should be generated
     # (adding new files), to keep consistency between yaml and repo
 
     # repo_handler.add(added_paths, config_file_changed=True)
     # commit_message = "[dotpyle]: added {} on {} profile on {} program".format(
-        # added_paths, profile, name
+    # added_paths, profile, name
     # )
     # repo_handler.commit(commit_message)
 
     # if not not_install:
-        # config_handler.install_key(
-            # key_name=name,
-            # profile_name=profile,
-            # process_pre=False,
-            # process_post=False,
-        # )
-        # local_handler.install_profile(name, profile)
-        # local_handler.save(local_handler.config)
+    # config_handler.install_key(
+    # key_name=name,
+    # profile_name=profile,
+    # process_pre=False,
+    # process_post=False,
+    # )
+    # local_handler.install_profile(name, profile)
+    # local_handler.save(local_handler.config)

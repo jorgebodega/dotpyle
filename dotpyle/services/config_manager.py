@@ -3,6 +3,7 @@ from typing import Any
 from rich.tree import Tree
 
 from dotpyle.utils import path
+
 # from dotpyle.services import FileHandler, LocalFileHandler, Logger
 # from dotpyle.services import FileHandler, LocalFileHandler
 # from dotpyle.services import  Logger
@@ -30,7 +31,12 @@ class ConfigManager:
         "_version",
     )
 
-    def __init__(self, file_handler: FileHandler, local_file_handler: LocalFileHandler, logger: Logger) -> None:
+    def __init__(
+        self,
+        file_handler: FileHandler,
+        local_file_handler: LocalFileHandler,
+        logger: Logger,
+    ) -> None:
         self._logger = logger
         # self.checker = ConfigChecker()
         self._config_file_handler = file_handler
@@ -59,7 +65,7 @@ class ConfigManager:
 
         # self._logger.log(*self._dotfiles.values())
         # for dotfile in self._dotfiles.values():
-            # self._logger.log(dotfile._get_tree())
+        # self._logger.log(dotfile._get_tree())
 
     def _load_general_config(self) -> None:
         """Read dotpyle.yml config file and creates a OOP mapping of all fields"""
@@ -88,7 +94,7 @@ class ConfigManager:
                             dotfile_name=dotfile_name,
                             profile_name=profile_name,
                             paths=profile_data.get("paths", []),
-                            root=profile_data.get("root", '~'),
+                            root=profile_data.get("root", "~"),
                             pre=profile_data.get("pre", []),
                             post=profile_data.get("post", []),
                         )
@@ -192,16 +198,20 @@ class ConfigManager:
     def query_dotfiles(self, program_name: str) -> list[Dotfile]:
         match = []
         if program_name:
-            match = [dotfile_data for dotfile_name, dotfile_data in self._dotfiles.items() if dotfile_name == program_name]
+            match = [
+                dotfile_data
+                for dotfile_name, dotfile_data in self._dotfiles.items()
+                if dotfile_name == program_name
+            ]
         else:
             match.extend(self._dotfiles.values())
         return match
 
     # def get_tree(self, program_name: str, profile_name: str, only_linked: bool):
-        # for dotfile in self.query_dotfiles(program_name):
-            # profile_tree = dotfile.get_tree(profile_filter=profile_name, only_linked=only_linked)
-            # if len(profile_tree.children) > 0:
-                # tree.add(dotfile.get_tree(profile_filter=name, only_linked=only_linked))
+    # for dotfile in self.query_dotfiles(program_name):
+    # profile_tree = dotfile.get_tree(profile_filter=profile_name, only_linked=only_linked)
+    # if len(profile_tree.children) > 0:
+    # tree.add(dotfile.get_tree(profile_filter=name, only_linked=only_linked))
 
     def get_dotfile(self, program_name: str) -> Dotfile:
         if program_name in self._dotfiles:

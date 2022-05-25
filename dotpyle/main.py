@@ -51,7 +51,8 @@ def dotpyle(ctx=None, verbose=False):
     ctx.meta[constants.CONFIG_MANAGER_PROVIDER] = ConfigManager(
         file_handler=handler,
         local_file_handler=local_file_handler,
-        logger=logger)
+        logger=logger,
+    )
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
     ctx.meta[constants.LOGGER_PROVIDER] = logger

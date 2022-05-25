@@ -4,6 +4,7 @@ from cerberus import Validator
 from cerberus.errors import ValidationError
 from dotpyle.utils import constants
 
+
 class ConfigChecker:
     """
     Class to check the validity of the config file.

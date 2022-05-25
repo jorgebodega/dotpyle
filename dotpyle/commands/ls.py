@@ -12,8 +12,12 @@ from dotpyle.services.config_manager import ConfigManager
 
 
 @click.command()
-@click.argument("name", required=False, default=None, type=DotfileNamesVarType())
-@click.option("--profile", "-p", default='', help="profile name", type=ProfileVarType())
+@click.argument(
+    "name", required=False, default=None, type=DotfileNamesVarType()
+)
+@click.option(
+    "--profile", "-p", default="", help="profile name", type=ProfileVarType()
+)
 @click.option(
     "--all", "-a", is_flag=True, help="list all dotfiles (linked or not)"
 )
@@ -38,8 +42,9 @@ def ls(
 
     only_linked = not all
     for dotfile in manager.query_dotfiles(name):
-        profile_tree = dotfile.get_tree(profile_filter=profile, only_linked=only_linked)
+        profile_tree = dotfile.get_tree(
+            profile_filter=profile, only_linked=only_linked
+        )
         if len(profile_tree.children) > 0:
             tree.add(profile_tree)
     logger.print(tree)
-

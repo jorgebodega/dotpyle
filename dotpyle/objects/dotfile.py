@@ -66,18 +66,21 @@ class Dotfile(object):
             self._program_name, *self._profiles.values()
         )
 
-    def query_profiles(self, profile_filter: str, only_linked: bool) -> list[Profile]:
+    def query_profiles(
+        self, profile_filter: str, only_linked: bool
+    ) -> list[Profile]:
         matched = []
         for profile_name, profile_data in self.profiles.items():
-            if (not profile_filter or profile_filter in profile_name) and (not only_linked or profile_data.linked):
+            if (not profile_filter or profile_filter in profile_name) and (
+                not only_linked or profile_data.linked
+            ):
                 matched.append(profile_data)
         return matched
 
-
-    def get_tree(self, profile_filter: str = '', only_linked: bool = False) -> Tree:
-        tree = Tree(
-            f"[bold magenta]:open_file_folder: {self._program_name}"
-        )
+    def get_tree(
+        self, profile_filter: str = "", only_linked: bool = False
+    ) -> Tree:
+        tree = Tree(f"[bold magenta]:open_file_folder: {self._program_name}")
         # for profile in self._profiles.values():
         for profile in self.query_profiles(profile_filter, only_linked):
             tree.add(profile._get_tree())
@@ -92,7 +95,7 @@ class Dotfile(object):
     def _get_pending_actions(self) -> list[BaseAction]:
         pending_actions = []
         # if self._new:
-            # pending_actions.append(mathe)
+        # pending_actions.append(mathe)
         for profile in self.profiles.values():
             pending_actions.extend(profile._get_pending_actions())
         return pending_actions
