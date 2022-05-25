@@ -4,7 +4,14 @@ from rich.tree import Tree
 from rich.text import Text
 from dotpyle.utils import path
 from dotpyle.objects.base import PathLike, ShellCommand
-from dotpyle.objects.action import BaseAction, LinkAction, UnlinkAction, ScriptAction, RepoAction, MoveAction
+from dotpyle.objects.action import (
+    BaseAction,
+    LinkAction,
+    UnlinkAction,
+    ScriptAction,
+    RepoAction,
+    MoveAction,
+)
 
 
 class Profile(object):
@@ -47,12 +54,15 @@ class Profile(object):
         return self._profile_name
 
     def _get_tree(self) -> Tree:
-        tree = Tree("[bold blue]:open_file_folder: [link"
-                    f" file://{self._profile_name}]{self._profile_name}"
-                    f" {'[bold green][LINKED]' if self._is_linked else ''}")
+        tree = Tree(
+            "[bold blue]:open_file_folder: [link"
+            f" file://{self._profile_name}]{self._profile_name}"
+            f" {'[bold green][LINKED]' if self._is_linked else ''}"
+        )
         for _path in self._paths:
             link_path = path.un_expanduser(
-                path.get_link_path(str(self._root), _path))
+                path.get_link_path(str(self._root), _path)
+            )
             text_filename = Text(_path, "green")
             text_filename.stylize(f"link file://{_path}")
             text_filename += Text(" --> ", "blink yellow")
@@ -125,7 +135,7 @@ class Profile(object):
 
     def _serialize(self) -> dict[str, Any]:
         serialized: dict[str, Any] = {"paths": self._paths}
-        if self._root != '~':
+        if self._root != "~":
             serialized["root"] = self._root
         if self._pre:
             serialized["pre"] = self._pre
@@ -137,10 +147,12 @@ class Profile(object):
         pending_actions: list[BaseAction] = []
         for _path in self.paths:
             source, link = path.get_source_and_link_path(
-                self._dotfile_name, self.profile_name, str(self._root), _path)
+                self._dotfile_name, self.profile_name, str(self._root), _path
+            )
             path_linked = os.path.islink(link)
-            path_correctly_linked = (os.readlink(link) == source
-                                     if path_linked else False)
+            path_correctly_linked = (
+                os.readlink(link) == source if path_linked else False
+            )
             source_path_exist = os.path.exists(source)
             if self._track:
                 pending_actions.append(MoveAction(link, source))
