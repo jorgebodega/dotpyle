@@ -3,8 +3,8 @@ on:
   pull_request:
     branches: [development, master]
 jobs:
-  lint:
-    name: Lint
+  format:
+    name: Format check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,8 +20,8 @@ jobs:
         uses: abatilo/actions-poetry@v2.1.4
         with:
           poetry-version: 1.1.13
-      - name: Black Check
-        uses: jpetrucciani/black-check@21.12b0
+      - name: Check format
+        run: poetry run poe black-format
   ci:
     strategy:
       fail-fast: false
