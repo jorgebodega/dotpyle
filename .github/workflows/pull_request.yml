@@ -8,24 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: '3.10'
       - name: Add poetry
         uses: abatilo/actions-poetry@v2.1.4
         with:
           poetry-version: 1.1.13
-      - name: Retrieve installed dependencies from cache
-        id: modules-cache
-        uses: actions/cache@v3
+      - uses: actions/setup-python@v3
         with:
-          path: '**/.venv'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
-        if: steps.modules-cache.outputs.cache-hit != 'true'
-        run: poetry install
-      - name: Check format
-        run: poetry run poe black-check
+          python-version: '3.10'
+          cache: 'poetry'
+      - run: poetry install
+      - run: poetry run poe black-check
   ci:
     strategy:
       fail-fast: false
