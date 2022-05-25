@@ -45,6 +45,7 @@ test = "pytest:main"
 
 [tool.poe.tasks]
 black = "black ."
+black-check = "black --check ."
 clear-cache = "rm -rf **/__pycache__/**"
 cov-report = "coverage report -m"
 pylint = "pylint dotpyle/ tests/"
