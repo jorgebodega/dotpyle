@@ -3,26 +3,58 @@ on:
   pull_request:
     branches: [development, master]
 jobs:
-  ci:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.9]
-        poetry-version: [1.1.13]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+  install-dependencies:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: abatilo/actions-poetry@v2.1.4
+        with:
+          poetry-version: 1.1.13
       - uses: actions/setup-python@v3
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Run image
-        uses: abatilo/actions-poetry@v2.1.4
+          python-version: '3.10'
+          cache: 'poetry'
+      - run: poetry install
+  format:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: abatilo/actions-poetry@v2.1.4
         with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: View poetry --help
-        run: poetry --help
-      - name: Install dependencies
-        run: poetry install
+          poetry-version: 1.1.13
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          cache: 'poetry'
+      - run: poetry install
+      - run: poetry run poe black-check
+  lint:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: abatilo/actions-poetry@v2.1.4
+        with:
+          poetry-version: 1.1.13
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          cache: 'poetry'
+      - run: poetry install
+      - run: poetry run poe pylint-check
+  ci:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: abatilo/actions-poetry@v2.1.4
+        with:
+          poetry-version: 1.1.13
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          cache: 'poetry'
+      - run: poetry install
       - name: Poetry test
         run: poetry run test --cov
