@@ -34,7 +34,7 @@ class Script(object):
         return path.get_script_path(self._filename)
 
     def __str__(self) -> str:
-        return "Script: {} located on {}".format(self._alias, self.get_path())
+        return "Script: {} located on {}\n".format(self._alias, self.get_path())
 
     def _serialize(self):
         return self._filename

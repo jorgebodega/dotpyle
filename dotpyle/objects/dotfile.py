@@ -8,6 +8,7 @@ class Dotfile(object):
     __slots__ = (
         "_program_name",
         "_profiles",
+        "_updated",
     )
 
     def __init__(
@@ -17,6 +18,7 @@ class Dotfile(object):
     ):
         self._program_name = program_name
         self._profiles = profiles
+        self._updated = False
 
     @property
     def program_name(self):
@@ -27,19 +29,21 @@ class Dotfile(object):
         self._program_name = program_name
 
     @property
-    def linked_profile(self):
+    def linked_profile(self) -> Profile | None:
         for profile in self._profiles.values():
             if profile.linked:
                 return profile
         # return self._linked_profile
 
-    # @linked_profile.setter
-    # def linked_profile(self, profile_name):
-    # if profile_name in self._profiles:
-    # profile = self._profiles[profile_name]
-    # # Set linked profile to internal profile
-    # profile.linked = True
-    # self._linked_profile = profile
+    @linked_profile.setter
+    def linked_profile(self, profile_name):
+        current_linked_profile = self.linked_profile
+        if current_linked_profile:
+            current_linked_profile.linked = False
+
+        if profile_name in self._profiles:
+            profile = self._profiles[profile_name]
+            profile.linked = True
 
     @property
     def profiles(self):
@@ -49,10 +53,18 @@ class Dotfile(object):
     def profiles(self, profiles):
         self._profiles = profiles
 
+    @property
+    def updated(self) -> bool:
+        return self._updated
+
+    @updated.setter
+    def updated(self, updated: bool) -> None:
+        self._updated = updated
+
     def get_profile_names(self) -> list[str]:
         return list(self.profiles.keys())
 
-    def get_profile(self, profile_name: str):
+    def get_profile(self, profile_name: str) -> Profile:
         if profile_name in self._profiles:
             return self._profiles[profile_name]
         raise ConfigHandlerException(
@@ -60,6 +72,9 @@ class Dotfile(object):
                 profile_name, self._program_name
             )
         )
+
+    def __repr__(self):
+        return "{} -> {} ".format(self.program_name, *self._profiles.values())
 
     def __str__(self) -> str:
         return "Program: {}\nProfiles:\n{}\n".format(
@@ -86,18 +101,18 @@ class Dotfile(object):
             tree.add(profile._get_tree())
         return tree
 
-    def _serialize(self):
+    def _serialize(self, check_updated: bool):
         return {
-            profile_name: profile_data._serialize()
+            profile_name: profile_data._serialize(check_updated)
             for profile_name, profile_data in self._profiles.items()
         }
 
-    def _get_pending_actions(self) -> list[BaseAction]:
+    def _get_pending_actions(self, check_updated: bool) -> list[BaseAction]:
         pending_actions = []
         # if self._new:
         # pending_actions.append(mathe)
         for profile in self.profiles.values():
-            pending_actions.extend(profile._get_pending_actions())
+            pending_actions.extend(profile._get_pending_actions(check_updated))
         return pending_actions
 
     def add_profile(self, profile: Profile):

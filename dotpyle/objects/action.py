@@ -11,6 +11,10 @@ from dotpyle.objects.base import PathLike, ShellCommand
 
 
 class BaseAction(ABC):
+
+    # There are some actions which need to be executed before others
+    priority: int = NotImplemented
+
     @abstractmethod
     def run(self) -> None:
         ...
@@ -21,6 +25,9 @@ class BaseAction(ABC):
 
 
 class LinkAction(BaseAction):
+
+    priority = 0
+
     def __init__(self, source: PathLike, link_name: PathLike):
         self.source = source
         self.link_name = link_name
@@ -40,6 +47,9 @@ class LinkAction(BaseAction):
 
 
 class UnlinkAction(BaseAction):
+
+    priority = 20
+
     def __init__(self, link_name: PathLike):
         self.link_name = link_name
 
@@ -57,6 +67,9 @@ class UnlinkAction(BaseAction):
 
 
 class ScriptAction(BaseAction):
+
+    priority = 0
+
     def __init__(self, commands: list[ShellCommand]):
         self.commands = commands
 
@@ -71,6 +84,9 @@ class ScriptAction(BaseAction):
 
 
 class RepoAction(BaseAction):
+
+    priority = 0
+
     import click
 
     def __init__(
@@ -111,6 +127,9 @@ class RepoAction(BaseAction):
 
 
 class MoveAction(BaseAction):
+
+    priority = 10
+
     def __init__(self, source_path, dest_path):
         self.source_path = source_path
         self.dest_path = dest_path
@@ -125,6 +144,7 @@ class MoveAction(BaseAction):
             print("Moving a folder")
         else:
             print("Moving a file")
+        print(self)
 
         # Create path if not exist
         pathlib.Path(str(os.path.dirname(self.dest_path))).mkdir(
@@ -139,3 +159,28 @@ class MoveAction(BaseAction):
             )
         )
         shutil.move(self.dest_path, self.source_path)
+
+
+class RemoveAction(BaseAction):
+
+    priority = 20
+
+    def __init__(self, source_path):
+        self.source_path = source_path
+
+    def __str__(self) -> str:
+        return "[Remove action]: rm -r {}".format(self.source_path)
+
+    # TODO: this will need a user confirmation in the future
+    def run(self):
+        if os.path.isdir(self.source_path):
+            print("TODO Removing a folder")
+            shutil.rmtree(self.source_path, ignore_errors=True)
+        else:
+            print("TODO Removing a file")
+            os.unlink(self.source_path)
+        print(self)
+
+    def rollback(self):
+        # TODO
+        pass

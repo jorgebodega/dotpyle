@@ -1,13 +1,4 @@
-import os
 from typing import Any
-from rich.tree import Tree
-
-from dotpyle.utils import path
-
-# from dotpyle.services import FileHandler, LocalFileHandler, Logger
-# from dotpyle.services import FileHandler, LocalFileHandler
-# from dotpyle.services import  Logger
-
 from dotpyle.services.logger import Logger
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.exceptions import ConfigHandlerException
@@ -29,6 +20,8 @@ class ConfigManager:
         "_local_file_handler",
         "_logger",
         "_version",
+        "_abort",
+        "_updated",
     )
 
     def __init__(
@@ -44,17 +37,21 @@ class ConfigManager:
         self._scripts: dict[str, Script] = {}
         self._dotfiles: dict[str, Dotfile] = {}
         self._load_config()
+        self._abort = False
+        self._updated = False
 
     def __del__(self):
-        try:
-            # First save config file
-            self._save_config()
-            self._run_pending_actions()
-            # TODO rollback config file storage
-            self._logger.log("Config file saved successfully")
-        except:
-            self._rollback_actions()
-            self._logger.failure("Error... TODO")
+        if not self._abort:
+            try:
+                # First save config file
+                self._save_config(updated=self._updated)
+                self._logger.log("Config file saved successfully")
+                self._run_pending_actions(self._updated)
+                # TODO rollback config file storage
+                self._logger.log("Pending actions done")
+            except:
+                self._rollback_actions()
+                self._logger.failure("Error, rolled back")
 
     def _load_config(self) -> None:
         """Read dotpyle.yml config file and creates a OOP mapping of all fields"""
@@ -62,10 +59,6 @@ class ConfigManager:
 
         """Read dotpyle.local.yml config file and set which dotfiles are linked"""
         self._load_local_config()
-
-        # self._logger.log(*self._dotfiles.values())
-        # for dotfile in self._dotfiles.values():
-        # self._logger.log(dotfile._get_tree())
 
     def _load_general_config(self) -> None:
         """Read dotpyle.yml config file and creates a OOP mapping of all fields"""
@@ -109,6 +102,47 @@ class ConfigManager:
         except KeyError as e:
             print(e)  # TODO
 
+    def _update_general_config(self, new_config: FileHandler) -> None:
+        """TODO dotpyle.yml config file and creates a OOP mapping of all fields"""
+        self._config_file_handler = new_config
+        config_dict = self._config_file_handler.config
+
+        self._updated = True  # Ensure all operations will work as updated
+
+        try:
+            self._version = config_dict["version"]
+            if self._version != 0:
+                raise ConfigHandlerException(
+                    "Version '{}' of dotfile.yml file is currently unsupported"
+                    .format(self._version)
+                )
+            if "scripts" in config_dict:
+                self._scripts = {
+                    alias: Script(alias, filename)
+                    for alias, filename in config_dict["scripts"].items()
+                }
+                self._logger.log(*self._scripts.values())
+
+            if "dotfiles" in config_dict:
+                raw_dotfiles = config_dict["dotfiles"].items()
+                for (dotfile_name, raw_profiles) in raw_dotfiles:
+                    # Mark profile as updated
+                    dotfile = self.get_dotfile(dotfile_name)
+                    dotfile.updated = True
+
+                    for profile_name, profile_data in raw_profiles.items():
+                        # Mark profile as updated
+                        profile = dotfile.get_profile(profile_name)
+                        profile.updated = True
+                        profile.paths = profile_data.get("paths", [])
+                        root = profile_data.get("root", "~")
+                        profile.root = root
+                        # profile.pre = profile_data.get("pre", []),
+                        # profile.post = profile_data.get("post", []),
+
+        except KeyError as e:
+            print(e)  # TODO
+
     def _load_local_config(self) -> None:
         """Read dotpyle.local.yml config file and enrich current dotfiles with proper information"""
         local_dict = self._local_file_handler.config
@@ -119,8 +153,10 @@ class ConfigManager:
                 " unsupported".format(version)
             )
         installed_profiles = local_dict.get("installed", {})
+
         for dotfile, profile in installed_profiles.items():
-            self.get_dotfile(dotfile).get_profile(profile).linked = True
+            # self.get_dotfile(dotfile).get_profile(profile).linked = True
+            self.get_dotfile(dotfile).linked_profile = profile
 
     def _get_linked_dotfiles(self) -> list[Dotfile]:
         """Auxiliar mothod to obtain current linked profiles"""
@@ -140,11 +176,13 @@ class ConfigManager:
                 ] = dotfile.linked_profile.profile_name
         return linked_profiles
 
-    def _serialize_general_config(self) -> dict[str, Any]:
+    def _serialize_general_config(
+        self, check_updated: bool = False
+    ) -> dict[str, Any]:
         """Convert all objects back to dict format (dotpyle.yml)"""
         serialized_config = {
             "dotfiles": {
-                dotfile_name: dotfile_data._serialize()
+                dotfile_name: dotfile_data._serialize(check_updated)
                 for dotfile_name, dotfile_data in self._dotfiles.items()
             },
             "scripts": {
@@ -166,34 +204,42 @@ class ConfigManager:
         self._logger.log(serialized_local_config)
         return serialized_local_config
 
-    def _save_config(self) -> None:
-        self._config_file_handler.save(self._serialize_general_config())
+    def _save_config(self, updated: bool) -> None:
+        self._config_file_handler.save(self._serialize_general_config(updated))
         self._local_file_handler.save(self._serialize_local_config())
 
-    def _get_pending_actions(self) -> list[BaseAction]:
+    def _get_pending_actions(self, check_updated: bool) -> list[BaseAction]:
         pending_actions = []
         for dotfile in self._dotfiles.values():
-            pending_actions.extend(dotfile._get_pending_actions())
+            pending_actions.extend(dotfile._get_pending_actions(check_updated))
+
+        # Sort pending actions by priority
+        pending_actions = sorted(
+            pending_actions, key=lambda x: x.priority, reverse=True
+        )
+
         return pending_actions
 
-    def _rollback_actions(self, actions: list[BaseAction] = None):
-        if not actions:
-            actions = self._get_pending_actions()
+    def _rollback_actions(
+        self, actions: list[BaseAction] = [], check_updated: bool = False
+    ):
+        if actions == []:
+            actions = self._get_pending_actions(check_updated=check_updated)
         # Iterate over all executed actions backwards, rollbacking them
         for action in actions[::-1]:
             action.rollback()
         pass
 
-    def _run_pending_actions(self) -> None:
+    def _run_pending_actions(self, check_updated: bool) -> None:
         run_actions: list[BaseAction] = []
         try:
-            for action in self._get_pending_actions():
+            for action in self._get_pending_actions(check_updated):
                 self._logger.log(action)
                 run_actions.append(action)
                 action.run()
         except:
             # Rollback executed actions
-            self._rollback_actions(run_actions)
+            self._rollback_actions(run_actions, check_updated)
 
     def query_dotfiles(self, program_name: str) -> list[Dotfile]:
         match = []
@@ -206,12 +252,6 @@ class ConfigManager:
         else:
             match.extend(self._dotfiles.values())
         return match
-
-    # def get_tree(self, program_name: str, profile_name: str, only_linked: bool):
-    # for dotfile in self.query_dotfiles(program_name):
-    # profile_tree = dotfile.get_tree(profile_filter=profile_name, only_linked=only_linked)
-    # if len(profile_tree.children) > 0:
-    # tree.add(dotfile.get_tree(profile_filter=name, only_linked=only_linked))
 
     def get_dotfile(self, program_name: str) -> Dotfile:
         if program_name in self._dotfiles:
@@ -228,3 +268,18 @@ class ConfigManager:
 
     def remove_dotfile(self):
         pass
+
+    def set_config_file_handler(self, config_file_handler: FileHandler):
+        try:
+            self._update_general_config(new_config=config_file_handler)
+        except ConfigHandlerException as e:
+            self._abort = True
+            raise e
+
+    def set_local_file_handler(self, local_file_handler: LocalFileHandler):
+        self._local_file_handler = local_file_handler
+        try:
+            self._load_local_config()
+        except ConfigHandlerException as e:
+            self._abort = True
+            raise e

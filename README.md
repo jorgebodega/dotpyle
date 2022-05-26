@@ -59,8 +59,49 @@ If you want to manage an existing repo you just need to input url and token
     dotpyle init [--url <git url>]  [--protocol (git/https)] [--token (if repo is private)]
 
 
-### Add
+### Edit
 
+#### Config
+
+```sh
+dotpyle edit config
+```
+
+Open `dotpyle.yml` file in your default editor for edit.
+Any change made here will be directly translated into your system.
+
+Understand this file as a reactive file. Anything you edit, it will be reflected in your system.
+
+TODO: give more examples
+
+A file correctness will be done before saving changes and performing proper actions.
+
+#### Local
+
+```sh
+dotpyle edit local
+```
+
+Open `dotpyle.local.yml` file in your default editor for edit.
+Any change made here will be traduced in linking or unlinking dotfiles in your system.
+A file correctness will be done before saving changes and performing proper actions.
+
+This is a quick way to define your local configuration (which programs and
+which profile will be linked to your system for that program)
+
+See [link](#link) and [unlink](#unlink) commands for a CLI approach.
+
+#### Readme
+
+```sh
+dotpyle edit readme
+```
+
+Open your dotfiles README.md file in your default editor for edit.
+If it does not exist, it will create it from a template (referencing this
+project, it's up to you to support us :3)
+
+### Add
 
 1. Copy file to repo location
 2. Delete file of path
@@ -169,21 +210,6 @@ All dotfiles which have a 'home' profile will be symlinked to its corresponding 
 Dotfiles which does not have a configuration for given profile will not be altered.
 
 TBD
-
-### Configuration
-
-#### check
-
-    dotpyle config check [<dotpyle_config_path>]
-
-This command will analize Dotpyle configuration file, by default
-(`XDG_CONFIG_HOME}/dotpyle/dotpyle.yml`) (or `<dotpyle_config_path>`),
-returning descriptive errors.
-
-**Info**: any other command will anayle the configuration file before
-executing.  This command is useful and recomended whenever any manual change is
-made on *dotpyle.yml*.
-
 
 ### dotpyle.yml example
 
@@ -325,7 +351,7 @@ TBD
 ## TODO
 
 - [ ] Decorator / global variable to instance parser and handlers
-- [ ] Print centralized service with colorful error / warning / correct output
+- [x] Print centralized service with colorful error / warning / correct output
 - [ ] Change uninstall name for on more intuitive
 - [ ] Run command to execute alone hooks
 - [ ] Create commit on uninstall dotfile
