@@ -1,3 +1,8 @@
+[MASTER]
+
+# TODO: Remove this rules whenever the package is stable
+disable = C0114,C0115,C0116
+
 [FORMAT]
 
 # Disable some rules that are handled by black formatter
