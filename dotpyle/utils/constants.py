@@ -12,6 +12,7 @@ README_TEMPLATE_PATH = "dotpyle/templates/readme.md"
 CONFIG_TEMPLATE_PATH = "dotpyle/templates/basic-config.yaml"
 CONFIG_LOCAL_TEMPLATE_PATH = "dotpyle/templates/local-config.yaml"
 SCRIPT_TEMPLATE_PATH = "dotpyle/templates/script.yaml"
+GIT_FOLDER = ".git"
 
 CONFIG_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.json")
 CONFIG_HANDLER_ERROR_CODE = 42

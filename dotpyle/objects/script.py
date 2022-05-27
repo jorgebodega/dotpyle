@@ -47,18 +47,19 @@ class Script(DotpyleObject):
             return {}
         return self._filename
 
-
-    def get_pending_actions(self, check_refreshed: bool = False) -> list[BaseAction]:
+    def get_pending_actions(
+        self, check_refreshed: bool = False
+    ) -> list[BaseAction]:
         pending_actions: list[BaseAction] = []
-         
+
         if self.track:
             # TODO add to repo
             # pending_actions.append(RepoAction(self))
-            pending_actions.append(MoveAction(source_path = self.filename, dest_path=self.get_path()))
+            pending_actions.append(
+                MoveAction(source_path=self.filename, dest_path=self.get_path())
+            )
 
         if check_refreshed and not self.refreshed:
-                pending_actions.append(RemoveAction(self.get_path()))
+            pending_actions.append(RemoveAction(self.get_path()))
 
         return pending_actions
-
-

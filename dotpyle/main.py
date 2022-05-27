@@ -28,6 +28,7 @@ from dotpyle.services.config_manager import ConfigManager
 
 CONTEXT = {"help_option_names": ["-h", "--help"]}
 
+
 @click.group()
 @click.version_option()
 @click.option(

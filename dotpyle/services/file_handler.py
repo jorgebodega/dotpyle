@@ -1,7 +1,8 @@
 import glob
 import itertools
-from os.path import join, isfile, isdir
-from os import listdir
+from os.path import join, isfile, isdir, dirname
+from os import listdir, makedirs
+import shutil
 from yaml import safe_load, safe_dump
 from dotpyle.utils.path import (
     get_configuration_path,
@@ -24,6 +25,9 @@ class BasicFileHandler:
                     file_path
                 )
             )
+            makedirs(dirname(file_path), exist_ok=True)
+            shutil.copy(template_path, file_path)
+
             copy2(template_path, file_path)
 
         self.file_path = file_path

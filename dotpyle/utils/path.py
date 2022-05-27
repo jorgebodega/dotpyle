@@ -20,7 +20,7 @@ def get_default_path() -> str:
 
 
 def un_expanduser(path: str) -> str:
-    """ translate /home/<username>/path into ~/path"""
+    """translate /home/<username>/path into ~/path"""
 
     home_path = getenv("HOME")
     path_from_home = search("^{0}(.+?)$".format(home_path), path)
@@ -85,6 +85,10 @@ def get_script_path(filename: str) -> str:
 
 def get_basename(full_path: str) -> str:
     return path.basename(full_path)
+
+
+def get_git_folder_path() -> str:
+    return path.join(get_default_path(), constants.GIT_FOLDER)
 
 
 if __name__ == "__main__":

@@ -156,14 +156,19 @@ class Profile(DotpyleObject):
             for _path in self.paths
         ]
 
-    def serialize( self, check_refreshed: Refreshed = Refreshed.QUERY) -> dict[str, Any]:
+    def serialize(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> dict[str, Any]:
         serialized: dict[str, Any] = {
             "paths": [
                 path.path
                 for path in self._paths
                 # Serialize paths if QUERY or LOCAL status, or if config file
                 # has been modified, only in the path has also been refreshed
-                if (check_refreshed != Refreshed.CONFIG or path.refreshed == Refreshed.CONFIG)
+                if (
+                    check_refreshed != Refreshed.CONFIG
+                    or path.refreshed == Refreshed.CONFIG
+                )
             ]
         }
         if self._root != "~":
@@ -174,7 +179,9 @@ class Profile(DotpyleObject):
             serialized["post"] = self._post
         return serialized
 
-    def get_pending_actions(self, check_refreshed: Refreshed = Refreshed.QUERY) -> list[BaseAction]:
+    def get_pending_actions(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> list[BaseAction]:
         pending_actions: list[BaseAction] = []
 
         for _path in self.paths:

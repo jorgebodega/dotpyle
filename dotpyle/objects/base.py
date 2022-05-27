@@ -9,8 +9,8 @@ class Refreshed(Enum):
     CONFIG = 1
     LOCAL = 2
 
-class DotpyleObject(ABC):
 
+class DotpyleObject(ABC):
     @property
     def track(self) -> bool:
         return self._track
@@ -28,11 +28,14 @@ class DotpyleObject(ABC):
         self._refreshed = refreshed
 
     @abstractmethod
-    def serialize( self, check_refreshed: Refreshed = Refreshed.QUERY) -> dict[str, Any]:
+    def serialize(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> dict[str, Any]:
         """Return a dict representation of the whole object"""
         ...
 
     @abstractmethod
-    def get_pending_actions(self, check_refreshed: Refreshed = Refreshed.QUERY) -> list[BaseAction]:
+    def get_pending_actions(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> list[BaseAction]:
         ...
-

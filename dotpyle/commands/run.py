@@ -4,6 +4,7 @@ from dotpyle.utils.autocompletion import ScriptVarType
 from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.services.config_manager import ConfigManager
 
+
 @click.command()
 @click.help_option(help="Run a script managed by Dotpyle")
 @click.argument("script", type=ScriptVarType())

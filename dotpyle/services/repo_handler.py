@@ -3,7 +3,11 @@ from typing import Callable, Optional
 from git import Repo, PathLike
 from shutil import rmtree
 
-from dotpyle.utils.path import get_configuration_path, get_default_path
+from dotpyle.utils.path import (
+    get_configuration_path,
+    get_default_path,
+    get_git_folder_path,
+)
 from dotpyle.services.logger import Logger
 
 
@@ -14,7 +18,7 @@ class RepoHandler:
         self.logger = logger
 
         self.local_path = local_path
-        if path.exists(local_path):
+        if path.exists(local_path) and path.exists(get_git_folder_path()):
             self.repo = Repo(local_path)
 
     def __str__(self) -> str:

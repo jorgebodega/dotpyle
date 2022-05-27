@@ -54,7 +54,7 @@ def dotfile(
     post: list[str],
     not_install: bool,
 ):
-    """ Add DOTFILE to KEY group on Dotpyle tracker TBD """
+    """Add DOTFILE to KEY group on Dotpyle tracker TBD"""
     # Convert tuples to lists
     paths = list(path)
     pre_commands = list(pre)

@@ -29,7 +29,7 @@ class Dotfile(DotpyleObject):
         self._program_name = program_name
 
     @property
-    def linked_profile(self) -> Profile | None:
+    def linked_profile(self):
         for profile in self._profiles.values():
             if profile.linked:
                 return profile
@@ -93,13 +93,17 @@ class Dotfile(DotpyleObject):
             tree.add(profile._get_tree())
         return tree
 
-    def serialize( self, check_refreshed: Refreshed = Refreshed.QUERY) -> dict[str, Any]:
+    def serialize(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> dict[str, Any]:
         return {
             profile_name: profile_data.serialize(check_refreshed)
             for profile_name, profile_data in self._profiles.items()
         }
 
-    def get_pending_actions(self, check_refreshed: Refreshed = Refreshed.QUERY) -> list[BaseAction]:
+    def get_pending_actions(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> list[BaseAction]:
         pending_actions = []
         # if self._new:
         # pending_actions.append(mathe)

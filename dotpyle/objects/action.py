@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import os
+from posixpath import dirname
 import shutil
 import pathlib
 from dotpyle.services.repo_handler import RepoHandler
@@ -37,6 +38,7 @@ class LinkAction(BaseAction):
         )
 
     def run(self):
+        os.makedirs(dirname(self.link_name), exist_ok=True)
         os.symlink(src=self.source, dst=self.link_name)
         print("Linking {} -> {}".format(self.source, self.link_name))
 

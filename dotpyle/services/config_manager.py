@@ -45,7 +45,9 @@ class ConfigManager:
 
     def __del__(self):
         # Only perform actions in editing mode
-        if (self._refreshed != Refreshed.QUERY or self._cli_mode) and not self._abort:
+        if (
+            self._refreshed != Refreshed.QUERY or self._cli_mode
+        ) and not self._abort:
             try:
                 # First save config file
                 self._save_config(refreshed=self._refreshed)
@@ -111,7 +113,9 @@ class ConfigManager:
         self._config_file_handler = new_config
         config_dict = self._config_file_handler.config
 
-        self._refreshed = Refreshed.CONFIG  # Ensure all operations will work as updated
+        self._refreshed = (
+            Refreshed.CONFIG
+        )  # Ensure all operations will work as updated
 
         try:
             self._version = config_dict["version"]
@@ -166,10 +170,12 @@ class ConfigManager:
     def _update_local_config(self, new_local_config: LocalFileHandler) -> None:
         """Read dotpyle.local.yml config file and enrich current dotfiles with proper information"""
 
-        self._local_file_handler = new_local_config 
+        self._local_file_handler = new_local_config
         local_dict = self._local_file_handler.config
 
-        self._refreshed = Refreshed.LOCAL  # Ensure all operations will work as updated
+        self._refreshed = (
+            Refreshed.LOCAL
+        )  # Ensure all operations will work as updated
 
         version = local_dict.get("version", None)
         if version != 0:
@@ -236,10 +242,14 @@ class ConfigManager:
         return serialized_local_config
 
     def _save_config(self, refreshed: Refreshed) -> None:
-        self._config_file_handler.save(self._serialize_general_config(refreshed))
+        self._config_file_handler.save(
+            self._serialize_general_config(refreshed)
+        )
         self._local_file_handler.save(self._serialize_local_config())
 
-    def _get_pending_actions(self, check_updated: Refreshed) -> list[BaseAction]:
+    def _get_pending_actions(
+        self, check_updated: Refreshed
+    ) -> list[BaseAction]:
         pending_actions = []
         for dotfile in self._dotfiles.values():
             pending_actions.extend(dotfile.get_pending_actions(check_updated))
@@ -252,7 +262,9 @@ class ConfigManager:
         return pending_actions
 
     def _rollback_actions(
-        self, actions: list[BaseAction] = [], check_updated: Refreshed = Refreshed.QUERY
+        self,
+        actions: list[BaseAction] = [],
+        check_updated: Refreshed = Refreshed.QUERY,
     ):
         if actions == []:
             actions = self._get_pending_actions(check_updated=check_updated)
@@ -261,7 +273,9 @@ class ConfigManager:
             action.rollback()
         pass
 
-    def _run_pending_actions(self, check_updated: Refreshed = Refreshed.QUERY) -> None:
+    def _run_pending_actions(
+        self, check_updated: Refreshed = Refreshed.QUERY
+    ) -> None:
         run_actions: list[BaseAction] = []
         try:
             for action in self._get_pending_actions(check_updated):
