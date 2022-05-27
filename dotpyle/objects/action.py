@@ -4,8 +4,7 @@ import shutil
 import pathlib
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.logger import Logger
-from dotpyle.decorators.pass_repo_handler import pass_repo_handler
-from dotpyle.objects.base import PathLike, ShellCommand
+from dotpyle.objects.common import PathLike, ShellCommand
 
 # from dotpyle.objects.profile import Profile # circular import
 
@@ -183,4 +182,5 @@ class RemoveAction(BaseAction):
 
     def rollback(self):
         # TODO
+        print("rolling back remove action")
         pass

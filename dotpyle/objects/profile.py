@@ -3,7 +3,7 @@ from typing import Any
 from rich.tree import Tree
 from rich.text import Text
 from dotpyle.utils import path
-from dotpyle.objects.base import PathLike, ShellCommand
+from dotpyle.objects.common import PathLike, ShellCommand
 from dotpyle.objects.path import Path
 from dotpyle.objects.action import (
     BaseAction,
@@ -14,9 +14,10 @@ from dotpyle.objects.action import (
     MoveAction,
     RemoveAction,
 )
+from dotpyle.objects.base import DotpyleObject, Refreshed
 
 
-class Profile(object):
+class Profile(DotpyleObject):
     __slots__ = (
         "_dotfile_name",
         "_profile_name",
@@ -27,8 +28,6 @@ class Profile(object):
         "_is_linked",
         "_process_pre",
         "_process_post",
-        "_track",
-        "_updated",
         "_updated_dict",
     )
 
@@ -52,8 +51,7 @@ class Profile(object):
         self._is_linked = False  # Set false by default (checked later)
         self._process_pre = False
         self._process_post = False
-        self._track = track
-        self._updated = False
+        self.track = track
         self._updated_dict = {}
 
     def __str__(self) -> str:
@@ -103,12 +101,12 @@ class Profile(object):
                 if _path.path == path:
                     # Mark as updated the non altered paths
                     # Removed paths will not be updated and an action will be generated
-                    _path.updated = True
+                    _path.refreshed = Refreshed.CONFIG
                     found = True
             if not found:
                 print("path not found", path)
                 # Added paths will be created with updated flag enabled
-                self._paths.append(Path(path, updated=True))
+                self._paths.append(Path(path, refreshed=Refreshed.CONFIG))
 
     @property
     def root(self) -> PathLike:
@@ -144,22 +142,6 @@ class Profile(object):
     def process_post(self, process: bool) -> None:
         self._process_post = process
 
-    @property
-    def track(self) -> bool:
-        return self._track
-
-    @track.setter
-    def track(self, track: bool) -> None:
-        self._track = track
-
-    @property
-    def updated(self) -> bool:
-        return self._updated
-
-    @updated.setter
-    def updated(self, updated: bool) -> None:
-        self._updated = updated
-
     def get_link_paths(self) -> list[str]:
         return [
             path.get_link_path(str(self._root), _path.path)
@@ -174,12 +156,14 @@ class Profile(object):
             for _path in self.paths
         ]
 
-    def _serialize(self, check_updated: bool) -> dict[str, Any]:
+    def serialize( self, check_refreshed: Refreshed = Refreshed.QUERY) -> dict[str, Any]:
         serialized: dict[str, Any] = {
             "paths": [
                 path.path
                 for path in self._paths
-                if (not check_updated or path.updated)
+                # Serialize paths if QUERY or LOCAL status, or if config file
+                # has been modified, only in the path has also been refreshed
+                if (check_refreshed != Refreshed.CONFIG or path.refreshed == Refreshed.CONFIG)
             ]
         }
         if self._root != "~":
@@ -190,7 +174,7 @@ class Profile(object):
             serialized["post"] = self._post
         return serialized
 
-    def _get_pending_actions(self, check_updated: bool) -> list[BaseAction]:
+    def get_pending_actions(self, check_refreshed: Refreshed = Refreshed.QUERY) -> list[BaseAction]:
         pending_actions: list[BaseAction] = []
 
         for _path in self.paths:
@@ -207,8 +191,8 @@ class Profile(object):
             )
             source_path_exist = os.path.exists(source)
 
-            if check_updated:
-                if not _path.updated:
+            if check_refreshed == Refreshed.CONFIG:
+                if _path.refreshed != Refreshed.CONFIG:
                     pending_actions.append(RemoveAction(source))
                 # Remove all links
                 if "last_root" in self._updated_dict and self.linked:
@@ -220,7 +204,7 @@ class Profile(object):
                     )
                     pending_actions.append(UnlinkAction(last_link))
 
-            if self._track:
+            if self.track:
                 pending_actions.append(MoveAction(link, source))
             # This allows to add new paths to dotpyle.yml and to be linked automatically
             elif not source_path_exist:
@@ -240,7 +224,7 @@ class Profile(object):
         if self._process_post and self._post:
             pending_actions.append(ScriptAction(self._post))
 
-        if self._track:
+        if self.track:
             pending_actions.append(RepoAction(self))
 
         return pending_actions

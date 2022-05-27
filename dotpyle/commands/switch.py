@@ -1,7 +1,5 @@
 import click
 from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
-from dotpyle.decorators.pass_config_handler import pass_config_handler
-from dotpyle.decorators.pass_local_handler import pass_local_handler
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.decorators.pass_repo_handler import pass_repo_handler

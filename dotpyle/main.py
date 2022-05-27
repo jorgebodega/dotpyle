@@ -26,6 +26,7 @@ from dotpyle.decorators.pass_repo_handler import pass_repo_handler
 from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.services.config_manager import ConfigManager
 
+CONTEXT = {"help_option_names": ["-h", "--help"]}
 
 @click.group()
 @click.version_option()
@@ -37,7 +38,7 @@ from dotpyle.services.config_manager import ConfigManager
     help="Enable verbose mode",
 )
 @click.pass_context
-def dotpyle(ctx=None, verbose=False):
+def dotpyle(ctx=CONTEXT, verbose=False):
     """
     Manage your dotfiles, create multiple profiles for different programs,
     automate task with hooks, etc.

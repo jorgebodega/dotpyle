@@ -1,4 +1,5 @@
 from typing import Any
+from dotpyle.objects.base import Refreshed
 from dotpyle.services.logger import Logger
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
 from dotpyle.exceptions import ConfigHandlerException
@@ -21,7 +22,8 @@ class ConfigManager:
         "_logger",
         "_version",
         "_abort",
-        "_updated",
+        "_refreshed",
+        "_cli_mode",
     )
 
     def __init__(
@@ -38,15 +40,17 @@ class ConfigManager:
         self._dotfiles: dict[str, Dotfile] = {}
         self._load_config()
         self._abort = False
-        self._updated = False
+        self._refreshed = Refreshed.QUERY
+        self._cli_mode = False
 
     def __del__(self):
-        if not self._abort:
+        # Only perform actions in editing mode
+        if (self._refreshed != Refreshed.QUERY or self._cli_mode) and not self._abort:
             try:
                 # First save config file
-                self._save_config(updated=self._updated)
+                self._save_config(refreshed=self._refreshed)
                 self._logger.log("Config file saved successfully")
-                self._run_pending_actions(self._updated)
+                self._run_pending_actions(self._refreshed)
                 # TODO rollback config file storage
                 self._logger.log("Pending actions done")
             except:
@@ -107,7 +111,7 @@ class ConfigManager:
         self._config_file_handler = new_config
         config_dict = self._config_file_handler.config
 
-        self._updated = True  # Ensure all operations will work as updated
+        self._refreshed = Refreshed.CONFIG  # Ensure all operations will work as updated
 
         try:
             self._version = config_dict["version"]
@@ -128,15 +132,16 @@ class ConfigManager:
                 for (dotfile_name, raw_profiles) in raw_dotfiles:
                     # Mark profile as updated
                     dotfile = self.get_dotfile(dotfile_name)
-                    dotfile.updated = True
+                    dotfile.refreshed = Refreshed.CONFIG
 
                     for profile_name, profile_data in raw_profiles.items():
                         # Mark profile as updated
                         profile = dotfile.get_profile(profile_name)
-                        profile.updated = True
+                        profile.refreshed = Refreshed.CONFIG
                         profile.paths = profile_data.get("paths", [])
                         root = profile_data.get("root", "~")
                         profile.root = root
+                        # TODO
                         # profile.pre = profile_data.get("pre", []),
                         # profile.post = profile_data.get("post", []),
 
@@ -158,6 +163,32 @@ class ConfigManager:
             # self.get_dotfile(dotfile).get_profile(profile).linked = True
             self.get_dotfile(dotfile).linked_profile = profile
 
+    def _update_local_config(self, new_local_config: LocalFileHandler) -> None:
+        """Read dotpyle.local.yml config file and enrich current dotfiles with proper information"""
+
+        self._local_file_handler = new_local_config 
+        local_dict = self._local_file_handler.config
+
+        self._refreshed = Refreshed.LOCAL  # Ensure all operations will work as updated
+
+        version = local_dict.get("version", None)
+        if version != 0:
+            raise ConfigHandlerException(
+                "Version '{}' of dotfile.local.yml file is currently"
+                " unsupported".format(version)
+            )
+        installed_profiles = local_dict.get("installed", {})
+
+        for dotfile_name, profile_name in installed_profiles.items():
+            # self.get_dotfile(dotfile).get_profile(profile).linked = True
+            dotfile = self.get_dotfile(dotfile_name)
+            dotfile.linked_profile = profile_name
+            profile = dotfile.get_profile(profile_name)
+            profile.refreshed = Refreshed.LOCAL
+            # TODO find another way to set as refreshed all paths while updating only local config
+            for path in profile.paths:
+                path.refreshed = Refreshed.LOCAL
+
     def _get_linked_dotfiles(self) -> list[Dotfile]:
         """Auxiliar mothod to obtain current linked profiles"""
         linked_dotfiles = []
@@ -177,16 +208,16 @@ class ConfigManager:
         return linked_profiles
 
     def _serialize_general_config(
-        self, check_updated: bool = False
+        self, check_updated: Refreshed
     ) -> dict[str, Any]:
         """Convert all objects back to dict format (dotpyle.yml)"""
         serialized_config = {
             "dotfiles": {
-                dotfile_name: dotfile_data._serialize(check_updated)
+                dotfile_name: dotfile_data.serialize(check_updated)
                 for dotfile_name, dotfile_data in self._dotfiles.items()
             },
             "scripts": {
-                script_name: script_data._serialize()
+                script_name: script_data.serialize()
                 for script_name, script_data in self._scripts.items()
             },
             "version": self._version,  # here could be updated to newer supported versions (future)
@@ -204,14 +235,14 @@ class ConfigManager:
         self._logger.log(serialized_local_config)
         return serialized_local_config
 
-    def _save_config(self, updated: bool) -> None:
-        self._config_file_handler.save(self._serialize_general_config(updated))
+    def _save_config(self, refreshed: Refreshed) -> None:
+        self._config_file_handler.save(self._serialize_general_config(refreshed))
         self._local_file_handler.save(self._serialize_local_config())
 
-    def _get_pending_actions(self, check_updated: bool) -> list[BaseAction]:
+    def _get_pending_actions(self, check_updated: Refreshed) -> list[BaseAction]:
         pending_actions = []
         for dotfile in self._dotfiles.values():
-            pending_actions.extend(dotfile._get_pending_actions(check_updated))
+            pending_actions.extend(dotfile.get_pending_actions(check_updated))
 
         # Sort pending actions by priority
         pending_actions = sorted(
@@ -221,7 +252,7 @@ class ConfigManager:
         return pending_actions
 
     def _rollback_actions(
-        self, actions: list[BaseAction] = [], check_updated: bool = False
+        self, actions: list[BaseAction] = [], check_updated: Refreshed = Refreshed.QUERY
     ):
         if actions == []:
             actions = self._get_pending_actions(check_updated=check_updated)
@@ -230,7 +261,7 @@ class ConfigManager:
             action.rollback()
         pass
 
-    def _run_pending_actions(self, check_updated: bool) -> None:
+    def _run_pending_actions(self, check_updated: Refreshed = Refreshed.QUERY) -> None:
         run_actions: list[BaseAction] = []
         try:
             for action in self._get_pending_actions(check_updated):
@@ -260,8 +291,23 @@ class ConfigManager:
             'Dotfile "{}" does not exist'.format(program_name)
         )
 
+    def get_script_path(self, script_name) -> str:
+        """
+        :return:
+        :raise ConfigHandlerException:
+            If name does not exist on Dotpyle database"""
+        if script_name in self._scripts:
+            return self._scripts[script_name].get_path()
+        raise ConfigHandlerException(
+            'Script "{}" does not exist'.format(script_name)
+        )
+
     def set_dotfile(self, dotfile: Dotfile) -> None:
+        self._cli_mode = True
         self._dotfiles[dotfile.program_name] = dotfile
+
+    def set_script(self, script: Script) -> None:
+        pass
 
     def edit_dotfile(self, program_name: str):
         pass
@@ -277,9 +323,8 @@ class ConfigManager:
             raise e
 
     def set_local_file_handler(self, local_file_handler: LocalFileHandler):
-        self._local_file_handler = local_file_handler
         try:
-            self._load_local_config()
+            self._update_local_config(local_file_handler)
         except ConfigHandlerException as e:
             self._abort = True
             raise e

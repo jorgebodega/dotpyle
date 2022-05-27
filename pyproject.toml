@@ -23,7 +23,6 @@ PyYAML = "^5.4.1"
 rich = "^12.0.0"
 click = "^8.0.1"
 setuptools = "^62.0.0"
-dictdiffer = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
