@@ -13,4 +13,4 @@ jobs:
         with:
           node-version: lts/gallium
       - run: npm install -g commitlint @commitlint/config-conventional
-      - run: commitlint --from ${{ github.event.before }} --to ${{ github.event.after }}
+      - run: commitlint --from ${{ github.event.commits[0][id] }} --to ${{ github.event.after }}
