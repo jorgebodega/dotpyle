@@ -3,16 +3,7 @@ on:
   push:
     branches-ignore: [development, master]
 jobs:
-  install-dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/gallium
-          cache: npm
-      - run: npm install -g commitlint @commitlint/config-conventional
   commitlint:
-    needs: install-dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,5 +12,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/gallium
-          cache: npm
+      - run: npm install -g commitlint @commitlint/config-conventional
       - run: commitlint --from ${{ github.event.before }} --to ${{ github.event.after }}
