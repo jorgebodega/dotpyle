@@ -1,7 +1,6 @@
 name: Commitlint
 on:
-  push:
-    branches-ignore: [development, master]
+  [push]
 jobs:
   commitlint:
     runs-on: ubuntu-latest
@@ -9,8 +8,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/gallium
-      - run: npm install -g commitlint @commitlint/config-conventional
-      - run: commitlint --from ${{ github.event.commits[0].id }} --to ${{ github.event.after }}
+      - uses: wagoid/commitlint-github-action@v4
+        with: 
+          configFile: .commitlintrc
