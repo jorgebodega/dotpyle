@@ -2,6 +2,7 @@
 
 # TODO: Remove this rules whenever the package is stable
 disable = C0114,C0115,C0116
+jobs = 0
 
 [FORMAT]
 
