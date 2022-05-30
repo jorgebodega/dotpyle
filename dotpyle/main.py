@@ -12,18 +12,12 @@ from dotpyle.commands.pull import pull
 from dotpyle.commands.switch import switch
 from dotpyle.commands.shell import shell
 from dotpyle.commands.run import run
-
 from dotpyle.services.config_checker import ConfigChecker
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
-from dotpyle.services.config_handler import ConfigHandler
 from dotpyle.services.logger import Logger
-
 from dotpyle.utils import constants
 from dotpyle.exceptions import DotpyleException
-
-from dotpyle.decorators.pass_repo_handler import pass_repo_handler
-from dotpyle.decorators.pass_logger import pass_logger
 from dotpyle.services.config_manager import ConfigManager
 
 CONTEXT = {"help_option_names": ["-h", "--help"]}
@@ -45,9 +39,12 @@ def dotpyle(ctx=CONTEXT, verbose=False):
     automate task with hooks, etc.
     """
     logger = Logger(verbose=verbose)
-    handler = FileHandler(logger=logger)
-    local_file_handler = LocalFileHandler(logger=logger)
-    parser = ConfigHandler(config=handler.config, logger=logger)
+    try:
+        handler = FileHandler(logger=logger)
+        local_file_handler = LocalFileHandler(logger=logger)
+    except:
+        handler = None
+        local_file_handler = None
 
     ctx.meta[constants.CONFIG_MANAGER_PROVIDER] = ConfigManager(
         file_handler=handler,
@@ -57,7 +54,6 @@ def dotpyle(ctx=CONTEXT, verbose=False):
     ctx.meta[constants.CONFIG_CHECKER_PROVIDER] = ConfigChecker()
     ctx.meta[constants.REPO_HANDLER_PROVIDER] = RepoHandler(logger=logger)
     ctx.meta[constants.LOGGER_PROVIDER] = logger
-    ctx.meta[constants.CONFIG_HANDLER_PROVIDER] = parser
     ctx.meta[constants.FILE_HANDLER_PROVIDER] = handler
     ctx.meta[constants.LOCAL_FILE_HANDLER_PROVIDER] = local_file_handler
 

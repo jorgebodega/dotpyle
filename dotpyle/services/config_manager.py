@@ -1,12 +1,12 @@
-from typing import Any
 from dotpyle.objects.base import Refreshed
 from dotpyle.services.logger import Logger
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
-from dotpyle.exceptions import ConfigHandlerException
+from dotpyle.exceptions import ConfigManagerException
 from dotpyle.objects.script import Script
 from dotpyle.objects.dotfile import Dotfile
 from dotpyle.objects.action import BaseAction
 from dotpyle.objects.profile import Profile
+from typing import Any
 
 
 class ConfigManager:
@@ -24,12 +24,13 @@ class ConfigManager:
         "_abort",
         "_refreshed",
         "_cli_mode",
+        "_initialized",
     )
 
     def __init__(
         self,
-        file_handler: FileHandler,
-        local_file_handler: LocalFileHandler,
+        file_handler: FileHandler | None,
+        local_file_handler: LocalFileHandler | None,
         logger: Logger,
     ) -> None:
         self._logger = logger
@@ -38,10 +39,15 @@ class ConfigManager:
         self._local_file_handler = local_file_handler
         self._scripts: dict[str, Script] = {}
         self._dotfiles: dict[str, Dotfile] = {}
-        self._load_config()
         self._abort = False
         self._refreshed = Refreshed.QUERY
         self._cli_mode = False
+
+        if file_handler and local_file_handler:
+            self._load_config()
+            self._initialized = True
+        else:
+            self._initialized = False
 
     def __del__(self):
         # Only perform actions in editing mode
@@ -72,7 +78,7 @@ class ConfigManager:
         try:
             self._version = config_dict["version"]
             if self._version != 0:
-                raise ConfigHandlerException(
+                raise ConfigManagerException(
                     "Version '{}' of dotfile.yml file is currently unsupported"
                     .format(self._version)
                 )
@@ -120,7 +126,7 @@ class ConfigManager:
         try:
             self._version = config_dict["version"]
             if self._version != 0:
-                raise ConfigHandlerException(
+                raise ConfigManagerException(
                     "Version '{}' of dotfile.yml file is currently unsupported"
                     .format(self._version)
                 )
@@ -157,7 +163,7 @@ class ConfigManager:
         local_dict = self._local_file_handler.config
         version = local_dict.get("version", None)
         if version != 0:
-            raise ConfigHandlerException(
+            raise ConfigManagerException(
                 "Version '{}' of dotfile.local.yml file is currently"
                 " unsupported".format(version)
             )
@@ -179,7 +185,7 @@ class ConfigManager:
 
         version = local_dict.get("version", None)
         if version != 0:
-            raise ConfigHandlerException(
+            raise ConfigManagerException(
                 "Version '{}' of dotfile.local.yml file is currently"
                 " unsupported".format(version)
             )
@@ -301,7 +307,7 @@ class ConfigManager:
     def get_dotfile(self, program_name: str) -> Dotfile:
         if program_name in self._dotfiles:
             return self._dotfiles[program_name]
-        raise ConfigHandlerException(
+        raise ConfigManagerException(
             'Dotfile "{}" does not exist'.format(program_name)
         )
 
@@ -312,7 +318,7 @@ class ConfigManager:
             If name does not exist on Dotpyle database"""
         if script_name in self._scripts:
             return self._scripts[script_name].get_path()
-        raise ConfigHandlerException(
+        raise ConfigManagerException(
             'Script "{}" does not exist'.format(script_name)
         )
 
@@ -332,13 +338,42 @@ class ConfigManager:
     def set_config_file_handler(self, config_file_handler: FileHandler):
         try:
             self._update_general_config(new_config=config_file_handler)
-        except ConfigHandlerException as e:
+        except ConfigManagerException as e:
             self._abort = True
             raise e
 
     def set_local_file_handler(self, local_file_handler: LocalFileHandler):
         try:
             self._update_local_config(local_file_handler)
-        except ConfigHandlerException as e:
+        except ConfigManagerException as e:
             self._abort = True
             raise e
+
+    def get_dotfile_names(self) -> list[str]:
+        """
+        :return:
+            List with all program names managed by Dotpyle
+        """
+        return [name for name in self._dotfiles.keys()]
+
+    def get_profile_names(self) -> list[str]:
+        """
+        :return:
+            List with all profiles managed by Dotpyle
+        """
+        profiles = set()
+        for dotfile in self._dotfiles.values():
+            for profile_name in dotfile.profiles.keys():
+                profiles.add(profile_name)
+        return list(profiles)
+
+    def get_script_names(self) -> list[str]:
+        """
+        :return:
+            List with all profiles managed by Dotpyle
+        """
+        return [script_name for script_name in self._scripts.keys()]
+
+    def initilize_repo(self):
+        if not self._initialized:
+            pass

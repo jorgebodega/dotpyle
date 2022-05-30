@@ -2,7 +2,7 @@ from typing import Any
 from dotpyle.objects.base import DotpyleObject, Refreshed
 from dotpyle.objects.profile import Profile
 from dotpyle.objects.action import BaseAction
-from dotpyle.exceptions import ConfigHandlerException
+from dotpyle.exceptions import ConfigManagerException
 from rich.tree import Tree
 
 
@@ -59,7 +59,7 @@ class Dotfile(DotpyleObject):
     def get_profile(self, profile_name: str) -> Profile:
         if profile_name in self._profiles:
             return self._profiles[profile_name]
-        raise ConfigHandlerException(
+        raise ConfigManagerException(
             'Profile "{}" for name "{}" does not exist'.format(
                 profile_name, self._program_name
             )

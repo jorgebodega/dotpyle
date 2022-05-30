@@ -1,9 +1,8 @@
 import click
-from os import system, path
+from os import path
 from shutil import copy2
 from tempfile import gettempdir
-from dotpyle.utils.path import get_configuration_path, get_dotpyle_readme_path
-from dotpyle.services.config_handler import ConfigHandler
+from dotpyle.utils.path import get_configuration_path
 from dotpyle.services.file_handler import FileHandler
 from dotpyle.utils import constants
 from dotpyle.decorators.pass_logger import pass_logger

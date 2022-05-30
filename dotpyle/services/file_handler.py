@@ -4,6 +4,7 @@ from os.path import join, isfile, isdir, dirname
 from os import listdir, makedirs
 import shutil
 from yaml import safe_load, safe_dump
+from dotpyle.exceptions import FileHandlerException
 from dotpyle.utils.path import (
     get_configuration_path,
     get_local_configuration_path,
@@ -16,19 +17,31 @@ from dotpyle.services.logger import Logger
 
 
 class BasicFileHandler:
-    def __init__(self, file_path: str, template_path: str, logger: Logger):
+    def __init__(
+        self,
+        file_path: str,
+        template_path: str,
+        logger: Logger,
+        force: bool = False,
+    ):
         self.logger = logger
 
         if not isfile(file_path):
-            self.logger.warning(
-                "File {0} does not exist. Creating from template...".format(
-                    file_path
+            if force:
+                self.logger.warning(
+                    "File {0} does not exist. Creating from template...".format(
+                        file_path
+                    )
                 )
-            )
-            makedirs(dirname(file_path), exist_ok=True)
-            shutil.copy(template_path, file_path)
+                makedirs(dirname(file_path), exist_ok=True)
+                shutil.copy(template_path, file_path)
+                copy2(template_path, file_path)
 
-            copy2(template_path, file_path)
+            else:
+                raise FileHandlerException(
+                    "File {0} does not exist, initialize repo with `dotpyle"
+                    " init`".format(file_path)
+                )
 
         self.file_path = file_path
         self._config = self.read()
@@ -57,11 +70,12 @@ class BasicFileHandler:
 
 
 class FileHandler(BasicFileHandler):
-    def __init__(self, logger: Logger, path=None):
+    def __init__(self, logger: Logger, path=None, force: bool = False):
         super().__init__(
             file_path=get_configuration_path() if path is None else path,
             template_path=constants.CONFIG_TEMPLATE_PATH,
             logger=logger,
+            force=force,
         )
 
     def get_profile_paths(self, key, profile):
@@ -83,11 +97,12 @@ class FileHandler(BasicFileHandler):
 
 
 class LocalFileHandler(BasicFileHandler):
-    def __init__(self, logger: Logger, path=None):
+    def __init__(self, logger: Logger, path=None, force: bool = False):
         super().__init__(
             file_path=get_local_configuration_path() if path is None else path,
             template_path=constants.CONFIG_LOCAL_TEMPLATE_PATH,
             logger=logger,
+            force=force,
         )
 
     def install_profile(self, name, profile):
@@ -111,12 +126,3 @@ class LocalFileHandler(BasicFileHandler):
 
     def get_installed(self):
         return self.config["installed"]
-
-
-class ScriptFileHandler(BasicFileHandler):
-    def __init__(self, logger: Logger, script_name: str):
-        super().__init__(
-            file_path=get_script_path(script_name),
-            template_path=constants.SCRIPT_TEMPLATE_PATH,
-            logger=logger,
-        )
