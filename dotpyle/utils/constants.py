@@ -11,10 +11,11 @@ README_NAME = "README.md"
 README_TEMPLATE_PATH = "dotpyle/templates/readme.md"
 CONFIG_TEMPLATE_PATH = "dotpyle/templates/basic-config.yaml"
 CONFIG_LOCAL_TEMPLATE_PATH = "dotpyle/templates/local-config.yaml"
-SCRIPT_TEMPLATE_PATH = "dotpyle/templates/script.yaml"
+GIT_FOLDER = ".git"
 
 CONFIG_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.json")
-CONFIG_HANDLER_ERROR_CODE = 42
+CONFIG_MANAGER_ERROR_CODE = 42
+FILE_HANDLER_ERROR_CODE = 10
 SCRIPTS_EXTENSION = "yaml"
 CONFIG_CHECKER_PROVIDER = "CONFIG_CHECKER"
 CONFIG_MANAGER_PROVIDER = "CONFIG_MANAGER_PROVIDER"

@@ -1,12 +1,8 @@
 import click
-import os
-import rich
-from rich.text import Text
 from rich.tree import Tree
 from dotpyle.utils.autocompletion import DotfileNamesVarType, ProfileVarType
 from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.decorators.pass_logger import pass_logger
-from dotpyle.utils.path import un_expanduser
 from dotpyle.services.logger import Logger
 from dotpyle.services.config_manager import ConfigManager
 

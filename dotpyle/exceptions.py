@@ -12,9 +12,16 @@ class DotpyleException(Exception):
         super().__init__(self.message)
 
 
-class ConfigHandlerException(DotpyleException):
-    """ConfigHandler custom exception"""
+class FileHandlerException(DotpyleException):
+    """FileHandler custom exception"""
+
+    def __init__(self, message: str):
+        super().__init__(message, constants.FILE_HANDLER_ERROR_CODE)
+
+
+class ConfigManagerException(DotpyleException):
+    """ConfigManager custom exception"""
 
     def __init__(self, message: str):
         message = "[CONFIG] " + message
-        super().__init__(message, constants.CONFIG_HANDLER_ERROR_CODE)
+        super().__init__(message, constants.CONFIG_MANAGER_ERROR_CODE)

@@ -1,25 +1,34 @@
 from click.shell_completion import CompletionItem
 from click import ParamType
-
+from dotpyle.exceptions import FileHandlerException
+from dotpyle.services.config_manager import ConfigManager
 from dotpyle.services.file_handler import FileHandler, LocalFileHandler
-from dotpyle.services.config_handler import ConfigHandler
 import os
-import sys
-from dotpyle.decorators.pass_config_handler import pass_config_handler
 
 # This is awful: should be done with inyection
 from dotpyle.services.logger import Logger
 
+
 logger = Logger(verbose=False)
-config_handler = ConfigHandler(
-    config=FileHandler(logger=logger).config, logger=logger
-)
+try:
+    manager = ConfigManager(
+        file_handler=FileHandler(logger),
+        local_file_handler=LocalFileHandler(logger),
+        logger=logger,
+    )
+    dotfile_names = manager.get_dotfile_names()
+    profile_names = manager.get_profile_names()
+    script_names = manager.get_script_names()
+
+except FileHandlerException as e:
+    dotfile_names = []
+    profile_names = []
+    script_names = []
 
 
 class DotfileNamesVarType(ParamType):
     def shell_complete(self, ctx, param, incomplete):
-        names = config_handler.get_names()
-        items = [(name, "") for name in names]
+        items = [(name, "") for name in dotfile_names]
         for value, help in items:
             if incomplete in value or incomplete in help:
                 yield (CompletionItem(value, help=help))
@@ -29,8 +38,7 @@ class DotfileNamesVarType(ParamType):
 # TODO https://stackoverflow.com/a/58617108/10474917
 class ProfileVarType(ParamType):
     def shell_complete(self, ctx, param, incomplete):
-        profiles = config_handler.get_profiles()
-        items = [(name, "") for name in profiles]
+        items = [(name, "") for name in profile_names]
         for value, help in items:
             if incomplete in value or incomplete in help:
                 yield (CompletionItem(value, help=help))
@@ -38,8 +46,7 @@ class ProfileVarType(ParamType):
 
 class ScriptVarType(ParamType):
     def shell_complete(self, ctx, param, incomplete):
-        scripts = config_handler.get_scripts()
-        items = [(name, "") for name in scripts]
+        items = [(name, "") for name in script_names]
         # For now, there will be no help
         for value, help in items:
             if incomplete in value or incomplete in help:

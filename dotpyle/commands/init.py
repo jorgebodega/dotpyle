@@ -28,7 +28,7 @@ from dotpyle.utils.url import get_default_url
     "--token",
     required=False,
     help=(
-        "Token could be used to clone a repository if it is private and the"
+        "Token could be used to clone a repository if it is private and the "
         "protocol is HTTPS. If the repository is private but no token provided,"
         "it will probably prompt for username/password (depends on service)."
     ),
@@ -69,6 +69,7 @@ def init(url: str, protocol, token: str, branch: str, force: bool):
             #     fg="red",
             # )
             # click.secho("Removing config folder...", fg="red")
+            print("removing dotpyle repo")
             rmtree(default_path)
     else:
         # click.secho("Folder already exists.", fg="red")

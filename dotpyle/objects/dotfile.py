@@ -1,14 +1,15 @@
+from typing import Any
+from dotpyle.objects.base import DotpyleObject, Refreshed
 from dotpyle.objects.profile import Profile
 from dotpyle.objects.action import BaseAction
-from dotpyle.exceptions import ConfigHandlerException
+from dotpyle.exceptions import ConfigManagerException
 from rich.tree import Tree
 
 
-class Dotfile(object):
+class Dotfile(DotpyleObject):
     __slots__ = (
         "_program_name",
         "_profiles",
-        "_updated",
     )
 
     def __init__(
@@ -18,7 +19,6 @@ class Dotfile(object):
     ):
         self._program_name = program_name
         self._profiles = profiles
-        self._updated = False
 
     @property
     def program_name(self):
@@ -29,7 +29,7 @@ class Dotfile(object):
         self._program_name = program_name
 
     @property
-    def linked_profile(self) -> Profile | None:
+    def linked_profile(self):
         for profile in self._profiles.values():
             if profile.linked:
                 return profile
@@ -53,21 +53,13 @@ class Dotfile(object):
     def profiles(self, profiles):
         self._profiles = profiles
 
-    @property
-    def updated(self) -> bool:
-        return self._updated
-
-    @updated.setter
-    def updated(self, updated: bool) -> None:
-        self._updated = updated
-
     def get_profile_names(self) -> list[str]:
         return list(self.profiles.keys())
 
     def get_profile(self, profile_name: str) -> Profile:
         if profile_name in self._profiles:
             return self._profiles[profile_name]
-        raise ConfigHandlerException(
+        raise ConfigManagerException(
             'Profile "{}" for name "{}" does not exist'.format(
                 profile_name, self._program_name
             )
@@ -101,18 +93,22 @@ class Dotfile(object):
             tree.add(profile._get_tree())
         return tree
 
-    def _serialize(self, check_updated: bool):
+    def serialize(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> dict[str, Any]:
         return {
-            profile_name: profile_data._serialize(check_updated)
+            profile_name: profile_data.serialize(check_refreshed)
             for profile_name, profile_data in self._profiles.items()
         }
 
-    def _get_pending_actions(self, check_updated: bool) -> list[BaseAction]:
+    def get_pending_actions(
+        self, check_refreshed: Refreshed = Refreshed.QUERY
+    ) -> list[BaseAction]:
         pending_actions = []
         # if self._new:
         # pending_actions.append(mathe)
         for profile in self.profiles.values():
-            pending_actions.extend(profile._get_pending_actions(check_updated))
+            pending_actions.extend(profile.get_pending_actions(check_refreshed))
         return pending_actions
 
     def add_profile(self, profile: Profile):

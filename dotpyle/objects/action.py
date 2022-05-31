@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 import os
+from posixpath import dirname
 import shutil
 import pathlib
 from dotpyle.services.repo_handler import RepoHandler
 from dotpyle.services.logger import Logger
-from dotpyle.decorators.pass_repo_handler import pass_repo_handler
-from dotpyle.objects.base import PathLike, ShellCommand
+from dotpyle.objects.common import PathLike, ShellCommand
 
 # from dotpyle.objects.profile import Profile # circular import
 
@@ -38,6 +38,7 @@ class LinkAction(BaseAction):
         )
 
     def run(self):
+        os.makedirs(dirname(self.link_name), exist_ok=True)
         os.symlink(src=self.source, dst=self.link_name)
         print("Linking {} -> {}".format(self.source, self.link_name))
 
@@ -183,4 +184,5 @@ class RemoveAction(BaseAction):
 
     def rollback(self):
         # TODO
+        print("rolling back remove action")
         pass

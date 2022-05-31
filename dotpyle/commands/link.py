@@ -1,6 +1,7 @@
 import click
 from dotpyle.decorators.pass_config_manager import pass_config_manager
 from dotpyle.decorators.pass_logger import pass_logger
+from dotpyle.objects.base import Refreshed
 from dotpyle.utils.autocompletion import ProfileVarType, DotfileNamesVarType
 from dotpyle.services.logger import Logger
 from dotpyle.services.config_manager import ConfigManager
@@ -43,5 +44,6 @@ def link(
     profile_data.linked = True
     profile_data.process_pre = not (no_pre or no_hooks)
     profile_data.process_post = not (no_post or no_hooks)
+    manager._refreshed = Refreshed.LOCAL
 
     logger.success("{} dotfiles installed".format(name))
