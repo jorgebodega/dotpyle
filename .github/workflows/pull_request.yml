@@ -5,14 +5,17 @@ on:
 jobs:
   install-dependencies:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['3.9', '3.10.5', '3.10.6']
     steps:
       - uses: actions/checkout@v3
       - uses: abatilo/actions-poetry@v2.1.6
         with:
-          poetry-version: 1.1.13
+          poetry-version: 1.1.15
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.version }}
           cache: 'poetry'
       - run: poetry install
   format:
@@ -22,10 +25,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: abatilo/actions-poetry@v2.1.6
         with:
-          poetry-version: 1.1.13
+          poetry-version: 1.2.0
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10.6'
           cache: 'poetry'
       - run: poetry install
       - run: poetry run poe black-check
@@ -36,10 +39,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: abatilo/actions-poetry@v2.1.6
         with:
-          poetry-version: 1.1.13
+          poetry-version: 1.2.0
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10.6'
           cache: 'poetry'
       - run: poetry install
       - run: poetry run poe pylint-check
@@ -50,10 +53,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: abatilo/actions-poetry@v2.1.6
         with:
-          poetry-version: 1.1.13
+          poetry-version: 1.2.0
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10.6'
           cache: 'poetry'
       - run: poetry install
       - name: Poetry test
