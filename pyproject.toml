@@ -27,7 +27,7 @@ setuptools = "^65.0.0"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
 black = "^22.3.0"
-coveralls = "^3.0.1"
+coveralls = "^4.0.0"
 pylint = "^2.6.0"
 pep8 = "^1.7.1"
 pre-commit = "^2.9.3"
